@@ -1,32 +1,54 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
+using NewLife;
 using NewLife.Http;
 using NewLife.Yun;
 using Xunit;
-using NewLife;
-using System.Net.Http;
 
-namespace XUnitTest.Yun
+namespace XUnitTest.Yun;
+
+public class BaiduMapTests
 {
-    public class BaiduMapTests
+    [Fact]
+    public async void Geocoder()
     {
-        [Fact]
-        public async void IpLocation()
-        {
-            var html = new HttpClient().GetString("http://myip.ipip.net");
-            var ip = html?.Substring("IP：", " ");
-            Assert.NotEmpty(ip);
+        var addr = "上海中心";
+        var map = new BaiduMap();
+        var rs = await map.GetGeocoderAsync(addr);
 
-            var map = new BaiduMap();
-            var rs = await map.IpLocationAsync(ip);
+        Assert.NotNull(rs);
+        Assert.True(rs.ContainsKey("location"));
 
-            Assert.NotNull(rs);
+        var ga = await map.GetGeoAsync(addr, null, false);
 
-            var addrs = (rs["full_address"] + "").Split('|');
-            Assert.Equal(7, addrs.Length);
-        }
+        Assert.NotNull(ga);
+        Assert.Equal(121.5119990462553, ga.Location.Longitude);
+        Assert.Equal(31.239184684191343, ga.Location.Latitude);
+        Assert.Null(ga.Address);
+
+        ga = await map.GetGeoAsync(addr, null, true);
+
+        Assert.NotNull(ga);
+        Assert.Equal(121.51199904625521, ga.Location.Longitude);
+        Assert.Equal(31.239184551783151, ga.Location.Latitude);
+        Assert.Equal("上海市浦东新区花园石桥路176号", ga.Address);
+        Assert.Equal(310115, ga.Code);
+        Assert.Equal("310115005", ga.Towncode);
+    }
+
+    [Fact]
+    public async void IpLocation()
+    {
+        var html = new HttpClient().GetString("http://myip.ipip.net");
+        var ip = html?.Substring("IP：", " ");
+        Assert.NotEmpty(ip);
+
+        var map = new BaiduMap();
+        var rs = await map.IpLocationAsync(ip);
+
+        Assert.NotNull(rs);
+
+        var addrs = (rs["full_address"] + "").Split('|');
+        Assert.Equal(7, addrs.Length);
     }
 }

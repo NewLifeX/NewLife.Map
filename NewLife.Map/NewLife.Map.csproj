@@ -5,7 +5,7 @@
     <Description>地图组件库，封装百度地图、高德地图和腾讯地图</Description>
     <Company>新生命开发团队</Company>
     <Copyright>©2002-2022 新生命开发团队</Copyright>
-    <VersionPrefix>2.0</VersionPrefix>
+    <VersionPrefix>2.1</VersionPrefix>
     <VersionSuffix>$([System.DateTime]::Now.ToString(`yyyy.MMdd`))</VersionSuffix>
     <Version>$(VersionPrefix).$(VersionSuffix)</Version>
     <FileVersion>$(Version)</FileVersion>
