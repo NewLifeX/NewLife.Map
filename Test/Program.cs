@@ -28,10 +28,10 @@ namespace Test
         {
             var addr = "上海中心";
             var map = new BaiduMap();
-            var rs = await map.GetGeocoderAsync(addr);
+            //var rs = await map.GetGeocoderAsync(addr);
 
-            Assert.NotNull(rs);
-            Assert.True(rs.ContainsKey("location"));
+            //Assert.NotNull(rs);
+            //Assert.True(rs.ContainsKey("location"));
 
             var ga = await map.GetGeoAsync(addr, null, false);
 
