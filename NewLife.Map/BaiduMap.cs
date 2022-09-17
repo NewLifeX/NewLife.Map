@@ -94,7 +94,7 @@ public class BaiduMap : Map, IMap
             Location = gp,
         };
 
-        if (formatAddress && gp != null) geo = await GetGeoAsync(gp);
+        if (formatAddress && gp != null) geo = await GetReverseGeoAsync(gp);
 
         geo.Precise = rs["precise"].ToBoolean();
         geo.Confidence = rs["confidence"].ToInt();
@@ -112,7 +112,7 @@ public class BaiduMap : Map, IMap
     /// </remarks>
     /// <param name="point"></param>
     /// <returns></returns>
-    public async Task<IDictionary<String, Object>> GetGeocoderAsync(GeoPoint point)
+    public async Task<IDictionary<String, Object>> GetReverseGeocoderAsync(GeoPoint point)
     {
         if (point == null || point.Longitude == 0 || point.Latitude == 0) throw new ArgumentNullException(nameof(point));
 
@@ -124,9 +124,9 @@ public class BaiduMap : Map, IMap
     /// <summary>根据坐标获取地址</summary>
     /// <param name="point"></param>
     /// <returns></returns>
-    public async Task<GeoAddress> GetGeoAsync(GeoPoint point)
+    public async Task<GeoAddress> GetReverseGeoAsync(GeoPoint point)
     {
-        var rs = await GetGeocoderAsync(point);
+        var rs = await GetReverseGeocoderAsync(point);
         if (rs == null || rs.Count == 0) return null;
 
         if (rs["location"] is IDictionary<String, Object> ds && ds.Count >= 2)
@@ -238,7 +238,7 @@ public class BaiduMap : Map, IMap
         else
             return null;
 
-        if (formatAddress && geo?.Location != null) geo = await GetGeoAsync(geo.Location);
+        if (formatAddress && geo?.Location != null) geo = await GetReverseGeoAsync(geo.Location);
 
         geo.Name = rs["name"] + "";
         var addr = rs["address"] + "";

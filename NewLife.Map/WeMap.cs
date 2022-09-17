@@ -113,7 +113,7 @@ namespace NewLife.Yun
 
             if (formatAddress)
             {
-                var geo2 = await GetGeoAsync(gp);
+                var geo2 = await GetReverseGeoAsync(gp);
                 if (geo2 != null)
                 {
                     geo = geo2;
@@ -138,7 +138,7 @@ namespace NewLife.Yun
         /// <remarks> 不会返回周边地点（POI）列表
         /// https://lbs.qq.com/service/webService/webServiceGuide/webServiceGcoder
         /// </remarks>
-        public async Task<IDictionary<String, Object>> GetGeocoderAsync(GeoPoint point)
+        public async Task<IDictionary<String, Object>> GetReverseGeocoderAsync(GeoPoint point)
         {
             if (point.Longitude < 0.1 || point.Latitude < 0.1) throw new ArgumentNullException(nameof(point));
 
@@ -150,9 +150,9 @@ namespace NewLife.Yun
         /// <summary>根据坐标获取地址</summary>
         /// <param name="point"></param>
         /// <returns></returns>
-        public async Task<GeoAddress> GetGeoAsync(GeoPoint point)
+        public async Task<GeoAddress> GetReverseGeoAsync(GeoPoint point)
         {
-            var rs = await GetGeocoderAsync(point);
+            var rs = await GetReverseGeocoderAsync(point);
             if (rs == null || rs.Count == 0) return null;
 
             var geo = new GeoAddress { Address = $"{rs["address"]}", Location = point };

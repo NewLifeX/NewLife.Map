@@ -45,12 +45,12 @@ namespace NewLife.Yun
         /// <summary>根据坐标获取地址</summary>
         /// <param name="point"></param>
         /// <returns></returns>
-        Task<IDictionary<String, Object>> GetGeocoderAsync(GeoPoint point);
+        Task<IDictionary<String, Object>> GetReverseGeocoderAsync(GeoPoint point);
 
         /// <summary>根据坐标获取地址</summary>
         /// <param name="point"></param>
         /// <returns></returns>
-        Task<GeoAddress> GetGeoAsync(GeoPoint point);
+        Task<GeoAddress> GetReverseGeoAsync(GeoPoint point);
         #endregion
 
         #region 路径规划
