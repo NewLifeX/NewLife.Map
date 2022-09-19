@@ -116,7 +116,7 @@ public class BaiduMap : Map, IMap
     {
         if (point == null || point.Longitude == 0 || point.Latitude == 0) throw new ArgumentNullException(nameof(point));
 
-        var url = $"https://api.map.baidu.com/reverse_geocoding/v3/?location={point.Latitude},{point.Longitude}&extensions_town=true&coord_type={CoordType}&output=json";
+        var url = $"https://api.map.baidu.com/reverse_geocoding/v3/?location={point.Latitude},{point.Longitude}&extensions_town=true&coordtype={CoordType}&output=json";
 
         return await InvokeAsync<IDictionary<String, Object>>(url, "result");
     }
