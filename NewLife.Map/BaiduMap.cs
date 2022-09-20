@@ -116,7 +116,7 @@ public class BaiduMap : Map, IMap
     {
         if (point == null || point.Longitude == 0 || point.Latitude == 0) throw new ArgumentNullException(nameof(point));
 
-        var url = $"https://api.map.baidu.com/reverse_geocoding/v3/?location={point.Latitude},{point.Longitude}&extensions_town=true&coordtype={CoordType}&output=json";
+        var url = $"https://api.map.baidu.com/reverse_geocoding/v3/?location={point.Latitude},{point.Longitude}&extensions_poi=1&extensions_town=true&coordtype={CoordType}&output=json";
 
         return await InvokeAsync<IDictionary<String, Object>>(url, "result");
     }
@@ -150,6 +150,10 @@ public class BaiduMap : Map, IMap
             addr.Towncode = component["town_code"] + "";
             addr.StreetNumber = component["street_number"] + "";
         }
+
+        // 叠加POI语义描述，让结果地址看起来更精确
+        if (rs.TryGetValue("sematic_description", out var sd) && sd is String value && !value.IsNullOrEmpty())
+            addr.Address += value;
 
         addr.Location = point;
 
