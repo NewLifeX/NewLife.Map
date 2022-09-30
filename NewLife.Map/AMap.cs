@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using System.Web;
 using NewLife.Data;
 using NewLife.Serialization;
@@ -20,20 +16,20 @@ public class AMap : Map, IMap
     /// <summary>高德地图</summary>
     public AMap()
     {
-        AppKey = "" +
-            // 六条
-            "2aada76e462af71e1b67ba1df22d0fa4," +
-            "038a84bf20e8306fdd2203110739110c," +
-            "29360e6eeb7b921d644cde3068ddf24f," +
-            "a8e5e3e7b4068be9c525bd2b7854eb20," +
-            "9935cf01abd570532ab7a19f83f905d3," +
-            "ecacc934a6529b39513ea2bfa8a03def," +
-            "08c70a500587c1006e10e4a096cb6b58," +
-            "3508dadf3777531cef63bdc061ac020f," +
-            "331566353c89521faffd84af22cd4f5f," +
-            "6f19a71c6fd71baf54680eb63c4d5fce," +
-            "" +
-            "";
+        //AppKey = "" +
+        //    // 六条
+        //    "2aada76e462af71e1b67ba1df22d0fa4," +
+        //    "038a84bf20e8306fdd2203110739110c," +
+        //    "29360e6eeb7b921d644cde3068ddf24f," +
+        //    "a8e5e3e7b4068be9c525bd2b7854eb20," +
+        //    "9935cf01abd570532ab7a19f83f905d3," +
+        //    "ecacc934a6529b39513ea2bfa8a03def," +
+        //    "08c70a500587c1006e10e4a096cb6b58," +
+        //    "3508dadf3777531cef63bdc061ac020f," +
+        //    "331566353c89521faffd84af22cd4f5f," +
+        //    "6f19a71c6fd71baf54680eb63c4d5fce," +
+        //    "" +
+        //    "";
         KeyName = "key";
 
         //CoordType = "wgs84ll";

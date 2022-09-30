@@ -16,7 +16,7 @@ public class BaiduMap : Map, IMap
     /// <summary>高德地图</summary>
     public BaiduMap()
     {
-        AppKey = "C73357a276668f8b0563d3f936475007";
+        //AppKey = "C73357a276668f8b0563d3f936475007";
         KeyName = "ak";
         //CoordType = "wgs84ll";
         CoordType = "bd09ll";
