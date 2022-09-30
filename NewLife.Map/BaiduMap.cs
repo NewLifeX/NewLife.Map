@@ -129,17 +129,20 @@ public class BaiduMap : Map, IMap
         var rs = await GetReverseGeocoderAsync(point);
         if (rs == null || rs.Count == 0) return null;
 
-        if (rs["location"] is IDictionary<String, Object> ds && ds.Count >= 2)
-        {
-            point.Longitude = ds["lng"].ToDouble();
-            point.Latitude = ds["lat"].ToDouble();
-        }
-
         var addr = new GeoAddress
         {
             Address = rs["formatted_address"] + "",
             Confidence = rs["confidence"].ToInt(),
         };
+        if (rs["location"] is IDictionary<String, Object> ds && ds.Count >= 2)
+        {
+            addr.Location = new GeoPoint
+            {
+                Longitude = ds["lng"].ToDouble(),
+                Latitude = ds["lat"].ToDouble()
+            };
+        }
+
         if (rs["addressComponent"] is IDictionary<String, Object> component)
         {
             var reader = new JsonReader();
@@ -154,8 +157,6 @@ public class BaiduMap : Map, IMap
         // 叠加POI语义描述，让结果地址看起来更精确
         if (rs.TryGetValue("sematic_description", out var sd) && sd is String value && !value.IsNullOrEmpty())
             addr.Address += value;
-
-        addr.Location = point;
 
         return addr;
     }
