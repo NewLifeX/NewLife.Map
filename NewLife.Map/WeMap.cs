@@ -93,7 +93,8 @@ public class WeMap : Map, IMap
 
         if (rs["ad_info"] is IDictionary<String, Object> ad && ad.Count > 0) geo.Code = ad["adcode"].ToInt();
 
-        {//省、市、县/乡镇、街道、信息
+        {
+            //省、市、县/乡镇、街道、信息
             if (rs["address_components"] is IDictionary<String, Object> addressComponents)
             {
                 geo.Province = $"{addressComponents["province"]}";

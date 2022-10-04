@@ -156,7 +156,7 @@ public class BaiduMap : Map, IMap
 
         // 叠加POI语义描述，让结果地址看起来更精确
         if (rs.TryGetValue("sematic_description", out var sd) && sd is String value && !value.IsNullOrEmpty())
-            addr.Address += value;
+            addr.Title = value;
 
         return addr;
     }

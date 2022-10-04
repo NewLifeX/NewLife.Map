@@ -127,9 +127,15 @@ public class AMap : Map, IMap
             if (!addr.IsNullOrEmpty()) geo.Address = addr;
         }
         // 替换竖线
-        if (!geo.Address.IsNullOrEmpty()) geo.Address = geo.Address.Replace("|", null);
+        TrimAddress(geo);
 
         return geo;
+    }
+
+    static void TrimAddress(GeoAddress geo)
+    {
+        // 替换竖线
+        if (!geo.Address.IsNullOrEmpty()) geo.Address = geo.Address.Replace("|", null);
     }
     #endregion
 
@@ -193,7 +199,7 @@ public class AMap : Map, IMap
 
         geo.Location = point;
         // 替换竖线
-        if (!geo.Address.IsNullOrEmpty()) geo.Address = geo.Address.Replace("|", null);
+        TrimAddress(geo);
 
         return geo;
     }

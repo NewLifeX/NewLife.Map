@@ -13,6 +13,9 @@ public class GeoAddress
     /// <summary>地址</summary>
     public String Address { get; set; }
 
+    /// <summary>标题。语义描述，POI详细信息，例如石下村东南282米</summary>
+    public String Title { get; set; }
+
     /// <summary>行政区域编码。6位数字</summary>
     public Int32 Code { get; set; }
 
