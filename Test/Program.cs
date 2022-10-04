@@ -47,7 +47,7 @@ namespace Test
             Assert.Equal(31.239184551783151, ga.Location.Latitude);
             Assert.Equal("上海市浦东新区花园石桥路176号", ga.Address);
             Assert.Equal(310115, ga.Code);
-            Assert.Equal("310115005", ga.Towncode);
+            Assert.Equal(310115005, ga.Towncode);
         }
     }
 }

@@ -150,7 +150,7 @@ public class BaiduMap : Map, IMap
 
             addr.Code = component["adcode"].ToInt();
             addr.Township = component["town"] + "";
-            addr.Towncode = component["town_code"] + "";
+            addr.Towncode = component["town_code"].ToInt();
             addr.StreetNumber = component["street_number"] + "";
         }
 

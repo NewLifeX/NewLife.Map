@@ -7,15 +7,18 @@ using NewLife.Http;
 using NewLife.Yun;
 using Xunit;
 
-namespace XUnitTest.Yun;
+namespace XUnitTest;
 
 public class BaiduMapTests
 {
+    private readonly BaiduMap _map;
+    public BaiduMapTests() => _map = new BaiduMap { AppKey = "C73357a276668f8b0563d3f936475007" };
+
     [Fact]
     public async void Geocoder()
     {
         var addr = "上海中心";
-        var map = new BaiduMap();
+        var map = _map;
         //var rs = await map.GetGeocoderAsync(addr);
 
         //Assert.NotNull(rs);
@@ -33,9 +36,9 @@ public class BaiduMapTests
         Assert.NotNull(ga);
         Assert.Equal(121.51199904625521, ga.Location.Longitude);
         Assert.Equal(31.239184551783151, ga.Location.Latitude);
-        Assert.Equal("上海市浦东新区花园石桥路176号", ga.Address);
+        Assert.Equal("上海市浦东新区花园石桥路176号上海中心大厦内", ga.Address);
         Assert.Equal(310115, ga.Code);
-        Assert.Equal("310115005", ga.Towncode);
+        Assert.Equal(310115005, ga.Towncode);
     }
 
     [Fact]
@@ -45,7 +48,7 @@ public class BaiduMapTests
         var ip = html?.Substring("IP：", " ");
         Assert.NotEmpty(ip);
 
-        var map = new BaiduMap();
+        var map = _map;
         var rs = await map.IpLocationAsync(ip);
 
         Assert.NotNull(rs);
@@ -63,7 +66,7 @@ public class BaiduMapTests
             new GeoPoint { Longitude = 114.21892734521, Latitude = 29.575429778924 }
         };
 
-        var map = new BaiduMap();
+        var map = _map;
         var points2 = await map.ConvertAsync(points, "wgs84", "gcj02");
 
         Assert.NotNull(points2);

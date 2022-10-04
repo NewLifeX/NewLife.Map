@@ -174,13 +174,15 @@ public class AMap : Map, IMap
             geo.Code = component["adcode"].ToInt();
 
             geo.Township = null;
-            geo.Towncode = null;
+            geo.Towncode = 0;
+
+            var towncode = "";
             if (component["township"] is String ts) geo.Township = ts;
-            if (component["towncode"] is String tc) geo.Towncode = tc;
+            if (component["towncode"] is String tc) towncode = tc;
 
             // 去掉乡镇代码后面多余的0
-            var tcode = geo.Towncode;
-            if (!tcode.IsNullOrEmpty() && tcode.Length > 6 + 3) geo.Towncode = tcode.TrimEnd("000");
+            if (!towncode.IsNullOrEmpty() && towncode.Length > 6 + 3) towncode = towncode.TrimEnd("000");
+            geo.Towncode = towncode.ToInt();
 
             if (component["streetNumber"] is IDictionary<String, Object> sn && sn.Count > 0)
             {
