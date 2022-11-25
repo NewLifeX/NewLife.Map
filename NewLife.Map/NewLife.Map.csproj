@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1</TargetFrameworks>
+    <TargetFrameworks>net461;netstandard2.0;netstandard2.1</TargetFrameworks>
     <AssemblyTitle>地图组件库</AssemblyTitle>
     <Description>地图组件库，封装百度地图、高德地图和腾讯地图</Description>
     <Company>新生命开发团队</Company>
