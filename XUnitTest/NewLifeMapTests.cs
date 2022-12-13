@@ -22,7 +22,7 @@ public class NewLifeMapTests
 
         var point = new GeoPoint(121.5119990462553, 31.239184684191343);
 
-        var gmodel = await map.GetGeoInfo(point);
+        var gmodel = await map.GetGeoInfo(point, null);
 
         Assert.NotNull(gmodel);
         Assert.Equal(121.511999, gmodel.Longitude);
@@ -30,7 +30,7 @@ public class NewLifeMapTests
         Assert.Equal("上海市浦东新区花园石桥路176号", gmodel.Address);
         Assert.Equal("上海中心大厦内", gmodel.Title);
 
-        var ga = await map.GetReverseGeoAsync(point);
+        var ga = await map.GetReverseGeoAsync(point, null);
 
         Assert.NotNull(ga);
         Assert.Equal(121.511999, ga.Location.Longitude);

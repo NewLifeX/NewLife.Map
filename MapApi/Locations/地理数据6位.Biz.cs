@@ -48,7 +48,7 @@ public partial class Geo6 : Entity<Geo6>, IGeo
             if (DistrictId == 0) DistrictId = code;
         }
 
-        if (Hash.IsNullOrEmpty()) Hash = GeoHash.Encode(Longitude, Latitude, 6);
+        if (Hash.IsNullOrEmpty() && Longitude != 0) Hash = GeoHash.Encode(Longitude, Latitude, 6);
         //if (HashBd09.IsNullOrEmpty()) HashBd09 = GeoHash.Encode(LongitudeBd09, LatitudeBd09, 6);
 
         if (Longitude != 0) Longitude = Math.Round(Longitude, 6);
@@ -104,6 +104,32 @@ public partial class Geo6 : Entity<Geo6>, IGeo
         return Meta.SingleCache.GetItemWithSlaveKey(hash) as Geo6;
     }
 
+    /// <summary>
+    /// 根据坐标查询
+    /// </summary>
+    /// <param name="point"></param>
+    /// <returns></returns>
+    public static Geo6 FindByHashBd09(GeoPoint point)
+    {
+        if (point == null) return null;
+
+        var hash = GeoHash.Encode(point.Longitude, point.Latitude, 6);
+        return Find(_.HashBd09 == hash);
+    }
+
+    /// <summary>
+    /// 根据坐标查询
+    /// </summary>
+    /// <param name="point"></param>
+    /// <returns></returns>
+    public static Geo6 FindByHashGcj02(GeoPoint point)
+    {
+        if (point == null) return null;
+
+        var hash = GeoHash.Encode(point.Longitude, point.Latitude, 6);
+        return Find(_.HashGcj02 == hash);
+    }
+
     /// <summary>根据区划编码查找</summary>
     /// <param name="code">区划编码</param>
     /// <returns>实体列表</returns>
@@ -155,68 +181,48 @@ public partial class Geo6 : Entity<Geo6>, IGeo
     #region 业务操作
     public Boolean IsValid() => Address.IsNullOrEmpty() && Longitude != 0 && LongitudeBd09 != 0 && LongitudeGcj02 != 0;
 
-    public static Geo6 Upsert(GeoPoint point, GeoAddress geoAddress, GeoPoint bd09, GeoPoint gcj02, Int32 days)
+    public static Geo6 Upsert(GeoAddress geoAddress, GeoPoint wgs84, GeoPoint bd09, GeoPoint gcj02, Int32 days)
     {
-        var hash = GeoHash.Encode(point.Longitude, point.Latitude, 6);
-        var g = GetOrAdd(hash, FindByHash, k =>
+        Geo6 onCreate(GeoPoint k)
         {
-            var gd = new Geo6 { Hash = k, CreateTime = DateTime.Now };
-            gd.Fill(geoAddress, bd09, gcj02);
-            gd.Longitude = point.Longitude;
-            gd.Latitude = point.Latitude;
+            var gd = new Geo6 { CreateTime = DateTime.Now };
+            gd.Fill(geoAddress, wgs84, bd09, gcj02);
             return gd;
-        });
+        }
+
+        var g = FindByHash(wgs84) ?? FindByHashBd09(bd09) ?? FindByHashGcj02(gcj02);
+        if (g == null)
+        {
+            if (wgs84 != null)
+                g = GetOrAdd(wgs84, FindByHash, onCreate);
+            else if (bd09 != null)
+                g = GetOrAdd(bd09, FindByHashBd09, onCreate);
+            else if (gcj02 != null)
+                g = GetOrAdd(gcj02, FindByHashGcj02, onCreate);
+        }
 
         if (!g.IsValid() || days > 0 && g.UpdateTime.AddDays(days) < DateTime.Now)
         {
-            g.Fill(geoAddress, bd09, gcj02);
-            g.Longitude = point.Longitude;
-            g.Latitude = point.Latitude;
-            g.Save();
+            g.Fill(geoAddress, wgs84, bd09, gcj02);
+            g.Update();
         }
 
         return g;
     }
 
-    public static Geo6 GetOrAdd(GeoPoint point)
+    public void Fill(GeoAddress geo, GeoPoint wgs84, GeoPoint bd09, GeoPoint gcj02)
     {
-        var hash = GeoHash.Encode(point.Longitude, point.Latitude, 6);
-        return GetOrAdd(hash);
-    }
-
-    public static Geo6 GetOrAdd(String hash) => GetOrAdd(hash, FindByHash, k => new Geo6 { Hash = k, CreateTime = DateTime.Now });
-
-    public GeoAddress ToGeo()
-    {
-        var geo = new GeoAddress
-        {
-            Code = Code,
-            Location = new GeoPoint
-            {
-                Longitude = Longitude,
-                Latitude = Latitude,
-            },
-            Address = Address,
-        };
-
-        if (Code > 999999)
-        {
-            geo.Code = Code / 1000;
-            geo.Towncode = Code;
-        }
-
-        return geo;
-    }
-
-    public void Fill(GeoAddress geo, GeoPoint bd09, GeoPoint gcj02)
-    {
-        //Longitude = geo.Location.Longitude;
-        //Latitude = geo.Location.Latitude;
-
         Code = geo.Towncode > 0 ? geo.Towncode : geo.Code;
 
         Address = geo.Address;
         Title = geo.Title;
+
+        if (wgs84 != null)
+        {
+            Longitude = Math.Round(wgs84.Longitude, 6);
+            Latitude = Math.Round(wgs84.Latitude, 6);
+            if (wgs84.Longitude != 0) Hash = GeoHash.Encode(wgs84.Longitude, wgs84.Latitude, 6);
+        }
 
         if (bd09 != null)
         {

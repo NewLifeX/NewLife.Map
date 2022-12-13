@@ -24,17 +24,18 @@ public class MapController : ControllerBaseX
 
     [AllowAnonymous]
     [HttpGet(nameof(ReverseGeo))]
-    public ActionResult ReverseGeo(Double lng, Double lat, String coordtype)
+    public async Task<ActionResult> ReverseGeo(Double lng, Double lat, String coordtype)
     {
         using var span = _tracer?.NewSpan(nameof(ReverseGeo), new { lng, lat, coordtype });
         try
         {
             if (lng == 0 || lat == 0) throw new ArgumentNullException(nameof(lng), "坐标为空");
 
-            if (coordtype.IsNullOrEmpty()) coordtype = "wgs84ll";
-            if (!coordtype.EqualIgnoreCase("wgs84", "wgs84ll")) throw new ArgumentOutOfRangeException(nameof(coordtype));
+            if (coordtype.IsNullOrEmpty()) coordtype = "wgs84";
+            coordtype = coordtype.ToLower();
+            if (!coordtype.EqualIgnoreCase("wgs84", "wgs84ll", "bd09", "bd09ll", "gcj02", "gcj02ll")) throw new ArgumentOutOfRangeException(nameof(coordtype));
 
-            var geo = _mapService.GetAddress(lng, lat);
+            var geo = await _mapService.GetAddress(lng, lat, coordtype);
             if (geo == null) throw new Exception("error");
 
             var gm = new GeoModel

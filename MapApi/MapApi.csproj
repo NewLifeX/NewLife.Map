@@ -33,8 +33,4 @@
     <ProjectReference Include="..\NewLife.Map\NewLife.Map.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
-
 </Project>

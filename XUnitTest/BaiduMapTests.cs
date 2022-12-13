@@ -24,14 +24,14 @@ public class BaiduMapTests
         //Assert.NotNull(rs);
         //Assert.True(rs.ContainsKey("location"));
 
-        var ga = await map.GetGeoAsync(addr, null, false);
+        var ga = await map.GetGeoAsync(addr, null, null, false);
 
         Assert.NotNull(ga);
         Assert.Equal(121.5119990462553, ga.Location.Longitude);
         Assert.Equal(31.239184684191343, ga.Location.Latitude);
         Assert.Null(ga.Address);
 
-        ga = await map.GetGeoAsync(addr, null, true);
+        ga = await map.GetGeoAsync(addr, null, null, true);
 
         Assert.NotNull(ga);
         Assert.Equal(121.51199904625521, ga.Location.Longitude);
@@ -50,7 +50,7 @@ public class BaiduMapTests
         Assert.NotEmpty(ip);
 
         var map = _map;
-        var rs = await map.IpLocationAsync(ip);
+        var rs = await map.IpLocationAsync(ip, null);
 
         Assert.NotNull(rs);
 

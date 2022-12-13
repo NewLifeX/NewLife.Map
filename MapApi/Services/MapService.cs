@@ -26,12 +26,12 @@ public class MapService
         }
     }
 
-    public IGeo GetAddress(Double longitude, Double latitude, Int32 days = 0)
+    public async Task<IGeo> GetAddress(Double longitude, Double latitude, String coordtype, Int32 days = 0)
     {
         if (longitude == 0 && latitude == 0) return null;
 
         // 查内存缓存
-        var key = $"{longitude},{latitude}";
+        var key = $"{longitude},{latitude},{coordtype}";
         if (_cache.TryGetValue<IGeo>(key, out var gd) && gd != null) return gd;
 
         var opt = MapSetting.Current;
@@ -42,27 +42,50 @@ public class MapService
         try
         {
             // 数据库查找，不存在则添加，支持并行执行
-            gd = Geo9.FindByHash(point);
+            gd = coordtype switch
+            {
+                "wgs84" or "wgs84ll" => Geo9.FindByHash(point),
+                "gcj02" or "gcj02ll" => Geo9.FindByHashGcj02(point),
+                "bd09" or "bd09ll" => Geo9.FindByHashBd09(point),
+                _ => Geo9.FindByHash(point),
+            };
             if (gd == null || !gd.IsValid() || gd.UpdateTime.AddDays(days) < DateTime.Now)
             {
                 // 调用接口
-                var geoAddress = _map.GetReverseGeoAsync(point).Result;
+                var geoAddress = await _map.GetReverseGeoAsync(point, coordtype);
                 if (geoAddress != null)
                 {
                     span?.SetTag(geoAddress);
 
                     // 坐标系转换
-                    var bd09 = geoAddress.Location;
-                    if (bd09 == null || bd09.Longitude == 0)
-                        _map.ConvertAsync(new[] { point }, "wgs84ll", "bd09ll").Result?.FirstOrDefault();
+                    GeoPoint wgs84 = null;
+                    GeoPoint bd09 = null;
+                    GeoPoint gcj02 = null;
 
-                    var gcj02 = _map.ConvertAsync(new[] { point }, "wgs84ll", "gcj02").Result?.FirstOrDefault();
+                    if (coordtype.EqualIgnoreCase("wgs84", "wgs84ll"))
+                    {
+                        wgs84 = point;
+                        bd09 = await _map.ConvertAsync(point, "wgs84ll", "bd09ll");
+                        gcj02 = await _map.ConvertAsync(point, "wgs84ll", "gcj02");
+                    }
+                    else if (coordtype.EqualIgnoreCase("bd09", "bd09ll"))
+                    {
+                        bd09 = point;
+                        //bd09 = await _map.ConvertAsync(point, "wgs84ll", "bd09ll");
+                        gcj02 = await _map.ConvertAsync(point, "bd09ll", "gcj02");
+                    }
+                    else if (coordtype.EqualIgnoreCase("gcj02", "gcj02ll"))
+                    {
+                        bd09 = await _map.ConvertAsync(point, "gcj02ll", "bd09ll");
+                        //gcj02 = await _map.ConvertAsync(point, "wgs84ll", "gcj02");
+                        gcj02 = point;
+                    }
 
-                    gd = Geo9.Upsert(point, geoAddress, bd09, gcj02, days);
+                    gd = Geo9.Upsert(geoAddress, wgs84, bd09, gcj02, days);
 
-                    Geo6.Upsert(point, geoAddress, bd09, gcj02, days);
-                    Geo7.Upsert(point, geoAddress, bd09, gcj02, days);
-                    Geo8.Upsert(point, geoAddress, bd09, gcj02, days);
+                    Geo6.Upsert(geoAddress, wgs84, bd09, gcj02, days);
+                    Geo7.Upsert(geoAddress, wgs84, bd09, gcj02, days);
+                    Geo8.Upsert(geoAddress, wgs84, bd09, gcj02, days);
                 }
             }
 
