@@ -7,8 +7,8 @@ using System.Xml.Serialization;
 
 namespace MapApi.Locations
 {
-    /// <summary>地理数据6位。根据GeoHash索引地理解析数据，6位精度610米</summary>
-    public partial interface IGeo6
+    /// <summary>地理数据。根据GeoHash索引地理解析数据，6位精度610米</summary>
+    public partial interface IGeo
     {
         #region 属性
         /// <summary>编号</summary>
@@ -32,6 +32,9 @@ namespace MapApi.Locations
         /// <summary>bd09纬度。百度坐标</summary>
         Double LatitudeBd09 { get; set; }
 
+        /// <summary>gcj02编码。GeoHash编码</summary>
+        String HashGcj02 { get; set; }
+
         /// <summary>gcj02经度。高德坐标</summary>
         Double LongitudeGcj02 { get; set; }
 
@@ -52,6 +55,9 @@ namespace MapApi.Locations
 
         /// <summary>地址</summary>
         String Address { get; set; }
+
+        /// <summary>标题。POI语义地址</summary>
+        String Title { get; set; }
 
         /// <summary>创建时间</summary>
         DateTime CreateTime { get; set; }

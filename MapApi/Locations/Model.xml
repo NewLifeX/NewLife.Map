@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Tables xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" xs:schemaLocation="https://newlifex.com https://newlifex.com/Model2022.xsd" NameSpace="MapApi.Locations" ConnName="Location" Output="" BaseClass="Entity" Version="11.3.2022.1013" Document="https://newlifex.com/xcode/model" DisplayName="地址编码" CubeOutput="../Areas/Location" xmlns="https://newlifex.com/Model2022.xsd">
-  <Table Name="Geo6" Description="地理数据6位。根据GeoHash索引地理解析数据，6位精度610米" ConnName="Geo6" ModelInterface="I{name}">
+  <Table Name="Geo" Description="地理数据。根据GeoHash索引地理解析数据，6位精度610米" ConnName="Geo6" ModelInterface="I{name}">
     <Columns>
       <Column Name="Id" DataType="Int32" Identity="True" PrimaryKey="True" Description="编号" />
       <Column Name="Hash" DataType="String" Description="编码。GeoHash编码" />
@@ -9,6 +9,7 @@
       <Column Name="HashBd09" DataType="String" Description="bd09编码。GeoHash编码" />
       <Column Name="LongitudeBd09" DataType="Double" Description="bd09经度。百度坐标" />
       <Column Name="LatitudeBd09" DataType="Double" Description="bd09纬度。百度坐标" />
+      <Column Name="HashGcj02" DataType="String" Description="gcj02编码。GeoHash编码" />
       <Column Name="LongitudeGcj02" DataType="Double" Description="gcj02经度。高德坐标" />
       <Column Name="LatitudeGcj02" DataType="Double" Description="gcj02纬度。高德坐标" />
       <Column Name="Code" DataType="Int32" Description="区划编码。最高到乡镇级行政区划编码" />
@@ -16,12 +17,43 @@
       <Column Name="CityId" DataType="Int32" Description="城市" />
       <Column Name="DistrictId" DataType="Int32" Description="区县" />
       <Column Name="Address" DataType="String" Length="200" Description="地址" />
+      <Column Name="Title" DataType="String" Master="True" Length="200" Description="标题。POI语义地址" />
       <Column Name="CreateTime" DataType="DateTime" Description="创建时间" />
       <Column Name="UpdateTime" DataType="DateTime" Description="更新时间" />
     </Columns>
     <Indexes>
       <Index Columns="Hash" />
       <Index Columns="HashBd09" />
+      <Index Columns="HashGcj02" />
+      <Index Columns="Code" />
+      <Index Columns="ProvinceId,CityId,DistrictId" />
+    </Indexes>
+  </Table>
+  <Table Name="Geo6" Description="地理数据6位。根据GeoHash索引地理解析数据，6位精度610米" ConnName="Geo6">
+    <Columns>
+      <Column Name="Id" DataType="Int32" Identity="True" PrimaryKey="True" Description="编号" />
+      <Column Name="Hash" DataType="String" Description="编码。GeoHash编码" />
+      <Column Name="Longitude" DataType="Double" Description="经度" />
+      <Column Name="Latitude" DataType="Double" Description="纬度" />
+      <Column Name="HashBd09" DataType="String" Description="bd09编码。GeoHash编码" />
+      <Column Name="LongitudeBd09" DataType="Double" Description="bd09经度。百度坐标" />
+      <Column Name="LatitudeBd09" DataType="Double" Description="bd09纬度。百度坐标" />
+      <Column Name="HashGcj02" DataType="String" Description="gcj02编码。GeoHash编码" />
+      <Column Name="LongitudeGcj02" DataType="Double" Description="gcj02经度。高德坐标" />
+      <Column Name="LatitudeGcj02" DataType="Double" Description="gcj02纬度。高德坐标" />
+      <Column Name="Code" DataType="Int32" Description="区划编码。最高到乡镇级行政区划编码" />
+      <Column Name="ProvinceId" DataType="Int32" Description="省份" />
+      <Column Name="CityId" DataType="Int32" Description="城市" />
+      <Column Name="DistrictId" DataType="Int32" Description="区县" />
+      <Column Name="Address" DataType="String" Length="200" Description="地址" />
+      <Column Name="Title" DataType="String" Master="True" Length="200" Description="标题。POI语义地址" />
+      <Column Name="CreateTime" DataType="DateTime" Description="创建时间" />
+      <Column Name="UpdateTime" DataType="DateTime" Description="更新时间" />
+    </Columns>
+    <Indexes>
+      <Index Columns="Hash" />
+      <Index Columns="HashBd09" />
+      <Index Columns="HashGcj02" />
       <Index Columns="Code" />
       <Index Columns="ProvinceId,CityId,DistrictId" />
     </Indexes>
@@ -35,6 +67,7 @@
       <Column Name="HashBd09" DataType="String" Description="bd09编码。GeoHash编码" />
       <Column Name="LongitudeBd09" DataType="Double" Description="bd09经度。百度坐标" />
       <Column Name="LatitudeBd09" DataType="Double" Description="bd09纬度。百度坐标" />
+      <Column Name="HashGcj02" DataType="String" Description="gcj02编码。GeoHash编码" />
       <Column Name="LongitudeGcj02" DataType="Double" Description="gcj02经度。高德坐标" />
       <Column Name="LatitudeGcj02" DataType="Double" Description="gcj02纬度。高德坐标" />
       <Column Name="Code" DataType="Int32" Description="区划编码。最高到乡镇级行政区划编码" />
@@ -42,12 +75,14 @@
       <Column Name="CityId" DataType="Int32" Description="城市" />
       <Column Name="DistrictId" DataType="Int32" Description="区县" />
       <Column Name="Address" DataType="String" Length="200" Description="地址" />
+      <Column Name="Title" DataType="String" Master="True" Length="200" Description="标题。POI语义地址" />
       <Column Name="CreateTime" DataType="DateTime" Description="创建时间" />
       <Column Name="UpdateTime" DataType="DateTime" Description="更新时间" />
     </Columns>
     <Indexes>
       <Index Columns="Hash" />
       <Index Columns="HashBd09" />
+      <Index Columns="HashGcj02" />
       <Index Columns="Code" />
       <Index Columns="ProvinceId,CityId,DistrictId" />
     </Indexes>
@@ -61,6 +96,7 @@
       <Column Name="HashBd09" DataType="String" Description="bd09编码。GeoHash编码" />
       <Column Name="LongitudeBd09" DataType="Double" Description="bd09经度。百度坐标" />
       <Column Name="LatitudeBd09" DataType="Double" Description="bd09纬度。百度坐标" />
+      <Column Name="HashGcj02" DataType="String" Description="gcj02编码。GeoHash编码" />
       <Column Name="LongitudeGcj02" DataType="Double" Description="gcj02经度。高德坐标" />
       <Column Name="LatitudeGcj02" DataType="Double" Description="gcj02纬度。高德坐标" />
       <Column Name="Code" DataType="Int32" Description="区划编码。最高到乡镇级行政区划编码" />
@@ -68,12 +104,14 @@
       <Column Name="CityId" DataType="Int32" Description="城市" />
       <Column Name="DistrictId" DataType="Int32" Description="区县" />
       <Column Name="Address" DataType="String" Length="200" Description="地址" />
+      <Column Name="Title" DataType="String" Master="True" Length="200" Description="标题。POI语义地址" />
       <Column Name="CreateTime" DataType="DateTime" Description="创建时间" />
       <Column Name="UpdateTime" DataType="DateTime" Description="更新时间" />
     </Columns>
     <Indexes>
       <Index Columns="Hash" />
       <Index Columns="HashBd09" />
+      <Index Columns="HashGcj02" />
       <Index Columns="Code" />
       <Index Columns="ProvinceId,CityId,DistrictId" />
     </Indexes>
@@ -87,6 +125,7 @@
       <Column Name="HashBd09" DataType="String" Description="bd09编码。GeoHash编码" />
       <Column Name="LongitudeBd09" DataType="Double" Description="bd09经度。百度坐标" />
       <Column Name="LatitudeBd09" DataType="Double" Description="bd09纬度。百度坐标" />
+      <Column Name="HashGcj02" DataType="String" Description="gcj02编码。GeoHash编码" />
       <Column Name="LongitudeGcj02" DataType="Double" Description="gcj02经度。高德坐标" />
       <Column Name="LatitudeGcj02" DataType="Double" Description="gcj02纬度。高德坐标" />
       <Column Name="Code" DataType="Int32" Description="区划编码。最高到乡镇级行政区划编码" />
@@ -94,12 +133,14 @@
       <Column Name="CityId" DataType="Int32" Description="城市" />
       <Column Name="DistrictId" DataType="Int32" Description="区县" />
       <Column Name="Address" DataType="String" Length="200" Description="地址" />
+      <Column Name="Title" DataType="String" Master="True" Length="200" Description="标题。POI语义地址" />
       <Column Name="CreateTime" DataType="DateTime" Description="创建时间" />
       <Column Name="UpdateTime" DataType="DateTime" Description="更新时间" />
     </Columns>
     <Indexes>
       <Index Columns="Hash" />
       <Index Columns="HashBd09" />
+      <Index Columns="HashGcj02" />
       <Index Columns="Code" />
       <Index Columns="ProvinceId,CityId,DistrictId" />
     </Indexes>

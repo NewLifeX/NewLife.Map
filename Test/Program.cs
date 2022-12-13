@@ -1,5 +1,7 @@
 ﻿using NewLife.Log;
+using NewLife.Serialization;
 using NewLife.Yun;
+using XCode.Membership;
 using Xunit;
 
 namespace Test
@@ -12,8 +14,7 @@ namespace Test
 
             try
             {
-                //TestHyperLogLog();
-                Test1();
+                Test2();
             }
             catch (Exception ex)
             {
@@ -48,6 +49,17 @@ namespace Test
             Assert.Equal("上海市浦东新区花园石桥路176号", ga.Address);
             Assert.Equal(310115, ga.Code);
             Assert.Equal(310115005, ga.Towncode);
+        }
+
+        static void Test2()
+        {
+            //Area.FetchAndSave();
+            Console.WriteLine("total={0}", Area.Meta.Count);
+            if (Area.Meta.Count == 0) Area.Import("http://x.newlifex.com/Area.csv.gz", true);
+
+            var ar = Area.FindByIDs(150204101, 150204, 150200, 150000);
+            Console.WriteLine(ar?.ToJson(true));
+
         }
     }
 }

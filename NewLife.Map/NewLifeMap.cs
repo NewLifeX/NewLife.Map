@@ -37,7 +37,7 @@ public class NewLifeMap : Map, IMap
     {
         if (_client != null && !_client.Disposed) return _client;
 
-        if (Server.IsNullOrEmpty()) throw new Exception("服务端地址未指定");
+        if (Server.IsNullOrEmpty()) throw new Exception("NewLifeMap服务端地址未指定");
 
         _client = new ApiHttpClient(Server);
 

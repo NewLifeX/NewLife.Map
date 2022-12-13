@@ -35,6 +35,7 @@ public class MapController : ControllerBaseX
             if (!coordtype.EqualIgnoreCase("wgs84", "wgs84ll")) throw new ArgumentOutOfRangeException(nameof(coordtype));
 
             var geo = _mapService.GetAddress(lng, lat);
+            if (geo == null) throw new Exception("error");
 
             var gm = new GeoModel
             {
@@ -42,6 +43,7 @@ public class MapController : ControllerBaseX
                 Longitude = geo.Longitude,
                 Latitude = geo.Latitude,
                 Address = geo.Address,
+                Title = geo.Title,
 
                 LongitudeBd09 = geo.LongitudeBd09,
                 LatitudeBd09 = geo.LatitudeBd09,

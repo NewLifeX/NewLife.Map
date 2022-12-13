@@ -153,6 +153,8 @@ public partial class Geo6 : Entity<Geo6>, IGeo
     #endregion
 
     #region 业务操作
+    public Boolean IsValid() => Address.IsNullOrEmpty() && Longitude != 0 && LongitudeBd09 != 0 && LongitudeGcj02 != 0;
+
     public static Geo6 Upsert(GeoPoint point, GeoAddress geoAddress, GeoPoint bd09, GeoPoint gcj02, Int32 days)
     {
         var hash = GeoHash.Encode(point.Longitude, point.Latitude, 6);
@@ -165,8 +167,7 @@ public partial class Geo6 : Entity<Geo6>, IGeo
             return gd;
         });
 
-        if (g.LongitudeGcj02 == 0 && gcj02 != null ||
-            days > 0 && g.UpdateTime.AddDays(days) < DateTime.Now)
+        if (!g.IsValid() || days > 0 && g.UpdateTime.AddDays(days) < DateTime.Now)
         {
             g.Fill(geoAddress, bd09, gcj02);
             g.Longitude = point.Longitude;
@@ -214,7 +215,8 @@ public partial class Geo6 : Entity<Geo6>, IGeo
 
         Code = geo.Towncode > 0 ? geo.Towncode : geo.Code;
 
-        Address = geo.Address + geo.Title;
+        Address = geo.Address;
+        Title = geo.Title;
 
         if (bd09 != null)
         {
@@ -227,6 +229,7 @@ public partial class Geo6 : Entity<Geo6>, IGeo
         {
             LongitudeGcj02 = Math.Round(gcj02.Longitude, 6);
             LatitudeGcj02 = Math.Round(gcj02.Latitude, 6);
+            HashGcj02 = GeoHash.Encode(gcj02.Longitude, gcj02.Latitude, 6);
         }
     }
     #endregion

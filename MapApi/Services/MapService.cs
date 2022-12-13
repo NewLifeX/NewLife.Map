@@ -43,9 +43,7 @@ public class MapService
         {
             // 数据库查找，不存在则添加，支持并行执行
             gd = Geo9.FindByHash(point);
-            if (gd == null || gd.Address.IsNullOrEmpty() ||
-                gd.Longitude == 0 || gd.LongitudeBd09 == 0 || gd.LongitudeGcj02 == 0 ||
-                gd.UpdateTime.AddDays(days) < DateTime.Now)
+            if (gd == null || !gd.IsValid() || gd.UpdateTime.AddDays(days) < DateTime.Now)
             {
                 // 调用接口
                 var geoAddress = _map.GetReverseGeoAsync(point).Result;
@@ -77,7 +75,7 @@ public class MapService
         {
             span?.SetError(ex, null);
 
-            return null;
+            throw;
         }
     }
 }

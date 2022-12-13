@@ -10,17 +10,17 @@ using XCode.DataAccessLayer;
 
 namespace MapApi.Locations
 {
-    /// <summary>地理数据9位。根据GeoHash索引地理解析数据，9位精度2米</summary>
+    /// <summary>地理数据。根据GeoHash索引地理解析数据，6位精度610米</summary>
     [Serializable]
     [DataObject]
-    [Description("地理数据9位。根据GeoHash索引地理解析数据，9位精度2米")]
-    [BindIndex("IX_Geo9_Hash", false, "Hash")]
-    [BindIndex("IX_Geo9_HashBd09", false, "HashBd09")]
-    [BindIndex("IX_Geo9_HashGcj02", false, "HashGcj02")]
-    [BindIndex("IX_Geo9_Code", false, "Code")]
-    [BindIndex("IX_Geo9_ProvinceId_CityId_DistrictId", false, "ProvinceId,CityId,DistrictId")]
-    [BindTable("Geo9", Description = "地理数据9位。根据GeoHash索引地理解析数据，9位精度2米", ConnName = "Geo9", DbType = DatabaseType.None)]
-    public partial class Geo9
+    [Description("地理数据。根据GeoHash索引地理解析数据，6位精度610米")]
+    [BindIndex("IX_Geo_Hash", false, "Hash")]
+    [BindIndex("IX_Geo_HashBd09", false, "HashBd09")]
+    [BindIndex("IX_Geo_HashGcj02", false, "HashGcj02")]
+    [BindIndex("IX_Geo_Code", false, "Code")]
+    [BindIndex("IX_Geo_ProvinceId_CityId_DistrictId", false, "ProvinceId,CityId,DistrictId")]
+    [BindTable("Geo", Description = "地理数据。根据GeoHash索引地理解析数据，6位精度610米", ConnName = "Geo6", DbType = DatabaseType.None)]
+    public partial class Geo : IGeo
     {
         #region 属性
         private Int32 _Id;
@@ -168,6 +168,32 @@ namespace MapApi.Locations
         public DateTime UpdateTime { get => _UpdateTime; set { if (OnPropertyChanging("UpdateTime", value)) { _UpdateTime = value; OnPropertyChanged("UpdateTime"); } } }
         #endregion
 
+        #region 拷贝
+        /// <summary>拷贝模型对象</summary>
+        /// <param name="model">模型</param>
+        public void Copy(IGeo model)
+        {
+            Id = model.Id;
+            Hash = model.Hash;
+            Longitude = model.Longitude;
+            Latitude = model.Latitude;
+            HashBd09 = model.HashBd09;
+            LongitudeBd09 = model.LongitudeBd09;
+            LatitudeBd09 = model.LatitudeBd09;
+            HashGcj02 = model.HashGcj02;
+            LongitudeGcj02 = model.LongitudeGcj02;
+            LatitudeGcj02 = model.LatitudeGcj02;
+            Code = model.Code;
+            ProvinceId = model.ProvinceId;
+            CityId = model.CityId;
+            DistrictId = model.DistrictId;
+            Address = model.Address;
+            Title = model.Title;
+            CreateTime = model.CreateTime;
+            UpdateTime = model.UpdateTime;
+        }
+        #endregion
+
         #region 获取/设置 字段值
         /// <summary>获取/设置 字段值</summary>
         /// <param name="name">字段名</param>
@@ -228,7 +254,7 @@ namespace MapApi.Locations
         #endregion
 
         #region 字段名
-        /// <summary>取得地理数据9位字段信息的快捷方式</summary>
+        /// <summary>取得地理数据字段信息的快捷方式</summary>
         public partial class _
         {
             /// <summary>编号</summary>
@@ -288,7 +314,7 @@ namespace MapApi.Locations
             static Field FindByName(String name) => Meta.Table.FindByName(name);
         }
 
-        /// <summary>取得地理数据9位字段名称的快捷方式</summary>
+        /// <summary>取得地理数据字段名称的快捷方式</summary>
         public partial class __
         {
             /// <summary>编号</summary>

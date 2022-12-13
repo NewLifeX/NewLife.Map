@@ -18,6 +18,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Areas\Location\Controllers\GeoController.cs" />
+    <Compile Remove="Locations\地理数据.Biz.cs" />
+    <Compile Remove="Locations\地理数据.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="NewLife.Cube.Core" Version="5.5.2022.1213-beta0750" />
     <PackageReference Include="NewLife.Stardust.Extensions" Version="2.5.2022.1213-beta0750" />
     <PackageReference Include="NewLife.XCode" Version="11.5.2022.1212-beta1503" />

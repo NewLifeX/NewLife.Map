@@ -16,10 +16,11 @@ namespace MapApi.Locations
     [Description("地理数据6位。根据GeoHash索引地理解析数据，6位精度610米")]
     [BindIndex("IX_Geo6_Hash", false, "Hash")]
     [BindIndex("IX_Geo6_HashBd09", false, "HashBd09")]
+    [BindIndex("IX_Geo6_HashGcj02", false, "HashGcj02")]
     [BindIndex("IX_Geo6_Code", false, "Code")]
     [BindIndex("IX_Geo6_ProvinceId_CityId_DistrictId", false, "ProvinceId,CityId,DistrictId")]
     [BindTable("Geo6", Description = "地理数据6位。根据GeoHash索引地理解析数据，6位精度610米", ConnName = "Geo6", DbType = DatabaseType.None)]
-    public partial class Geo6 : IGeo6
+    public partial class Geo6
     {
         #region 属性
         private Int32 _Id;
@@ -78,6 +79,14 @@ namespace MapApi.Locations
         [BindColumn("LatitudeBd09", "bd09纬度。百度坐标", "")]
         public Double LatitudeBd09 { get => _LatitudeBd09; set { if (OnPropertyChanging("LatitudeBd09", value)) { _LatitudeBd09 = value; OnPropertyChanged("LatitudeBd09"); } } }
 
+        private String _HashGcj02;
+        /// <summary>gcj02编码。GeoHash编码</summary>
+        [DisplayName("gcj02编码")]
+        [Description("gcj02编码。GeoHash编码")]
+        [DataObjectField(false, false, true, 50)]
+        [BindColumn("HashGcj02", "gcj02编码。GeoHash编码", "")]
+        public String HashGcj02 { get => _HashGcj02; set { if (OnPropertyChanging("HashGcj02", value)) { _HashGcj02 = value; OnPropertyChanged("HashGcj02"); } } }
+
         private Double _LongitudeGcj02;
         /// <summary>gcj02经度。高德坐标</summary>
         [DisplayName("gcj02经度")]
@@ -134,6 +143,14 @@ namespace MapApi.Locations
         [BindColumn("Address", "地址", "")]
         public String Address { get => _Address; set { if (OnPropertyChanging("Address", value)) { _Address = value; OnPropertyChanged("Address"); } } }
 
+        private String _Title;
+        /// <summary>标题。POI语义地址</summary>
+        [DisplayName("标题")]
+        [Description("标题。POI语义地址")]
+        [DataObjectField(false, false, true, 200)]
+        [BindColumn("Title", "标题。POI语义地址", "", Master = true)]
+        public String Title { get => _Title; set { if (OnPropertyChanging("Title", value)) { _Title = value; OnPropertyChanged("Title"); } } }
+
         private DateTime _CreateTime;
         /// <summary>创建时间</summary>
         [DisplayName("创建时间")]
@@ -149,30 +166,6 @@ namespace MapApi.Locations
         [DataObjectField(false, false, true, 0)]
         [BindColumn("UpdateTime", "更新时间", "")]
         public DateTime UpdateTime { get => _UpdateTime; set { if (OnPropertyChanging("UpdateTime", value)) { _UpdateTime = value; OnPropertyChanged("UpdateTime"); } } }
-        #endregion
-
-        #region 拷贝
-        /// <summary>拷贝模型对象</summary>
-        /// <param name="model">模型</param>
-        public void Copy(IGeo6 model)
-        {
-            Id = model.Id;
-            Hash = model.Hash;
-            Longitude = model.Longitude;
-            Latitude = model.Latitude;
-            HashBd09 = model.HashBd09;
-            LongitudeBd09 = model.LongitudeBd09;
-            LatitudeBd09 = model.LatitudeBd09;
-            LongitudeGcj02 = model.LongitudeGcj02;
-            LatitudeGcj02 = model.LatitudeGcj02;
-            Code = model.Code;
-            ProvinceId = model.ProvinceId;
-            CityId = model.CityId;
-            DistrictId = model.DistrictId;
-            Address = model.Address;
-            CreateTime = model.CreateTime;
-            UpdateTime = model.UpdateTime;
-        }
         #endregion
 
         #region 获取/设置 字段值
@@ -192,6 +185,7 @@ namespace MapApi.Locations
                     case "HashBd09": return _HashBd09;
                     case "LongitudeBd09": return _LongitudeBd09;
                     case "LatitudeBd09": return _LatitudeBd09;
+                    case "HashGcj02": return _HashGcj02;
                     case "LongitudeGcj02": return _LongitudeGcj02;
                     case "LatitudeGcj02": return _LatitudeGcj02;
                     case "Code": return _Code;
@@ -199,6 +193,7 @@ namespace MapApi.Locations
                     case "CityId": return _CityId;
                     case "DistrictId": return _DistrictId;
                     case "Address": return _Address;
+                    case "Title": return _Title;
                     case "CreateTime": return _CreateTime;
                     case "UpdateTime": return _UpdateTime;
                     default: return base[name];
@@ -215,6 +210,7 @@ namespace MapApi.Locations
                     case "HashBd09": _HashBd09 = Convert.ToString(value); break;
                     case "LongitudeBd09": _LongitudeBd09 = value.ToDouble(); break;
                     case "LatitudeBd09": _LatitudeBd09 = value.ToDouble(); break;
+                    case "HashGcj02": _HashGcj02 = Convert.ToString(value); break;
                     case "LongitudeGcj02": _LongitudeGcj02 = value.ToDouble(); break;
                     case "LatitudeGcj02": _LatitudeGcj02 = value.ToDouble(); break;
                     case "Code": _Code = value.ToInt(); break;
@@ -222,6 +218,7 @@ namespace MapApi.Locations
                     case "CityId": _CityId = value.ToInt(); break;
                     case "DistrictId": _DistrictId = value.ToInt(); break;
                     case "Address": _Address = Convert.ToString(value); break;
+                    case "Title": _Title = Convert.ToString(value); break;
                     case "CreateTime": _CreateTime = value.ToDateTime(); break;
                     case "UpdateTime": _UpdateTime = value.ToDateTime(); break;
                     default: base[name] = value; break;
@@ -255,6 +252,9 @@ namespace MapApi.Locations
             /// <summary>bd09纬度。百度坐标</summary>
             public static readonly Field LatitudeBd09 = FindByName("LatitudeBd09");
 
+            /// <summary>gcj02编码。GeoHash编码</summary>
+            public static readonly Field HashGcj02 = FindByName("HashGcj02");
+
             /// <summary>gcj02经度。高德坐标</summary>
             public static readonly Field LongitudeGcj02 = FindByName("LongitudeGcj02");
 
@@ -275,6 +275,9 @@ namespace MapApi.Locations
 
             /// <summary>地址</summary>
             public static readonly Field Address = FindByName("Address");
+
+            /// <summary>标题。POI语义地址</summary>
+            public static readonly Field Title = FindByName("Title");
 
             /// <summary>创建时间</summary>
             public static readonly Field CreateTime = FindByName("CreateTime");
@@ -309,6 +312,9 @@ namespace MapApi.Locations
             /// <summary>bd09纬度。百度坐标</summary>
             public const String LatitudeBd09 = "LatitudeBd09";
 
+            /// <summary>gcj02编码。GeoHash编码</summary>
+            public const String HashGcj02 = "HashGcj02";
+
             /// <summary>gcj02经度。高德坐标</summary>
             public const String LongitudeGcj02 = "LongitudeGcj02";
 
@@ -329,6 +335,9 @@ namespace MapApi.Locations
 
             /// <summary>地址</summary>
             public const String Address = "Address";
+
+            /// <summary>标题。POI语义地址</summary>
+            public const String Title = "Title";
 
             /// <summary>创建时间</summary>
             public const String CreateTime = "CreateTime";
