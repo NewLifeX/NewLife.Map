@@ -1,4 +1,6 @@
-﻿using NewLife.Log;
+﻿using Microsoft.Extensions.DependencyInjection;
+using NewLife.Data;
+using NewLife.Log;
 using NewLife.Serialization;
 using NewLife.Yun;
 using XCode.Membership;
@@ -14,7 +16,7 @@ namespace Test
 
             try
             {
-                Test2();
+                Test3();
             }
             catch (Exception ex)
             {
@@ -60,6 +62,29 @@ namespace Test
             var ar = Area.FindByIDs(150204101, 150204, 150200, 150000);
             Console.WriteLine(ar?.ToJson(true));
 
+        }
+
+        static async void Test3()
+        {
+            var services = new ServiceCollection();
+
+            services.AddStardust();
+            services.AddSingleton<IMap, NewLifeMap>();
+
+            var provider = services.BuildServiceProvider();
+
+            var map = provider.GetRequiredService<IMap>();
+            Assert.NotNull(map);
+
+            for (var i = 0; i < 100; i++)
+            {
+                var rs = await map.GetReverseGeoAsync(new GeoPoint("109.995837,40.690028"));
+                Assert.NotNull(rs);
+
+                XTrace.WriteLine(rs.ToJson(true));
+
+                Thread.Sleep(5000);
+            }
         }
     }
 }

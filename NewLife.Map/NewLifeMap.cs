@@ -1,7 +1,11 @@
 ﻿using System.ComponentModel;
 using NewLife.Data;
+using NewLife.Log;
 using NewLife.Map.Models;
+using NewLife.Model;
 using NewLife.Remoting;
+using Stardust;
+using Stardust.Registry;
 
 namespace NewLife.Yun;
 
@@ -20,11 +24,37 @@ public class NewLifeMap : Map, IMap
     /// <summary>实例化</summary>
     public NewLifeMap() => KeyName = "key";
 
+    /// <summary>通过制定服务端地址来实例化</summary>
+    /// <param name="server"></param>
+    public NewLifeMap(String server) : this() => Server = server;
+
     /// <summary>使用服务提供者实例化</summary>
     /// <param name="serviceProvider"></param>
     public NewLifeMap(IServiceProvider serviceProvider) : this()
     {
-        //todo 借助星尘注册中心，获取服务端地址
+        // 借助星尘注册中心，获取服务端地址
+        var registry = serviceProvider.GetService<IRegistry>();
+        if (registry != null)
+        {
+            // 星尘创建客户端，绑定注册中心，可自动更新服务端地址
+            _client = registry.CreateForServiceAsync("NewLife.Map").Result as ApiHttpClient;
+
+            if (_client != null)
+            {
+                Server = _client.Services.Join(",", e => e.Address);
+                XTrace.WriteLine("由星尘注册中心绑定NewLife.Map地址：{0}", Server);
+            }
+        }
+        else
+        {
+            var star = serviceProvider.GetService<StarFactory>();
+            if (star != null)
+            {
+                // 单次获取服务端地址，后续不再改变
+                Server = star.ResolveAddressAsync("NewLife.Map").Result.Join(",");
+                if (!Server.IsNullOrEmpty()) XTrace.WriteLine("由星尘注册中心取得NewLife.Map地址：{0}", Server);
+            }
+        }
     }
     #endregion
 
