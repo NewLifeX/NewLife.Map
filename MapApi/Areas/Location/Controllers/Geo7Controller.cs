@@ -1,53 +1,38 @@
 ﻿using MapApi.Locations;
 using NewLife;
 using NewLife.Cube;
-using NewLife.Cube.Extensions;
 using NewLife.Cube.ViewModels;
 using NewLife.Web;
 using XCode.Membership;
 
-namespace MapApi.Areas.Location.Controllers
+namespace MapApi.Areas.Location.Controllers;
+
+[Menu(80, true, Icon = "product-hunt")]
+[LocationArea]
+public class Geo7Controller : EntityController<Geo7>
 {
-    /// <summary>地理数据7位。根据GeoHash索引地理解析数据，7位精度76米</summary>
-    [Menu(30, true, Icon = "fa-table")]
-    [LocationArea]
-    public class Geo7Controller : EntityController<Geo7>
+    static Geo7Controller()
     {
-        static Geo7Controller()
+        ListFields.RemoveCreateField();
+        ListFields.RemoveField("ProvinceId", "CityId", "DistrictId");
+
         {
-            //LogOnChange = true;
-
-            //ListFields.RemoveField("Id", "Creator");
-            ListFields.RemoveCreateField();
-
-            //{
-            //    var df = ListFields.GetField("Code") as ListField;
-            //    df.Url = "?code={Code}";
-            //}
-            //{
-            //    var df = ListFields.AddListField("devices", null, "Onlines");
-            //    df.DisplayName = "查看设备";
-            //    df.Url = "Device?groupId={Id}";
-            //    df.DataVisible = e => (e as Geo7).Devices > 0;
-            //}
-            //{
-            //    var df = ListFields.GetField("Kind") as ListField;
-            //    df.GetValue = e => ((Int32)(e as Geo7).Kind).ToString("X4");
-            //}
-            //ListFields.TraceUrl("TraceId");
+            var df = ListFields.GetField("Code") as ListField;
+            df.Url = "/Location/Geo7?code={Code}";
         }
+    }
 
-        /// <summary>高级搜索。列表页查询、导出Excel、导出Json、分享页等使用</summary>
-        /// <param name="p">分页器。包含分页排序参数，以及Http请求参数</param>
-        /// <returns></returns>
-        protected override IEnumerable<Geo7> Search(Pager p)
-        {
-            //var deviceId = p["deviceId"].ToInt(-1);
+    protected override IEnumerable<Geo7> Search(Pager p)
+    {
+        var code = p["code"].ToInt(-1);
+        var rids = p["areaId"].SplitAsInt("/");
+        var provinceId = rids.Length > 0 ? rids[0] : -1;
+        var cityId = rids.Length > 1 ? rids[1] : -1;
+        var districtId = rids.Length > 2 ? rids[2] : -1;
 
-            var start = p["dtStart"].ToDateTime();
-            var end = p["dtEnd"].ToDateTime();
+        var start = p["dtStart"].ToDateTime();
+        var end = p["dtEnd"].ToDateTime();
 
-            return Geo7.Search(start, end, p["Q"], p);
-        }
+        return Geo7.Search(code, provinceId, cityId, districtId, start, end, p["Q"], p);
     }
 }
