@@ -30,14 +30,19 @@ public class NewLifeMap : Map, IMap
 
     /// <summary>使用服务提供者实例化</summary>
     /// <param name="serviceProvider"></param>
-    public NewLifeMap(IServiceProvider serviceProvider) : this()
+    public NewLifeMap(IServiceProvider serviceProvider) : this() => Task.Run(() => InitAsync(serviceProvider)).Wait();
+
+    /// <summary>使用服务提供者初始化，借助星尘注册中心能力</summary>
+    /// <param name="serviceProvider"></param>
+    /// <returns></returns>
+    public async Task InitAsync(IServiceProvider serviceProvider)
     {
         // 借助星尘注册中心，获取服务端地址
         var registry = serviceProvider.GetService<IRegistry>();
         if (registry != null)
         {
             // 星尘创建客户端，绑定注册中心，可自动更新服务端地址
-            _client = registry.CreateForServiceAsync("NewLife.Map").Result as ApiHttpClient;
+            _client = await registry.CreateForServiceAsync("NewLife.Map") as ApiHttpClient;
 
             if (_client != null)
             {
@@ -51,7 +56,8 @@ public class NewLifeMap : Map, IMap
             if (star != null)
             {
                 // 单次获取服务端地址，后续不再改变
-                Server = star.ResolveAddressAsync("NewLife.Map").Result.Join(",");
+                var models = await star.ResolveAddressAsync("NewLife.Map");
+                Server = models.Join(",");
                 if (!Server.IsNullOrEmpty()) XTrace.WriteLine("由星尘注册中心取得NewLife.Map地址：{0}", Server);
             }
         }
