@@ -6,6 +6,7 @@ using NewLife;
 using NewLife.Cube;
 using NewLife.Data;
 using NewLife.Log;
+using NewLife.Map.Models;
 using XCode.Membership;
 
 namespace MapApi.Controllers;
