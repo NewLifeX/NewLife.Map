@@ -22,7 +22,7 @@ public class NewLifeMapTests
 
         var point = new GeoPoint(121.5119990462553, 31.239184684191343);
 
-        var gmodel = await map.GetGeoModel(point);
+        var gmodel = await map.GetGeoInfo(point);
 
         Assert.NotNull(gmodel);
         Assert.Equal(121.511999, gmodel.Longitude);
