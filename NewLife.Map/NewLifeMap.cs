@@ -63,15 +63,23 @@ public class NewLifeMap : Map, IMap
     /// <returns></returns>
     public async Task<GeoAddress> GetReverseGeoAsync(GeoPoint point)
     {
-        var rs = await GetClient().GetAsync<GeoModel>("/Map/ReverseGeo", new
+        var rs = await GetGeoModel(point);
+        if (rs == null) return null;
+
+        return rs.ToGeoAddress();
+    }
+
+    /// <summary>根据坐标获取地址</summary>
+    /// <param name="point"></param>
+    /// <returns></returns>
+    public async Task<GeoModel> GetGeoModel(GeoPoint point)
+    {
+        return await GetClient().GetAsync<GeoModel>("/Map/ReverseGeo", new
         {
             lng = point.Longitude,
             lat = point.Latitude,
             coorType = CoordType
         });
-        if (rs == null) return null;
-
-        return rs.ToGeoAddress();
     }
     #endregion
 

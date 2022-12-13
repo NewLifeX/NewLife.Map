@@ -1,6 +1,5 @@
-﻿using MapApi.Locations;
-using MapApi.Models;
-using Microsoft.Extensions.Options;
+﻿using IoTWeb;
+using MapApi.Locations;
 using NewLife;
 using NewLife.Caching;
 using NewLife.Data;
@@ -12,21 +11,19 @@ namespace MapApi.Services;
 public class MapService
 {
     private readonly IMap _map;
-    private readonly IOptionsMonitor<MapOptions> _mapOptions;
     private readonly ITracer _tracer;
     private readonly ICache _cache = Cache.Default;
 
-    public MapService(IMap map, IOptionsMonitor<MapOptions> mapOptions, ITracer tracer)
+    public MapService(ITracer tracer)
     {
-        _map = map;
-        _mapOptions = mapOptions;
         _tracer = tracer;
 
-        map.AppKey = mapOptions.CurrentValue.Key;
-
-        // 使用84坐标
-        if (map is BaiduMap baidu)
-            baidu.CoordType = "wgs84ll";
+        var set = MapSetting.Current;
+        if (!set.MapProvider.IsNullOrEmpty())
+        {
+            _map = Map.Create(set.MapProvider);
+            _map.AppKey = set.ServiceKey;
+        }
     }
 
     public IGeo GetAddress(Double longitude, Double latitude, Int32 days = 0)
@@ -37,7 +34,7 @@ public class MapService
         var key = $"{longitude},{latitude}";
         if (_cache.TryGetValue<IGeo>(key, out var gd) && gd != null) return gd;
 
-        var opt = _mapOptions.CurrentValue;
+        var opt = MapSetting.Current;
         if (days <= 0 && opt.CacheDays > 0) days = opt.CacheDays;
 
         var point = new GeoPoint(longitude, latitude);
@@ -72,7 +69,7 @@ public class MapService
             }
 
             // 缓存
-            _cache.Set(key, gd, 20 * 60);
+            _cache.Set(key, gd, 10 * 60);
 
             return gd;
         }

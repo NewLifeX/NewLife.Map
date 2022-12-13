@@ -59,9 +59,25 @@ public class GeoModel
     #endregion
 
     #region 方法
+    /// <summary>
+    /// 转Geo地址模型
+    /// </summary>
+    /// <returns></returns>
     public GeoAddress ToGeoAddress()
     {
-        GeoAddress geoAddress = new GeoAddress();
+        var geoAddress = new GeoAddress
+        {
+            Location = new GeoPoint(Latitude, Longitude),
+            Address = Address,
+            Title = Title,
+
+            Code = DistrictId,
+            Province = Province,
+            City = City,
+            District = District,
+            Towncode = AreaCode,
+            Township = AreaName,
+        };
 
         return geoAddress;
     }

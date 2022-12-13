@@ -22,11 +22,11 @@ if (set.IsNew)
     set.Save();
 }
 
-EntityFactory.InitConnection("Location");
+EntityFactory.InitConnection("Geo6");
+EntityFactory.InitConnection("Geo7");
+EntityFactory.InitConnection("Geo8");
+EntityFactory.InitConnection("Geo9");
 
-services.Configure<MapOptions>(builder.Configuration.GetSection("Map"));
-
-services.AddSingleton<IMap, BaiduMap>();
 services.AddSingleton<MapService>();
 
 // Add services to the container.

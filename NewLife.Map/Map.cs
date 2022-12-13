@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 using System.Threading.Tasks;
 using NewLife.Data;
 using NewLife.Log;
+using NewLife.Reflection;
 using NewLife.Security;
 using NewLife.Serialization;
 
@@ -225,6 +227,26 @@ public class Map : DisposeBase
     /// <param name="to">目标坐标类型。gcj02/bd09ll</param>
     /// <returns></returns>
     public virtual Task<IList<GeoPoint>> ConvertAsync(IList<GeoPoint> points, String from, String to) => throw new NotImplementedException();
+    #endregion
+
+    #region 静态
+    private static Dictionary<String, Type>? _providers;
+    /// <summary>创建指定提供者的实例</summary>
+    /// <param name="provider"></param>
+    /// <returns></returns>
+    public static IMap? Create(String provider)
+    {
+        _providers ??= AssemblyX.FindAllPlugins(typeof(IMap), true).ToDictionary(e => e.Name, e => e);
+
+        if (_providers.TryGetValue(provider, out var type) ||
+            _providers.TryGetValue(provider + "Map", out type))
+            return type.CreateInstance() as IMap;
+
+        type = provider.GetTypeEx();
+        if (type != null) return type.CreateInstance() as IMap;
+
+        return null;
+    }
     #endregion
 
     #region 日志

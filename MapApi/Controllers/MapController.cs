@@ -1,10 +1,8 @@
-﻿using MapApi.Models;
-using MapApi.Services;
+﻿using MapApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NewLife;
 using NewLife.Cube;
-using NewLife.Data;
 using NewLife.Log;
 using NewLife.Map.Models;
 using XCode.Membership;
@@ -67,6 +65,7 @@ public class MapController : ControllerBaseX
         catch (Exception ex)
         {
             span?.SetError(ex, null);
+            XTrace.WriteException(ex);
 
             return Json(500, ex.Message, ex);
         }
