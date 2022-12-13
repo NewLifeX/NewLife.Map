@@ -67,7 +67,7 @@ public class GeoModel
     {
         var geoAddress = new GeoAddress
         {
-            Location = new GeoPoint(Latitude, Longitude),
+            Location = new GeoPoint(Longitude, Latitude),
             Address = Address,
             Title = Title,
 

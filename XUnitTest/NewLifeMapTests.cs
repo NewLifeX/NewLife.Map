@@ -22,18 +22,22 @@ public class NewLifeMapTests
 
         var point = new GeoPoint(121.5119990462553, 31.239184684191343);
 
-        var ga = await map.GetGeoModel(point);
+        var gmodel = await map.GetGeoModel(point);
+
+        Assert.NotNull(gmodel);
+        Assert.Equal(121.511999, gmodel.Longitude);
+        Assert.Equal(31.239185, gmodel.Latitude);
+        Assert.Equal("上海市浦东新区花园石桥路176号", gmodel.Address);
+        Assert.Equal("上海中心大厦内", gmodel.Title);
+
+        var ga = await map.GetReverseGeoAsync(point);
 
         Assert.NotNull(ga);
-        Assert.Equal(121.5119990462553, ga.Longitude);
-        Assert.Equal(31.239184684191343, ga.Latitude);
-        Assert.Null(ga.Address);
-
-        Assert.NotNull(ga);
-        Assert.Equal(121.51199904625521, ga.Longitude);
-        Assert.Equal(31.239184551783151, ga.Latitude);
-        Assert.Equal("上海市浦东新区花园石桥路176号上海中心大厦内", ga.Address);
-        //Assert.Equal(310115, ga.Code);
-        //Assert.Equal(310115005, ga.Towncode);
+        Assert.Equal(121.511999, ga.Location.Longitude);
+        Assert.Equal(31.239185, ga.Location.Latitude);
+        Assert.Equal("上海市浦东新区花园石桥路176号", ga.Address);
+        Assert.Equal("上海中心大厦内", ga.Title);
+        Assert.Equal(310115, ga.Code);
+        Assert.Equal(310115005, ga.Towncode);
     }
 }
