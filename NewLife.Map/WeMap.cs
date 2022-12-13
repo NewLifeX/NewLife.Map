@@ -52,12 +52,13 @@ public class WeMap : Map, IMap
     /// <summary>查询地址的经纬度坐标</summary>
     /// <param name="address"></param>
     /// <param name="city"></param>
+    /// <param name="coordtype"></param>
     /// <returns></returns>
     /// <remarks>
     /// https://lbs.qq.com/service/webService/webServiceGuide/webServiceGeocoder
     /// 未使用smart_address参数，（智能地址解析作为高级版服务，还可支持地址标准化整理、补全、地址切分及要素识别、提取姓名与手机号的功能。）
     /// </remarks>
-    public async Task<IDictionary<String, Object>> GetGeocoderAsync(String address, String city = null)
+    public async Task<IDictionary<String, Object>> GetGeocoderAsync(String address, String city = null, String coordtype = null)
     {
         if (address.IsNullOrEmpty()) throw new ArgumentNullException(nameof(address));
 
@@ -76,11 +77,12 @@ public class WeMap : Map, IMap
     /// <summary>查询地址获取坐标</summary>
     /// <param name="address">地址</param>
     /// <param name="city">城市</param>
+    /// <param name="coordtype"></param>
     /// <param name="formatAddress">是否格式化地址。</param>
     /// <returns></returns>
-    public async Task<GeoAddress> GetGeoAsync(String address, String city = null, Boolean formatAddress = false)
+    public async Task<GeoAddress> GetGeoAsync(String address, String city = null, String coordtype = null, Boolean formatAddress = false)
     {
-        var rs = await GetGeocoderAsync(address, city);
+        var rs = await GetGeocoderAsync(address, city, coordtype);
         if (rs == null || rs.Count == 0) return null;
 
         if (rs["location"] is not IDictionary<String, Object> ds || ds.Count < 2) return null;
@@ -110,7 +112,7 @@ public class WeMap : Map, IMap
 
         if (formatAddress)
         {
-            var geo2 = await GetReverseGeoAsync(gp);
+            var geo2 = await GetReverseGeoAsync(gp, coordtype);
             if (geo2 != null)
             {
                 geo = geo2;
@@ -131,11 +133,12 @@ public class WeMap : Map, IMap
     #region 逆地址编码
     /// <summary>根据坐标获取地址：</summary>
     /// <param name="point"></param>
+    /// <param name="coordtype"></param>
     /// <returns></returns>
     /// <remarks> 不会返回周边地点（POI）列表
     /// https://lbs.qq.com/service/webService/webServiceGuide/webServiceGcoder
     /// </remarks>
-    public async Task<IDictionary<String, Object>> GetReverseGeocoderAsync(GeoPoint point)
+    public async Task<IDictionary<String, Object>> GetReverseGeocoderAsync(GeoPoint point, String coordtype)
     {
         if (point.Longitude < 0.1 || point.Latitude < 0.1) throw new ArgumentNullException(nameof(point));
 
@@ -146,10 +149,11 @@ public class WeMap : Map, IMap
 
     /// <summary>根据坐标获取地址</summary>
     /// <param name="point"></param>
+    /// <param name="coordtype"></param>
     /// <returns></returns>
-    public async Task<GeoAddress> GetReverseGeoAsync(GeoPoint point)
+    public async Task<GeoAddress> GetReverseGeoAsync(GeoPoint point, String coordtype)
     {
-        var rs = await GetReverseGeocoderAsync(point);
+        var rs = await GetReverseGeocoderAsync(point, coordtype);
         if (rs == null || rs.Count == 0) return null;
 
         var geo = new GeoAddress { Address = $"{rs["address"]}", Location = point };
@@ -189,9 +193,10 @@ public class WeMap : Map, IMap
     /// </remarks>
     /// <param name="origin">起始位置坐标</param>
     /// <param name="destination">目的地坐标</param>
+    /// <param name="coordtype"></param>
     /// <param name="type">  1：驾车导航距离  3：自行车 2：步行规划距离 </param>
     /// <returns></returns>
-    public async Task<Driving> GetDistanceAsync(GeoPoint origin, GeoPoint destination, Int32 type = 1)
+    public async Task<Driving> GetDistanceAsync(GeoPoint origin, GeoPoint destination, String coordtype, Int32 type = 1)
     {
         if (origin == null || origin.Longitude < 1 && origin.Latitude < 1) throw new ArgumentNullException(nameof(origin));
         if (destination == null || destination.Longitude < 1 && destination.Latitude < 1) throw new ArgumentNullException(nameof(destination));
@@ -209,6 +214,7 @@ public class WeMap : Map, IMap
         var rs = new Driving { Distance = geo["distance"].ToInt(), Duration = geo["duration"].ToInt() };
         return rs;
     }
+
     /// <summary>获取参数字符串</summary>
     /// <param name="type"></param>
     /// <returns></returns>
@@ -252,8 +258,6 @@ public class WeMap : Map, IMap
         return rs;
     }
     #endregion
-
-
 
     #region 密钥管理
     private readonly String[] _KeyWords = new[] { "TOO_FREQUENT", "LIMIT", "NOMATCH", "RECYCLED", "key" };

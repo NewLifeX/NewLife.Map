@@ -87,19 +87,21 @@ public class NewLifeMap : Map, IMap
     /// </summary>
     /// <param name="address"></param>
     /// <param name="city"></param>
+    /// <param name="coordtype"></param>
     /// <param name="formatAddress"></param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    public Task<GeoAddress> GetGeoAsync(String address, String city = null, Boolean formatAddress = false) => throw new NotImplementedException();
+    public Task<GeoAddress> GetGeoAsync(String address, String city = null, String coordtype = null, Boolean formatAddress = false) => throw new NotImplementedException();
     #endregion
 
     #region 逆地址编码
     /// <summary>根据坐标获取地址</summary>
     /// <param name="point"></param>
+    /// <param name="coordtype"></param>
     /// <returns></returns>
-    public async Task<GeoAddress> GetReverseGeoAsync(GeoPoint point)
+    public async Task<GeoAddress> GetReverseGeoAsync(GeoPoint point, String coordtype)
     {
-        var rs = await GetGeoInfo(point);
+        var rs = await GetGeoInfo(point, coordtype);
         if (rs == null) return null;
 
         return rs.ToGeoAddress();
@@ -107,14 +109,15 @@ public class NewLifeMap : Map, IMap
 
     /// <summary>根据坐标获取地址编码信息</summary>
     /// <param name="point"></param>
+    /// <param name="coordtype"></param>
     /// <returns></returns>
-    public async Task<GeoModel> GetGeoInfo(GeoPoint point)
+    public async Task<GeoModel> GetGeoInfo(GeoPoint point, String coordtype)
     {
         return await GetClient().GetAsync<GeoModel>("/Map/ReverseGeo", new
         {
             lng = point.Longitude,
             lat = point.Latitude,
-            coorType = CoordType
+            coortype = coordtype
         });
     }
     #endregion
@@ -125,9 +128,10 @@ public class NewLifeMap : Map, IMap
     /// </summary>
     /// <param name="origin"></param>
     /// <param name="destination"></param>
+    /// <param name="coordtype"></param>
     /// <param name="type"></param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    public Task<Driving> GetDistanceAsync(GeoPoint origin, GeoPoint destination, Int32 type = 0) => throw new NotImplementedException();
+    public Task<Driving> GetDistanceAsync(GeoPoint origin, GeoPoint destination, String coordtype, Int32 type = 0) => throw new NotImplementedException();
     #endregion
 }

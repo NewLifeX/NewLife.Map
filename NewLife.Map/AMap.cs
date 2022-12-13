@@ -67,8 +67,9 @@ public class AMap : Map, IMap
     /// <summary>查询地址的经纬度坐标</summary>
     /// <param name="address"></param>
     /// <param name="city"></param>
+    /// <param name="coordtype"></param>
     /// <returns></returns>
-    protected async Task<IDictionary<String, Object>> GetGeocoderAsync(String address, String city = null)
+    protected async Task<IDictionary<String, Object>> GetGeocoderAsync(String address, String city = null, String coordtype = null)
     {
         if (address.IsNullOrEmpty()) throw new ArgumentNullException(nameof(address));
 
@@ -85,9 +86,10 @@ public class AMap : Map, IMap
     /// <summary>查询地址获取坐标</summary>
     /// <param name="address">地址</param>
     /// <param name="city">城市</param>
+    /// <param name="coordtype"></param>
     /// <param name="formatAddress">是否格式化地址。高德地图默认已经格式化地址</param>
     /// <returns></returns>
-    public async Task<GeoAddress> GetGeoAsync(String address, String city = null, Boolean formatAddress = false)
+    public async Task<GeoAddress> GetGeoAsync(String address, String city = null, String coordtype = null, Boolean formatAddress = false)
     {
         var rs = await GetGeocoderAsync(address, city);
         if (rs == null || rs.Count == 0) return null;
@@ -114,7 +116,7 @@ public class AMap : Map, IMap
 
         if (formatAddress)
         {
-            var geo2 = await GetReverseGeoAsync(gp);
+            var geo2 = await GetReverseGeoAsync(gp, "wcj02");
             if (geo2 != null)
             {
                 geo = geo2;
@@ -145,8 +147,9 @@ public class AMap : Map, IMap
     /// http://lbs.amap.com/api/webservice/guide/api/georegeo/#regeo
     /// </remarks>
     /// <param name="point"></param>
+    /// <param name="coordtype"></param>
     /// <returns></returns>
-    protected async Task<IDictionary<String, Object>> GetReverseGeocoderAsync(GeoPoint point)
+    protected async Task<IDictionary<String, Object>> GetReverseGeocoderAsync(GeoPoint point, String coordtype)
     {
         if (point.Longitude < 0.1 || point.Latitude < 0.1) throw new ArgumentNullException(nameof(point));
 
@@ -157,10 +160,11 @@ public class AMap : Map, IMap
 
     /// <summary>根据坐标获取地址</summary>
     /// <param name="point"></param>
+    /// <param name="coordtype">坐标系</param>
     /// <returns></returns>
-    public async Task<GeoAddress> GetReverseGeoAsync(GeoPoint point)
+    public async Task<GeoAddress> GetReverseGeoAsync(GeoPoint point, String coordtype)
     {
-        var rs = await GetReverseGeocoderAsync(point);
+        var rs = await GetReverseGeocoderAsync(point, coordtype);
         if (rs == null || rs.Count == 0) return null;
 
         var geo = new GeoAddress
@@ -223,9 +227,10 @@ public class AMap : Map, IMap
     /// </remarks>
     /// <param name="origin"></param>
     /// <param name="destination"></param>
+    /// <param name="coordtype"></param>
     /// <param name="type">路径计算的方式和方法</param>
     /// <returns></returns>
-    public async Task<Driving> GetDistanceAsync(GeoPoint origin, GeoPoint destination, Int32 type = 1)
+    public async Task<Driving> GetDistanceAsync(GeoPoint origin, GeoPoint destination, String coordtype, Int32 type = 1)
     {
         if (origin == null || origin.Longitude < 1 && origin.Latitude < 1) throw new ArgumentNullException(nameof(origin));
         if (destination == null || destination.Longitude < 1 && destination.Latitude < 1) throw new ArgumentNullException(nameof(destination));

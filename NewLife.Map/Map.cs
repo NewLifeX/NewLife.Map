@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Reflection;
-using System.Threading.Tasks;
-using NewLife.Data;
+﻿using NewLife.Data;
 using NewLife.Log;
 using NewLife.Reflection;
 using NewLife.Security;
@@ -29,39 +23,31 @@ public interface IMap
     #endregion
 
     #region 地址编码
-    ///// <summary>查询地址的经纬度坐标</summary>
-    ///// <param name="address"></param>
-    ///// <param name="city"></param>
-    ///// <returns></returns>
-    //Task<IDictionary<String, Object>> GetGeocoderAsync(String address, String? city = null);
-
     /// <summary>查询地址获取坐标</summary>
     /// <param name="address">地址</param>
     /// <param name="city">城市</param>
+    /// <param name="coordtype">所需要的坐标系</param>
     /// <param name="formatAddress">是否格式化地址</param>
     /// <returns></returns>
-    Task<GeoAddress> GetGeoAsync(String address, String? city = null, Boolean formatAddress = false);
+    Task<GeoAddress> GetGeoAsync(String address, String? city = null, String? coordtype = null, Boolean formatAddress = false);
     #endregion
 
     #region 逆地址编码
-    ///// <summary>根据坐标获取地址</summary>
-    ///// <param name="point"></param>
-    ///// <returns></returns>
-    //Task<IDictionary<String, Object>> GetReverseGeocoderAsync(GeoPoint point);
-
     /// <summary>根据坐标获取地址</summary>
-    /// <param name="point"></param>
+    /// <param name="point">坐标</param>
+    /// <param name="coordtype">坐标系</param>
     /// <returns></returns>
-    Task<GeoAddress> GetReverseGeoAsync(GeoPoint point);
+    Task<GeoAddress> GetReverseGeoAsync(GeoPoint point, String coordtype);
     #endregion
 
     #region 路径规划
     /// <summary>计算距离和驾车时间</summary>
-    /// <param name="origin"></param>
-    /// <param name="destination"></param>
+    /// <param name="origin">起始坐标</param>
+    /// <param name="destination">目的坐标</param>
+    /// <param name="coordtype">坐标系</param>
     /// <param name="type">路径计算的方式和方法</param>
     /// <returns></returns>
-    Task<Driving> GetDistanceAsync(GeoPoint origin, GeoPoint destination, Int32 type = 0);
+    Task<Driving> GetDistanceAsync(GeoPoint origin, GeoPoint destination, String coordtype, Int32 type = 0);
     #endregion
 
     #region 坐标系转换
@@ -92,8 +78,8 @@ public class Map : DisposeBase
     /// <summary>最后密钥</summary>
     public String? LastKey { get; private set; }
 
-    /// <summary>坐标系</summary>
-    public String? CoordType { get; set; }
+    ///// <summary>坐标系</summary>
+    //public String? CoordType { get; set; }
 
     /// <summary>最后网址</summary>
     public String? LastUrl { get; private set; }
@@ -258,5 +244,23 @@ public class Map : DisposeBase
     /// <param name="args"></param>
     public void WriteLog(String format, params Object[] args) => Log?.Info(format, args);
     #endregion
+}
+
+/// <summary>
+/// 助手类
+/// </summary>
+public static class MapHelper
+{
+    /// <summary>坐标系转换</summary>
+    /// <param name="map"></param>
+    /// <param name="point">需转换的源坐标</param>
+    /// <param name="from">源坐标类型。wgs84ll/gcj02/bd09ll</param>
+    /// <param name="to">目标坐标类型。gcj02/bd09ll</param>
+    /// <returns></returns>
+    public static async Task<GeoPoint?> ConvertAsync(this IMap map, GeoPoint point, String from, String to)
+    {
+        var list = await map.ConvertAsync(new[] { point }, from, to);
+        return list.Count == 0 ? null : list[0];
+    }
 }
 #nullable restore
