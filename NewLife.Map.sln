@@ -18,6 +18,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewLife.Map", "NewLife.Map\NewLife.Map.csproj", "{9C7D96F5-136F-4FBD-8D58-18105263D041}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapApi", "MapApi\MapApi.csproj", "{393023C1-CCC2-40E3-AE4B-2AA6B4A20BC1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,6 +38,10 @@ Global
 		{9C7D96F5-136F-4FBD-8D58-18105263D041}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C7D96F5-136F-4FBD-8D58-18105263D041}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C7D96F5-136F-4FBD-8D58-18105263D041}.Release|Any CPU.Build.0 = Release|Any CPU
+		{393023C1-CCC2-40E3-AE4B-2AA6B4A20BC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{393023C1-CCC2-40E3-AE4B-2AA6B4A20BC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{393023C1-CCC2-40E3-AE4B-2AA6B4A20BC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{393023C1-CCC2-40E3-AE4B-2AA6B4A20BC1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
