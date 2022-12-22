@@ -1,8 +1,10 @@
-﻿using NewLife.Data;
+﻿using NewLife.Caching;
+using NewLife.Data;
 using NewLife.Log;
 using NewLife.Reflection;
 using NewLife.Security;
 using NewLife.Serialization;
+using NewLife.Threading;
 
 #nullable enable
 namespace NewLife.Yun;
@@ -92,6 +94,9 @@ public class Map : DisposeBase
 
     /// <summary>收到异常响应时是否抛出异常</summary>
     public Boolean ThrowException { get; set; }
+
+    /// <summary>是否有效。当前是否有可用key</summary>
+    public Boolean Available => _Keys == null ? !AcquireKey().IsNullOrEmpty() : (_Keys.Length > 0);
     #endregion
 
     #region 构造
@@ -158,7 +163,9 @@ public class Map : DisposeBase
 
     #region 密钥管理
     private String[]? _Keys;
-    //private Int32 _KeyIndex;
+    private Int32 _KeyIndex;
+    private SortedList<DateTime, List<String>> _pendingKeys = new();
+    private TimerX? _timer;
 
     /// <summary>申请密钥</summary>
     /// <returns></returns>
@@ -171,28 +178,69 @@ public class Map : DisposeBase
         if (ks == null) return String.Empty;
         if (ks.Length == 0) return String.Empty;
 
-        //var key = _Keys[_KeyIndex++];
-        //if (_KeyIndex >= _Keys.Length) _KeyIndex = 0;
-
-        // 使用本地变量保存数据，避免多线程冲突
-        var idx = Rand.Next(ks.Length);
-        var key = ks[idx];
-
-        return key;
+        var idx = Interlocked.Increment(ref _KeyIndex);
+        return ks[idx % ks.Length];
     }
 
-    /// <summary>移除不可用密钥</summary>
+    /// <summary>移除暂时不可用密钥</summary>
     /// <param name="key"></param>
-    protected void RemoveKey(String key)
+    /// <param name="reviveTime">复苏时间。达到该时间时，重新启用该key</param>
+    protected void RemoveKey(String key, DateTime reviveTime)
     {
         // 使用本地变量保存数据，避免多线程冲突
         var ks = _Keys;
         if (ks == null || ks.Length == 0) return;
 
         var list = new List<String>(ks);
-        if (list.Contains(key)) list.Remove(key);
+        if (list.Contains(key))
+        {
+            list.Remove(key);
+
+            if (_timer == null)
+            {
+                lock (this)
+                {
+                    _timer = new TimerX(CheckPending, null, 5_000, 60_000)
+                    {
+                        Async = true,
+                        CanExecute = () => _pendingKeys.Any()
+                    };
+                }
+            }
+
+            // 加入挂起列表
+            if (!_pendingKeys.TryGetValue(reviveTime, out var keys))
+                _pendingKeys.Add(reviveTime, keys = new List<String>());
+
+            keys.Add(key);
+        }
 
         _Keys = list.ToArray();
+    }
+
+    void CheckPending(Object state)
+    {
+        var now = DateTime.Now;
+        while (_pendingKeys.Count > 0)
+        {
+            var dt = _pendingKeys.Keys[0];
+            if (dt > now) break;
+
+            // 回归山林
+            var ks = new List<String>(_Keys);
+            var keys = _pendingKeys.Values[0];
+            ks.AddRange(keys);
+            _Keys = ks.ToArray();
+
+            _pendingKeys.RemoveAt(0);
+        }
+
+        if (_pendingKeys.Count > 0)
+        {
+            // 对齐时间，使其更精确
+            var retain = _pendingKeys.Keys[0] - now;
+            if (retain.TotalSeconds < 60) _timer?.SetNext((Int32)retain.TotalMilliseconds);
+        }
     }
 
     private readonly String[] _KeyWords = new[] { "INVALID", "LIMIT" };
