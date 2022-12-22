@@ -54,7 +54,7 @@ public class AMap : Map, IMap
             // 删除无效密钥
             if (IsValidKey(msg)) RemoveKey(LastKey);
 
-            return !ThrowException ? default(T) : throw new Exception(msg);
+            return !ThrowException ? default : throw new Exception(msg);
         }
 
         if (result.IsNullOrEmpty()) return (T)dic;
@@ -319,7 +319,7 @@ public class AMap : Map, IMap
     {
         if (result.IsNullOrEmpty()) return false;
 
-        if (_KeyWords.Any(e => result.Contains(e))) return true;
+        if (_KeyWords.Any(result.Contains)) return true;
 
         return base.IsValidKey(result);
     }

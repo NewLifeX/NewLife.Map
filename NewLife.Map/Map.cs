@@ -116,7 +116,7 @@ public class Map : DisposeBase
         var key = AcquireKey();
         if (key.IsNullOrEmpty()) throw new ArgumentNullException(nameof(AppKey), "没有可用密钥");
 
-        if (_Client == null) _Client = DefaultTracer.Instance.CreateHttpClient();
+        _Client ??= DefaultTracer.Instance.CreateHttpClient();
 
         if (url.Contains('?'))
             url += "&";
@@ -167,8 +167,9 @@ public class Map : DisposeBase
         if (AppKey.IsNullOrEmpty()) return String.Empty;
 
         var ks = _Keys;
-        if (ks == null) ks = _Keys = AppKey?.Split(',', StringSplitOptions.RemoveEmptyEntries);
+        ks ??= _Keys = AppKey?.Split(',', StringSplitOptions.RemoveEmptyEntries);
         if (ks == null) return String.Empty;
+        if (ks.Length == 0) return String.Empty;
 
         //var key = _Keys[_KeyIndex++];
         //if (_KeyIndex >= _Keys.Length) _KeyIndex = 0;
@@ -202,7 +203,7 @@ public class Map : DisposeBase
     {
         if (result.IsNullOrEmpty()) return false;
 
-        return _KeyWords.Any(e => result.Contains(e));
+        return _KeyWords.Any(result.Contains);
     }
     #endregion
 
