@@ -187,25 +187,22 @@ public class Map : DisposeBase
     /// <param name="reviveTime">复苏时间。达到该时间时，重新启用该key</param>
     protected void RemoveKey(String key, DateTime reviveTime)
     {
-        // 使用本地变量保存数据，避免多线程冲突
-        var ks = _Keys;
-        if (ks == null || ks.Length == 0) return;
-
-        var list = new List<String>(ks);
-        if (list.Contains(key))
+        lock (this)
         {
-            list.Remove(key);
+            // 使用本地变量保存数据，避免多线程冲突
+            var ks = _Keys;
+            if (ks == null || ks.Length == 0) return;
 
-            if (_timer == null)
+            var list = new List<String>(ks);
+            if (list.Contains(key))
             {
-                lock (this)
+                list.Remove(key);
+
+                _timer ??= new TimerX(CheckPending, null, 5_000, 60_000)
                 {
-                    _timer = new TimerX(CheckPending, null, 5_000, 60_000)
-                    {
-                        Async = true,
-                        CanExecute = () => _pendingKeys.Any()
-                    };
-                }
+                    Async = true,
+                    CanExecute = () => _pendingKeys.Any()
+                };
             }
 
             // 加入挂起列表
@@ -213,9 +210,9 @@ public class Map : DisposeBase
                 _pendingKeys.Add(reviveTime, keys = new List<String>());
 
             keys.Add(key);
-        }
 
-        _Keys = list.ToArray();
+            _Keys = list.ToArray();
+        }
     }
 
     void CheckPending(Object state)
@@ -230,7 +227,7 @@ public class Map : DisposeBase
             var ks = new List<String>(_Keys);
             var keys = _pendingKeys.Values[0];
             ks.AddRange(keys);
-            _Keys = ks.ToArray();
+            _Keys = ks.Distinct().ToArray();
 
             _pendingKeys.RemoveAt(0);
         }

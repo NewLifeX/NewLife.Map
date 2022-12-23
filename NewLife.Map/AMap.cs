@@ -52,7 +52,7 @@ public class AMap : Map, IMap
             var msg = dic["info"] + "";
 
             // 删除无效密钥
-            if (IsValidKey(msg)) RemoveKey(LastKey, DateTime.Today.AddDays(1));
+            if (IsValidKey(msg)) RemoveKey(LastKey, DateTime.Now.AddHours(1));
 
             return !ThrowException ? default : throw new Exception(msg);
         }
