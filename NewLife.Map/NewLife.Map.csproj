@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net461;netstandard2.0;netstandard2.1</TargetFrameworks>
+    <TargetFrameworks>net45;net461;netstandard2.0;netstandard2.1</TargetFrameworks>
     <AssemblyTitle>地图组件库</AssemblyTitle>
     <Description>地图组件库，封装百度地图、高德地图和腾讯地图</Description>
     <Company>新生命开发团队</Company>
@@ -47,8 +47,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NewLife.Core" Version="10.2.2023.401" />
-    <PackageReference Include="NewLife.Stardust" Version="2.7.2023.301" />
+    <PackageReference Include="NewLife.Core" Version="10.3.2023.503" />
+    <PackageReference Include="NewLife.Stardust" Version="2.8.2023.512" />
   </ItemGroup>
 
   <ItemGroup>
