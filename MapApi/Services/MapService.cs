@@ -4,7 +4,7 @@ using NewLife;
 using NewLife.Caching;
 using NewLife.Data;
 using NewLife.Log;
-using NewLife.Yun;
+using NewLife.Map;
 
 namespace MapApi.Services;
 

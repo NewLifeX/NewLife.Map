@@ -3,7 +3,7 @@ using System.Web;
 using NewLife.Data;
 using NewLife.Serialization;
 
-namespace NewLife.Yun;
+namespace NewLife.Map;
 
 /// <summary>腾讯地图</summary>
 /// <remarks>

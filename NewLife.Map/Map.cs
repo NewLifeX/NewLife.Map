@@ -7,7 +7,7 @@ using NewLife.Serialization;
 using NewLife.Threading;
 
 #nullable enable
-namespace NewLife.Yun;
+namespace NewLife.Map;
 
 /// <summary>地图提供者接口</summary>
 public interface IMap
