@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Builder.Extensions;
 using NewLife.Cube;
 using NewLife.Log;
-using NewLife.Yun;
+using NewLife.Map;
 using XCode;
 
 // 日志输出到控制台，并拦截全局异常

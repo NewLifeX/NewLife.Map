@@ -7,7 +7,7 @@ using NewLife.Remoting;
 using Stardust;
 using Stardust.Registry;
 
-namespace NewLife.Yun;
+namespace NewLife.Map;
 
 /// <summary>新生命地图</summary>
 /// <remarks>

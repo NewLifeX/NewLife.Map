@@ -2,7 +2,7 @@
 using NewLife.Data;
 using NewLife.Log;
 using NewLife.Serialization;
-using NewLife.Yun;
+using NewLife.Map;
 using XCode.Membership;
 using Xunit;
 

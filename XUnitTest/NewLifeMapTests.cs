@@ -4,7 +4,7 @@ using System.Text;
 using NewLife;
 using NewLife.Data;
 using NewLife.Http;
-using NewLife.Yun;
+using NewLife.Map;
 using Xunit;
 
 namespace XUnitTest;
