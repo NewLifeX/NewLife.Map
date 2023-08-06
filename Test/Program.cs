@@ -57,7 +57,7 @@ namespace Test
         {
             //Area.FetchAndSave();
             Console.WriteLine("total={0}", Area.Meta.Count);
-            if (Area.Meta.Count == 0) Area.Import("http://x.newlifex.com/Area.csv.gz", true);
+            if (Area.Meta.Count == 0) Area.Import("http://x.newlifex.com/Area.csv.gz", true, 4, true);
 
             var ar = Area.FindByIDs(150204101, 150204, 150200, 150000);
             Console.WriteLine(ar?.ToJson(true));
