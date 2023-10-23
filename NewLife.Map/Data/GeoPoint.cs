@@ -40,6 +40,22 @@ public class GeoPoint
     }
     #endregion
 
+    #region 方法
+    /// <summary>编码坐标点为GeoHash字符串</summary>
+    /// <param name="level">字符个数。默认9位字符编码，精度2米</param>
+    /// <returns></returns>
+    public String Encode(Int32 level = 9) => GeoHash.Encode(Longitude, Latitude, level);
+
+    /// <summary>解码GeoHash字符串为坐标点</summary>
+    /// <param name="hash"></param>
+    /// <returns></returns>
+    public static GeoPoint Decode(String hash)
+    {
+        var p = GeoHash.Decode(hash);
+        return new GeoPoint(p.Longitude, p.Latitude);
+    }
+    #endregion
+
     /// <summary>已重载</summary>
     /// <returns></returns>
     public override String ToString() => $"{Longitude},{Latitude}";
