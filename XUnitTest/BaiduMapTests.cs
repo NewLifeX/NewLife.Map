@@ -37,7 +37,7 @@ public class BaiduMapTests
         Assert.Equal(121.51199904625521, ga.Location.Longitude);
         Assert.Equal(31.239184551783151, ga.Location.Latitude);
         Assert.Equal("上海市浦东新区花园石桥路176号", ga.Address);
-        Assert.Equal("上海中心大厦内", ga.Title);
+        Assert.Equal("上海中心大厦内,MIUBOOK文创超级市场附近12米", ga.Title);
         Assert.Equal(310115, ga.Code);
         Assert.Equal(310115005, ga.Towncode);
     }

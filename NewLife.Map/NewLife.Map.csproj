@@ -5,7 +5,7 @@
     <Description>地图组件库，封装百度地图、高德地图和腾讯地图</Description>
     <Company>新生命开发团队</Company>
     <Copyright>©2002-2023 新生命开发团队</Copyright>
-    <VersionPrefix>2.3</VersionPrefix>
+    <VersionPrefix>2.4</VersionPrefix>
     <VersionSuffix>$([System.DateTime]::Now.ToString(`yyyy.MMdd`))</VersionSuffix>
     <Version>$(VersionPrefix).$(VersionSuffix)</Version>
     <FileVersion>$(Version)</FileVersion>
@@ -47,7 +47,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NewLife.Core" Version="10.6.2023.1001" />
+    <PackageReference Include="NewLife.Core" Version="10.6.2023.1101" />
     <PackageReference Include="NewLife.Stardust" Version="2.9.2023.1001" />
   </ItemGroup>
 

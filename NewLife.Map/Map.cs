@@ -199,7 +199,7 @@ public class Map : DisposeBase
                 _timer ??= new TimerX(CheckPending, null, 5_000, 60_000)
                 {
                     Async = true,
-                    CanExecute = () => _pendingKeys.Any()
+                    //CanExecute = () => _pendingKeys.Any()
                 };
             }
 
