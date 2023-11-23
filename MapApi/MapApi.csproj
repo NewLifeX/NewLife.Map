@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <AssemblyTitle>地图接口平台</AssemblyTitle>
     <Description>企业内部地图接口平台，为各应用系统提供统一化的地图接口</Description>
     <Company>新生命开发团队</Company>

@@ -4,6 +4,10 @@ using NewLife.Reflection;
 using NewLife.Serialization;
 using NewLife.Threading;
 
+#if NET45 || NET461 
+using System.Net.Http;
+#endif
+
 #nullable enable
 namespace NewLife.Map;
 
@@ -104,11 +108,12 @@ public class Map : DisposeBase
     {
         base.Dispose(disposing);
 
-        _Client.TryDispose();
+        _Client?.TryDispose();
     }
     #endregion
 
     #region 方法
+
     private HttpClient? _Client;
 
     /// <summary>异步获取字符串</summary>
@@ -118,6 +123,7 @@ public class Map : DisposeBase
     {
         var key = AcquireKey();
         if (key.IsNullOrEmpty()) throw new ArgumentNullException(nameof(AppKey), "没有可用密钥");
+
 
         _Client ??= DefaultTracer.Instance.CreateHttpClient();
 
@@ -157,7 +163,7 @@ public class Map : DisposeBase
 
         return rs == null ? null : JsonHelper.Convert<T>(rs);
     }
-    #endregion
+#endregion
 
     #region 密钥管理
     private String[]? _Keys;
