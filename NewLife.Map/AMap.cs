@@ -312,7 +312,7 @@ public class AMap : Map, IMap
     #endregion
 
     #region 密钥管理
-    private readonly String[] _KeyWords = new[] { "TOO_FREQUENT", "LIMIT", "NOMATCH", "RECYCLED" };
+    private readonly String[] _KeyWords = ["TOO_FREQUENT", "LIMIT", "NOMATCH", "RECYCLED"];
     /// <summary>是否无效Key。可能禁用或超出限制</summary>
     /// <param name="result"></param>
     /// <returns></returns>

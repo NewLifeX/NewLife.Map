@@ -177,7 +177,7 @@ public class Map : DisposeBase
     #region 密钥管理
     private String[]? _Keys;
     private Int32 _KeyIndex;
-    private SortedList<DateTime, List<String>> _pendingKeys = new();
+    private SortedList<DateTime, List<String>> _pendingKeys = [];
     private TimerX? _timer;
 
     /// <summary>申请密钥</summary>
@@ -220,7 +220,7 @@ public class Map : DisposeBase
 
             // 加入挂起列表
             if (!_pendingKeys.TryGetValue(reviveTime, out var keys))
-                _pendingKeys.Add(reviveTime, keys = new List<String>());
+                _pendingKeys.Add(reviveTime, keys = []);
 
             keys.Add(key);
 
@@ -253,13 +253,14 @@ public class Map : DisposeBase
         }
     }
 
-    private readonly String[] _KeyWords = new[] { "INVALID", "LIMIT" };
+    private readonly String[] _KeyWords = ["INVALID", "LIMIT"];
     /// <summary>是否无效Key。可能禁用或超出限制</summary>
     /// <param name="result"></param>
     /// <returns></returns>
     protected virtual Boolean IsValidKey(String result)
     {
         if (result.IsNullOrEmpty()) return false;
+        if (!KeyName.IsNullOrEmpty() && result.Contains(KeyName.ToUpper())) return false;
 
         return _KeyWords.Any(result.Contains);
     }

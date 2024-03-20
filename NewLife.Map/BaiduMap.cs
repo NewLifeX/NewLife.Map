@@ -294,7 +294,7 @@ public class BaiduMap : Map, IMap
     #endregion
 
     #region 坐标转换
-    private static readonly String[] _coordTypes = new[] { "", "wgs84ll", "sougou", "gcj02ll", "gcj02mc", "bd09ll", "bd09mc" };
+    private static readonly String[] _coordTypes = ["", "wgs84ll", "sougou", "gcj02ll", "gcj02mc", "bd09ll", "bd09mc"];
     /// <summary>坐标转换</summary>
     /// <remarks>
     /// https://lbsyun.baidu.com/index.php?title=webapi/guide/changeposition
@@ -341,21 +341,6 @@ public class BaiduMap : Map, IMap
         }
 
         return list;
-    }
-    #endregion
-
-    #region 密钥管理
-    private readonly String[] _KeyWords = new[] { "AK" };
-    /// <summary>是否无效Key。可能禁用或超出限制</summary>
-    /// <param name="result"></param>
-    /// <returns></returns>
-    protected override Boolean IsValidKey(String result)
-    {
-        if (result.IsNullOrEmpty()) return false;
-
-        if (_KeyWords.Any(result.Contains)) return true;
-
-        return base.IsValidKey(result);
     }
     #endregion
 }
