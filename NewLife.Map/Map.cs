@@ -165,11 +165,12 @@ public class Map : DisposeBase
         var html = await GetStringAsync(url).ConfigureAwait(false);
         if (html.IsNullOrEmpty()) return default;
 
-        var rs = JsonParser.Decode(html);
+        var rs = html[0] == '<' && html[^1] == '>' ? XmlParser.Decode(html) : JsonParser.Decode(html);
+        if (rs == null) return default;
 
         LastResult = rs;
 
-        return rs == null ? null : JsonHelper.Convert<T>(rs);
+        return JsonHelper.Convert<T>(rs);
     }
     #endregion
 

@@ -60,12 +60,29 @@ public class BaiduMapTests
     }
 
     [Fact]
+    public async void GetDistanceAsync()
+    {
+        var points = new List<GeoPoint>
+        {
+            new() { Longitude = 121.51199904625513, Latitude = 31.239184419374944 },
+            new() { Longitude = 114.21892734521, Latitude = 29.575429778924 }
+        };
+
+        var map = _map;
+        var drv = await map.GetDistanceAsync(points[0], points[1], "wgs84", 0);
+
+        Assert.NotNull(drv);
+        Assert.Equal(814272, drv.Distance);
+        Assert.Equal(30533, drv.Duration);
+    }
+
+    [Fact]
     public async void ConvertAsync()
     {
         var points = new List<GeoPoint>
         {
-            new GeoPoint { Longitude = 121.51199904625513, Latitude = 31.239184419374944 },
-            new GeoPoint { Longitude = 114.21892734521, Latitude = 29.575429778924 }
+            new() { Longitude = 121.51199904625513, Latitude = 31.239184419374944 },
+            new() { Longitude = 114.21892734521, Latitude = 29.575429778924 }
         };
 
         var map = _map;

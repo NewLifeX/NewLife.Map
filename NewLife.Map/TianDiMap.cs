@@ -105,7 +105,7 @@ public class TianDiMap : Map, IMap
     #region 逆地理编码
     /// <summary>根据坐标获取地址</summary>
     /// <remarks>
-    /// 参考手册 http://lbs.tianditu.gov.cn/server/geocodinginterface.html
+    /// 参考手册 http://lbs.tianditu.gov.cn/server/geocoding.html
     /// </remarks>
     /// <param name="point"></param>
     /// <param name="coordtype">坐标系</param>
@@ -161,10 +161,6 @@ public class TianDiMap : Map, IMap
             addr.StreetNumber = component["street_number"] + "";
         }
 
-        // 叠加POI语义描述，让结果地址看起来更精确
-        if (rs.TryGetValue("sematic_description", out var sd) && sd is String value && !value.IsNullOrEmpty())
-            addr.Title = value;
-
         return addr;
     }
     #endregion
@@ -172,35 +168,29 @@ public class TianDiMap : Map, IMap
     #region 路径规划
     /// <summary>计算距离和驾车时间</summary>
     /// <remarks>
-    /// https://lbsyun.baidu.com/index.php?title=webapi/route-matrix-api-v2
+    /// http://lbs.tianditu.gov.cn/server/drive.html
     /// </remarks>
     /// <param name="origin"></param>
     /// <param name="destination"></param>
     /// <param name="coordtype"></param>
-    /// <param name="type">路径计算的方式和方法</param>
+    /// <param name="type">导航路线类型。0：最快路线，1：最短路线，2：避开高速，3：步行</param>
     /// <returns></returns>
-    public async Task<Driving> GetDistanceAsync(GeoPoint origin, GeoPoint destination, String coordtype, Int32 type = 13)
+    public async Task<Driving> GetDistanceAsync(GeoPoint origin, GeoPoint destination, String coordtype = null, Int32 type = 0)
     {
         if (origin == null || origin.Longitude < 1 && origin.Latitude < 1) throw new ArgumentNullException(nameof(origin));
         if (destination == null || destination.Longitude < 1 && destination.Latitude < 1) throw new ArgumentNullException(nameof(destination));
 
-        if (type <= 0) type = 13;
-        var coord = coordtype;
-        if (!coord.IsNullOrEmpty() && coord.Length > 6) coord = coord.TrimEnd("ll");
-        var url = $"https://api.map.baidu.com/routematrix/v2/driving?origins={origin.Latitude},{origin.Longitude}&destinations={destination.Latitude},{destination.Longitude}&tactics={type}&coord_type={coord}&output=json";
+        var url = $"/drive?postStr={{\"orig\":\"{origin.Longitude},{origin.Latitude}\",\"dest\":\"{destination.Longitude},{destination.Latitude}\",\"style\":\"{type}\"}}&type=search";
 
-        var list = await InvokeAsync<IList<Object>>(url, "result");
-        if (list == null || list.Count == 0) return null;
+        var dic = await InvokeAsync<IDictionary<String, Object>>(url, null);
+        if (dic == null || dic.Count == 0) return null;
 
-        if (list.FirstOrDefault() is not IDictionary<String, Object> geo) return null;
-
-        var d1 = geo["distance"] as IDictionary<String, Object>;
-        var d2 = geo["duration"] as IDictionary<String, Object>;
+        var html = LastString;
 
         var rs = new Driving
         {
-            Distance = d1["value"].ToInt(),
-            Duration = d2["value"].ToInt()
+            Distance = (Int32)Math.Round(html.Substring("<distance>", "</distance>").ToDouble() * 1000, 0),
+            Duration = (Int32)Math.Round(html.Substring("<duration>", "</duration>").ToDouble(), 0),
         };
 
         return rs;
@@ -259,39 +249,6 @@ public class TianDiMap : Map, IMap
         if (!addr.IsNullOrEmpty()) geo.Address = addr;
 
         return geo;
-    }
-    #endregion
-
-    #region IP定位
-    /// <summary>IP定位</summary>
-    /// <remarks>
-    /// https://lbsyun.baidu.com/index.php?title=webapi/ip-api
-    /// </remarks>
-    /// <param name="ip"></param>
-    /// <param name="coordtype"></param>
-    /// <returns></returns>
-    public async Task<IDictionary<String, Object>> IpLocationAsync(String ip, String coordtype)
-    {
-        var url = $"https://api.map.baidu.com/location/ip?ip={ip}&coor={coordtype}";
-
-        var dic = await InvokeAsync<IDictionary<String, Object>>(url, null);
-        if (dic == null || dic.Count == 0) return null;
-
-        if (dic["content"] is not IDictionary<String, Object> rs) return null;
-
-        if (dic.TryGetValue("address", out var fulladdress)) rs["full_address"] = fulladdress;
-        if (rs.TryGetValue("address_detail", out var v1))
-        {
-            rs.Merge(v1);
-            rs.Remove("address_detail");
-        }
-        if (rs.TryGetValue("point", out var v2))
-        {
-            rs.Merge(v2);
-            rs.Remove("point");
-        }
-
-        return rs;
     }
     #endregion
 

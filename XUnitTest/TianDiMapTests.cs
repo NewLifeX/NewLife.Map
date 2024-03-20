@@ -44,19 +44,20 @@ public class TianDiMapTests
     }
 
     [Fact]
-    public async void IpLocation()
+    public async void GetDistanceAsync()
     {
-        var html = new HttpClient().GetString("http://myip.ipip.net");
-        var ip = html?.Substring("IP：", " ");
-        Assert.NotEmpty(ip);
+        var points = new List<GeoPoint>
+        {
+            new() { Longitude = 121.51199904625513, Latitude = 31.239184419374944 },
+            new() { Longitude = 114.21892734521, Latitude = 29.575429778924 }
+        };
 
         var map = _map;
-        var rs = await map.IpLocationAsync(ip, null);
+        var drv = await map.GetDistanceAsync(points[0], points[1], "wgs84", 0);
 
-        Assert.NotNull(rs);
-
-        var addrs = (rs["full_address"] + "").Split('|');
-        Assert.Equal(7, addrs.Length);
+        Assert.NotNull(drv);
+        Assert.Equal(853030, drv.Distance);
+        Assert.Equal(33118, drv.Duration);
     }
 
     [Fact]
@@ -64,8 +65,8 @@ public class TianDiMapTests
     {
         var points = new List<GeoPoint>
         {
-            new GeoPoint { Longitude = 121.51199904625513, Latitude = 31.239184419374944 },
-            new GeoPoint { Longitude = 114.21892734521, Latitude = 29.575429778924 }
+            new() { Longitude = 121.51199904625513, Latitude = 31.239184419374944 },
+            new() { Longitude = 114.21892734521, Latitude = 29.575429778924 }
         };
 
         var map = _map;
