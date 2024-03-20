@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Web;
+using NewLife.Collections;
 using NewLife.Data;
 using NewLife.Serialization;
 
@@ -177,10 +178,31 @@ public class TianDiMap : Map, IMap
     /// <returns></returns>
     public async Task<Driving> GetDistanceAsync(GeoPoint origin, GeoPoint destination, String coordtype = null, Int32 type = 0)
     {
+        return await GetDistanceAsync(origin, destination, null, coordtype, type);
+    }
+
+    /// <summary>计算距离和驾车时间</summary>
+    /// <remarks>
+    /// http://lbs.tianditu.gov.cn/server/drive.html
+    /// </remarks>
+    /// <param name="origin"></param>
+    /// <param name="destination"></param>
+    /// <param name="mids">途经点</param>
+    /// <param name="coordtype"></param>
+    /// <param name="type">导航路线类型。0：最快路线，1：最短路线，2：避开高速，3：步行</param>
+    /// <returns></returns>
+    public async Task<Driving> GetDistanceAsync(GeoPoint origin, GeoPoint destination, IList<GeoPoint> mids, String coordtype = null, Int32 type = 0)
+    {
         if (origin == null || origin.Longitude < 1 && origin.Latitude < 1) throw new ArgumentNullException(nameof(origin));
         if (destination == null || destination.Longitude < 1 && destination.Latitude < 1) throw new ArgumentNullException(nameof(destination));
 
-        var url = $"/drive?postStr={{\"orig\":\"{origin.Longitude},{origin.Latitude}\",\"dest\":\"{destination.Longitude},{destination.Latitude}\",\"style\":\"{type}\"}}&type=search";
+        var sb = Pool.StringBuilder.Get();
+        sb.Append($"/drive?postStr={{\"orig\":\"{origin.Longitude},{origin.Latitude}\",\"dest\":\"{destination.Longitude},{destination.Latitude}\"");
+        if (mids != null && mids.Count > 0)
+            sb.Append($",\"mid\":\"{mids.Join(";", e => $"{e.Longitude},{e.Latitude}")}\"");
+        sb.Append($",\"style\":\"{type}\"}}&type=search");
+
+        var url = sb.Return(true);
 
         var dic = await InvokeAsync<IDictionary<String, Object>>(url, null);
         if (dic == null || dic.Count == 0) return null;

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using NewLife;
@@ -49,11 +50,11 @@ public class TianDiMapTests
         var points = new List<GeoPoint>
         {
             new() { Longitude = 121.51199904625513, Latitude = 31.239184419374944 },
-            new() { Longitude = 114.21892734521, Latitude = 29.575429778924 }
+            new() { Longitude = 114.21892734521, Latitude = 29.575429778924 },
         };
 
         var map = _map;
-        var drv = await map.GetDistanceAsync(points[0], points[1], "wgs84", 0);
+        var drv = await map.GetDistanceAsync(points[0], points[^1]);
 
         Assert.NotNull(drv);
         Assert.Equal(853030, drv.Distance);
@@ -61,21 +62,21 @@ public class TianDiMapTests
     }
 
     [Fact]
-    public async void ConvertAsync()
+    public async void GetDistanceAsync2()
     {
         var points = new List<GeoPoint>
         {
             new() { Longitude = 121.51199904625513, Latitude = 31.239184419374944 },
-            new() { Longitude = 114.21892734521, Latitude = 29.575429778924 }
+            new() { Longitude = 118.21, Latitude = 30.57 },
+            new() { Longitude = 116.21, Latitude = 29.97 },
+            new() { Longitude = 114.21892734521, Latitude = 29.575429778924 },
         };
 
         var map = _map;
-        var points2 = await map.ConvertAsync(points, "wgs84", "gcj02");
+        var drv = await map.GetDistanceAsync(points[0], points[^1], points[1..^1]);
 
-        Assert.NotNull(points2);
-
-        Assert.Equal(points.Count, points2.Count);
-        Assert.True(points2[0].Longitude > 0);
-        Assert.True(points2[0].Latitude > 0);
+        Assert.NotNull(drv);
+        Assert.Equal(958790, drv.Distance);
+        Assert.Equal(49091, drv.Duration);
     }
 }
