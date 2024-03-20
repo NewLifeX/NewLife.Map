@@ -9,15 +9,15 @@ using Xunit;
 
 namespace XUnitTest;
 
-public class BaiduMapTests
+public class TianDiMapTests
 {
-    private readonly BaiduMap _map;
-    public BaiduMapTests() => _map = new BaiduMap { AppKey = "C73357a276668f8b0563d3f936475007" };
+    private readonly TianDiMap _map;
+    public TianDiMapTests() => _map = new TianDiMap { AppKey = "3334f7776916effb40f2a11dbae57781" };
 
     [Fact]
     public async void Geocoder()
     {
-        var addr = "上海中心";
+        var addr = "浦东上海中心";
         var map = _map;
         //var rs = await map.GetGeocoderAsync(addr);
 
@@ -27,20 +27,20 @@ public class BaiduMapTests
         var ga = await map.GetGeoAsync(addr, null, null, false);
 
         Assert.NotNull(ga);
-        Assert.Equal(121.5119990462553, ga.Location.Longitude);
-        Assert.Equal(31.239184684191343, ga.Location.Latitude);
+        Assert.Equal(121.50053, ga.Location.Longitude);
+        Assert.Equal(31.235746, ga.Location.Latitude);
         Assert.Null(ga.Address);
         Assert.True(ga.Confidence > 0);
 
         ga = await map.GetGeoAsync(addr, null, null, true);
 
         Assert.NotNull(ga);
-        Assert.Equal(121.51199904625521, ga.Location.Longitude);
-        Assert.Equal(31.239184551783151, ga.Location.Latitude);
-        Assert.Equal("上海市浦东新区花园石桥路176号", ga.Address);
-        Assert.StartsWith("上海中心大厦内", ga.Title);
+        Assert.Equal(121.50053, ga.Location.Longitude);
+        Assert.Equal(31.235746, ga.Location.Latitude);
+        Assert.Equal("银城中路501号上海中心大厦地下2层", ga.Address);
+        Assert.Equal("银城中路501号上海中心大厦地下2层", ga.Title);
         Assert.Equal(310115, ga.Code);
-        Assert.Equal(310115005, ga.Towncode);
+        //Assert.Equal(310115005, ga.Towncode);
     }
 
     [Fact]

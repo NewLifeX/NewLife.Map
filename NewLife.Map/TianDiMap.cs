@@ -5,22 +5,20 @@ using NewLife.Serialization;
 
 namespace NewLife.Map;
 
-/// <summary>百度地图</summary>
+/// <summary>天地图</summary>
 /// <remarks>
-/// 参考手册 https://lbsyun.baidu.com/index.php?title=webapi
+/// 参考手册 http://lbs.tianditu.gov.cn/server/guide.html
 /// </remarks>
-[DisplayName("百度地图")]
-public class BaiduMap : Map, IMap
+[DisplayName("天地图")]
+public class TianDiMap : Map, IMap
 {
     #region 构造
     /// <summary>高德地图</summary>
-    public BaiduMap()
+    public TianDiMap()
     {
-        Server = "https://api.map.baidu.com";
-        //AppKey = "C73357a276668f8b0563d3f936475007";
-        KeyName = "ak";
-        //CoordType = "wgs84ll";
-        //CoordType = "bd09ll";
+        Server = "http://api.tianditu.gov.cn";
+        //AppKey = "3334f7776916effb40f2a11dbae57781";
+        KeyName = "tk";
     }
     #endregion
 
@@ -68,9 +66,9 @@ public class BaiduMap : Map, IMap
         address = HttpUtility.UrlEncode(address);
         city = HttpUtility.UrlEncode(city);
 
-        var url = $"/geocoding/v3/?address={address}&city={city}&ret_coordtype={coordtype}&extension_analys_level=1&output=json";
+        var url = $"/geocoder?ds={{\"keyWord\":\"{address}\"}}";
 
-        return await InvokeAsync<IDictionary<String, Object>>(url, "result");
+        return await InvokeAsync<IDictionary<String, Object>>(url, "location");
     }
 
     /// <summary>查询地址获取坐标</summary>
@@ -84,12 +82,10 @@ public class BaiduMap : Map, IMap
         var rs = await GetGeocoderAsync(address, city, coordtype);
         if (rs == null || rs.Count == 0) return null;
 
-        if (rs["location"] is not IDictionary<String, Object> ds || ds.Count < 2) return null;
-
         var gp = new GeoPoint
         {
-            Longitude = ds["lng"].ToDouble(),
-            Latitude = ds["lat"].ToDouble()
+            Longitude = rs["lon"].ToDouble(),
+            Latitude = rs["lat"].ToDouble()
         };
 
         var geo = new GeoAddress
@@ -99,10 +95,8 @@ public class BaiduMap : Map, IMap
 
         if (formatAddress && gp != null) geo = await GetReverseGeoAsync(gp, coordtype);
 
-        geo.Precise = rs["precise"].ToBoolean();
-        geo.Confidence = rs["confidence"].ToInt();
-        geo.Comprehension = rs["comprehension"].ToInt();
         geo.Level = rs["level"] + "";
+        geo.Confidence = rs["score"].ToInt();
 
         return geo;
     }
@@ -111,7 +105,7 @@ public class BaiduMap : Map, IMap
     #region 逆地理编码
     /// <summary>根据坐标获取地址</summary>
     /// <remarks>
-    /// 参考手册 https://lbsyun.baidu.com/index.php?title=webapi/guide/webservice-geocoding-abroad
+    /// 参考手册 http://lbs.tianditu.gov.cn/server/geocodinginterface.html
     /// </remarks>
     /// <param name="point"></param>
     /// <param name="coordtype">坐标系</param>
@@ -120,7 +114,7 @@ public class BaiduMap : Map, IMap
     {
         if (point == null || point.Longitude == 0 || point.Latitude == 0) throw new ArgumentNullException(nameof(point));
 
-        var url = $"/reverse_geocoding/v3/?location={point.Latitude},{point.Longitude}&extensions_poi=1&extensions_town=true&coordtype={coordtype}&output=json";
+        var url = $"/geocoder?postStr={{'lon':{point.Longitude},'lat':{point.Latitude},'ver':1}}&type=geocode";
 
         return await InvokeAsync<IDictionary<String, Object>>(url, "result");
     }
@@ -143,7 +137,7 @@ public class BaiduMap : Map, IMap
         {
             addr.Location = new GeoPoint
             {
-                Longitude = ds["lng"].ToDouble(),
+                Longitude = ds["lon"].ToDouble(),
                 Latitude = ds["lat"].ToDouble()
             };
         }
@@ -153,9 +147,17 @@ public class BaiduMap : Map, IMap
             var reader = new JsonReader();
             reader.ToObject(component, null, addr);
 
-            addr.Code = component["adcode"].ToInt();
-            addr.Township = component["town"] + "";
-            addr.Towncode = component["town_code"].ToInt();
+            addr.Country = component["nation"] + "";
+            addr.Province = component["province"] + "";
+            addr.City = component["city"] + "";
+            addr.District = component["county"] + "";
+
+            addr.Code = (component["county_code"] + "").TrimStart("156").ToInt();
+
+            addr.Name = component["poi"] + "";
+            addr.Title = component["address"] + "";
+
+            addr.Street = component["road"] + "";
             addr.StreetNumber = component["street_number"] + "";
         }
 
@@ -185,7 +187,7 @@ public class BaiduMap : Map, IMap
         if (type <= 0) type = 13;
         var coord = coordtype;
         if (!coord.IsNullOrEmpty() && coord.Length > 6) coord = coord.TrimEnd("ll");
-        var url = $"/routematrix/v2/driving?origins={origin.Latitude},{origin.Longitude}&destinations={destination.Latitude},{destination.Longitude}&tactics={type}&coord_type={coord}&output=json";
+        var url = $"https://api.map.baidu.com/routematrix/v2/driving?origins={origin.Latitude},{origin.Longitude}&destinations={destination.Latitude},{destination.Longitude}&tactics={type}&coord_type={coord}&output=json";
 
         var list = await InvokeAsync<IList<Object>>(url, "result");
         if (list == null || list.Count == 0) return null;
@@ -223,7 +225,7 @@ public class BaiduMap : Map, IMap
         tag = HttpUtility.UrlEncode(tag);
         region = HttpUtility.UrlEncode(region);
 
-        var url = $"/place/v2/search?output=json&query={query}&tag={tag}&region={region}&city_limit=true&ret_coordtype={coordtype}";
+        var url = $"https://api.map.baidu.com/place/v2/search?output=json&query={query}&tag={tag}&region={region}&city_limit=true&ret_coordtype={coordtype}";
 
         var list = await InvokeAsync<IList<Object>>(url, "results");
         if (list == null || list.Count == 0) return null;
@@ -270,7 +272,7 @@ public class BaiduMap : Map, IMap
     /// <returns></returns>
     public async Task<IDictionary<String, Object>> IpLocationAsync(String ip, String coordtype)
     {
-        var url = $"/location/ip?ip={ip}&coor={coordtype}";
+        var url = $"https://api.map.baidu.com/location/ip?ip={ip}&coor={coordtype}";
 
         var dic = await InvokeAsync<IDictionary<String, Object>>(url, null);
         if (dic == null || dic.Count == 0) return null;
@@ -325,7 +327,7 @@ public class BaiduMap : Map, IMap
         if (idxFrom == 0) throw new ArgumentOutOfRangeException(nameof(from));
         if (idxTo == 0) throw new ArgumentOutOfRangeException(nameof(to));
 
-        var url = $"/geoconv/v1/?coords={points.Join(";", e => $"{e.Longitude},{e.Latitude}")}&from={idxFrom}&to={idxTo}&output=json";
+        var url = $"https://api.map.baidu.com/geoconv/v1/?coords={points.Join(";", e => $"{e.Longitude},{e.Latitude}")}&from={idxFrom}&to={idxTo}&output=json";
 
         var rs = await InvokeAsync<IList<Object>>(url, "result");
         if (rs == null || rs.Count == 0) return null;

@@ -40,7 +40,7 @@ public class GeoAddress
     /// <summary>街道</summary>
     public String Street { get; set; }
 
-    /// <summary></summary>
+    /// <summary>街道编码</summary>
     public String StreetNumber { get; set; }
 
     /// <summary>级别</summary>

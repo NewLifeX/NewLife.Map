@@ -26,7 +26,7 @@ public interface IMap
     Task<String> GetStringAsync(String url);
     #endregion
 
-    #region 地址编码
+    #region 地理编码
     /// <summary>查询地址获取坐标</summary>
     /// <param name="address">地址</param>
     /// <param name="city">城市</param>
@@ -36,7 +36,7 @@ public interface IMap
     Task<GeoAddress> GetGeoAsync(String address, String? city = null, String? coordtype = null, Boolean formatAddress = false);
     #endregion
 
-    #region 逆地址编码
+    #region 逆地理编码
     /// <summary>根据坐标获取地址</summary>
     /// <param name="point">坐标</param>
     /// <param name="coordtype">坐标系</param>
@@ -73,6 +73,9 @@ public interface IMap
 public class Map : DisposeBase
 {
     #region 属性
+    /// <summary>服务地址</summary>
+    public String? Server { get; set; }
+
     /// <summary>应用密钥。多个key逗号分隔</summary>
     public String? AppKey { get; set; }
 
@@ -124,8 +127,13 @@ public class Map : DisposeBase
         var key = AcquireKey();
         if (key.IsNullOrEmpty()) throw new ArgumentNullException(nameof(AppKey), "没有可用密钥");
 
+        if (_Client == null)
+        {
+            var client = DefaultTracer.Instance.CreateHttpClient();
+            if (!Server.IsNullOrEmpty()) client.BaseAddress = new Uri(Server);
 
-        _Client ??= DefaultTracer.Instance.CreateHttpClient();
+            _Client = client;
+        }
 
         if (url.Contains('?'))
             url += "&";
@@ -163,7 +171,7 @@ public class Map : DisposeBase
 
         return rs == null ? null : JsonHelper.Convert<T>(rs);
     }
-#endregion
+    #endregion
 
     #region 密钥管理
     private String[]? _Keys;

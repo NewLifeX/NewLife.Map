@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Tables xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" xs:schemaLocation="https://newlifex.com https://newlifex.com/Model2022.xsd" NameSpace="MapApi.Locations" ConnName="Location" Output="" BaseClass="Entity" Version="11.3.2022.1013" Document="https://newlifex.com/xcode/model" DisplayName="地址编码" CubeOutput="../Areas/Location" xmlns="https://newlifex.com/Model2022.xsd">
+<Tables xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" xs:schemaLocation="https://newlifex.com https://newlifex.com/Model2022.xsd" NameSpace="MapApi.Locations" ConnName="Location" Output="" BaseClass="Entity" Version="11.3.2022.1013" Document="https://newlifex.com/xcode/model" DisplayName="地理编码" CubeOutput="../Areas/Location" xmlns="https://newlifex.com/Model2022.xsd">
   <Table Name="Geo" Description="地理数据。根据GeoHash索引地理解析数据，6位精度610米" ConnName="Geo6" ModelInterface="I{name}">
     <Columns>
       <Column Name="Id" DataType="Int32" Identity="True" PrimaryKey="True" Description="编号" />

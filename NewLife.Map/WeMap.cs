@@ -17,6 +17,7 @@ public class WeMap : Map, IMap
     /// <summary>腾讯地图</summary>
     public WeMap()
     {
+        Server = "https://apis.map.qq.com";
         //AppKey = "" +
         //    "YGEBZ-BDCCX-AJG4X-ZUH6W-MESMV-P2BFF";//Yann
         KeyName = "key";
@@ -48,7 +49,7 @@ public class WeMap : Map, IMap
     }
     #endregion
 
-    #region 地址编码
+    #region 地理编码
     /// <summary>查询地址的经纬度坐标</summary>
     /// <param name="address"></param>
     /// <param name="city"></param>
@@ -130,7 +131,7 @@ public class WeMap : Map, IMap
     }
     #endregion
 
-    #region 逆地址编码
+    #region 逆地理编码
     /// <summary>根据坐标获取地址：</summary>
     /// <param name="point"></param>
     /// <param name="coordtype"></param>

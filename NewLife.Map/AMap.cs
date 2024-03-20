@@ -16,6 +16,7 @@ public class AMap : Map, IMap
     /// <summary>高德地图</summary>
     public AMap()
     {
+        Server = "http://restapi.amap.com";
         //AppKey = "" +
         //    // 六条
         //    "2aada76e462af71e1b67ba1df22d0fa4," +
@@ -63,7 +64,7 @@ public class AMap : Map, IMap
     }
     #endregion
 
-    #region 地址编码
+    #region 地理编码
     /// <summary>查询地址的经纬度坐标</summary>
     /// <param name="address"></param>
     /// <param name="city"></param>
@@ -141,7 +142,7 @@ public class AMap : Map, IMap
     }
     #endregion
 
-    #region 逆地址编码
+    #region 逆地理编码
     /// <summary>根据坐标获取地址</summary>
     /// <remarks>
     /// http://lbs.amap.com/api/webservice/guide/api/georegeo/#regeo
