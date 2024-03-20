@@ -127,8 +127,10 @@ public class AMap : Map, IMap
 
         {
             var addr = rs["formatted_address"] + "";
-            if (!addr.IsNullOrEmpty()) geo.Address = addr;
+            if (!addr.IsNullOrEmpty() && (geo.Address.IsNullOrEmpty() || geo.Address.Length < addr.Length))
+                geo.Address = addr;
         }
+
         // 替换竖线
         TrimAddress(geo);
 
@@ -170,17 +172,18 @@ public class AMap : Map, IMap
 
         var geo = new GeoAddress
         {
-            Address = rs["formatted_address"] + ""
-        };
-        geo.Location = new GeoPoint
-        {
-            Longitude = point.Longitude,
-            Latitude = point.Latitude
+            Address = rs["formatted_address"] + "",
+            Location = point
         };
         if (rs["addressComponent"] is IDictionary<String, Object> component)
         {
             var reader = new JsonReader();
             reader.ToObject(component, null, geo);
+
+            if (component.TryGetValue("city", out var obj) && obj is not String)
+                geo.City = null;
+            if (component.TryGetValue("streetNumber", out obj) && obj is not String)
+                geo.StreetNumber = null;
 
             geo.Code = component["adcode"].ToInt();
 
@@ -199,6 +202,14 @@ public class AMap : Map, IMap
             {
                 geo.Street = sn["street"] + "";
                 geo.StreetNumber = sn["number"] + "";
+
+                if (geo.Title.IsNullOrEmpty())
+                {
+                    if (!sn.TryGetValue("direction", out var direction)) direction = "";
+                    if (sn.TryGetValue("distance", out var distance)) distance = Math.Round(distance.ToDouble(), 0) + "米";
+
+                    geo.Title = $"{geo.Province}{geo.City}{geo.District}{geo.Township}{geo.Street}{geo.StreetNumber}{direction}{distance}";
+                }
             }
         }
 

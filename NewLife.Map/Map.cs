@@ -27,7 +27,7 @@ public interface IMap
     #endregion
 
     #region 地理编码
-    /// <summary>查询地址获取坐标</summary>
+    /// <summary>查询地址获取坐标。将地址转换为地理位置坐标</summary>
     /// <param name="address">地址</param>
     /// <param name="city">城市</param>
     /// <param name="coordtype">所需要的坐标系</param>
@@ -37,7 +37,7 @@ public interface IMap
     #endregion
 
     #region 逆地理编码
-    /// <summary>根据坐标获取地址</summary>
+    /// <summary>根据坐标获取地址。将地理位置坐标转换为直观易懂的地址的过程</summary>
     /// <param name="point">坐标</param>
     /// <param name="coordtype">坐标系</param>
     /// <returns></returns>

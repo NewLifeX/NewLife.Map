@@ -91,6 +91,7 @@ public class WeMap : Map, IMap
         var gp = new GeoPoint { Longitude = ds["lng"].ToDouble(), Latitude = ds["lat"].ToDouble() };
 
         var geo = new GeoAddress();
+        geo.Location = gp;
         var reader = new JsonReader();
         reader.ToObject(rs, null, geo);
 
@@ -108,22 +109,26 @@ public class WeMap : Map, IMap
             }
         }
         geo.Confidence = rs["reliability"].ToInt() * 10;//可信度 
-
-        geo.Location = gp;
+        geo.Level = rs["level"] + "";
 
         if (formatAddress)
         {
             var geo2 = await GetReverseGeoAsync(gp, coordtype);
             if (geo2 != null)
             {
+                geo2.Comprehension = geo.Comprehension;
+                geo2.Confidence = geo.Confidence;
+                if (geo2.Level.IsNullOrEmpty()) geo2.Level = geo.Level;
+
                 geo = geo2;
-                if (geo.Level.IsNullOrEmpty()) geo.Level = rs["level"] + "";
             }
         }
 
+        if (geo.Address.IsNullOrEmpty())
         {
             geo.Address = $"{geo.Province}{geo.City}{geo.District}{geo.Street}{rs["title"]}";
         }
+
         // 替换竖线
         if (!geo.Address.IsNullOrEmpty()) geo.Address = geo.Address.Replace("|", null);
 
@@ -143,7 +148,7 @@ public class WeMap : Map, IMap
     {
         if (point.Longitude < 0.1 || point.Latitude < 0.1) throw new ArgumentNullException(nameof(point));
 
-        var url = $"https://apis.map.qq.com/ws/geocoder/v1/?location={point.Latitude},{point.Longitude}&output=json";//&get_poi=1
+        var url = $"/ws/geocoder/v1/?location={point.Latitude},{point.Longitude}&output=json";//&get_poi=1
 
         return await InvokeAsync<IDictionary<String, Object>>(url, "result");
     }
@@ -157,11 +162,19 @@ public class WeMap : Map, IMap
         var rs = await GetReverseGeocoderAsync(point, coordtype);
         if (rs == null || rs.Count == 0) return null;
 
-        var geo = new GeoAddress { Address = $"{rs["address"]}", Location = point };
+        var geo = new GeoAddress { Address = rs["address"] + "", Location = point };
 
         if (rs["formatted_addresses"] is IDictionary<String, Object> formattedAddresses)
         {
-            geo.Name = $"{formattedAddresses["recommend"]}";//推荐使用的地址描述，描述精确性较高
+            // 推荐使用的地址描述，描述精确性较高
+            geo.Name = formattedAddresses["recommend"] + "";
+
+            var addr = formattedAddresses["standard_address"] + "";
+            if (!addr.IsNullOrEmpty())
+            {
+                geo.Title = geo.Address;
+                geo.Address = addr;
+            }
         }
 
         if (rs["address_component"] is IDictionary<String, Object> component)
@@ -204,15 +217,19 @@ public class WeMap : Map, IMap
 
         if (type <= 0 || type > 3) type = 1;
 
-        var url = $"https://apis.map.qq.com/ws/distance/v1/?model={DrivingType(type)}&from={origin.Latitude},{origin.Longitude}&to={destination.Latitude},{destination.Longitude}&output=json";
+        var url = $"/ws/direction/v1/{DrivingType(type)}?from={origin.Latitude},{origin.Longitude}&to={destination.Latitude},{destination.Longitude}&output=json";
 
         var list = await InvokeAsync<IDictionary<String, Object>>(url, "result");
         if (list == null || list.Count == 0) return null;
 
-        if (list["elements"] is not IList<Object> elements) return null;
+        if (list["routes"] is not IList<Object> elements) return null;
         if (elements.FirstOrDefault() is not IDictionary<String, Object> geo) return null;
 
-        var rs = new Driving { Distance = geo["distance"].ToInt(), Duration = geo["duration"].ToInt() };
+        var rs = new Driving
+        {
+            Distance = geo["distance"].ToInt(),
+            Duration = geo["duration"].ToInt() * 60
+        };
         return rs;
     }
 
@@ -244,7 +261,7 @@ public class WeMap : Map, IMap
     /// <returns></returns>
     public async Task<IDictionary<String, Object>> IpLocationAsync(String ip)
     {
-        var url = $"https://apis.map.qq.com/ws/location/v1/ip?ip={ip}";
+        var url = $"/ws/location/v1/ip?ip={ip}";
 
         var dic = await InvokeAsync<IDictionary<String, Object>>(url, "result");
         if (dic == null || dic.Count == 0) return null;

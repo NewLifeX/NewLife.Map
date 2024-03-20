@@ -16,8 +16,6 @@ namespace NewLife.Map;
 public class NewLifeMap : Map, IMap
 {
     #region 属性
-    /// <summary>服务端地址</summary>
-    public String Server { get; set; }
     #endregion
 
     #region 构造
