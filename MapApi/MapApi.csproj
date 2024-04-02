@@ -25,8 +25,8 @@
 
   <ItemGroup>
     <PackageReference Include="NewLife.Cube.Core" Version="6.0.2024.101" />
-    <PackageReference Include="NewLife.Stardust.Extensions" Version="2.9.2024.218" />
-    <PackageReference Include="NewLife.XCode" Version="11.11.2024.303" />
+    <PackageReference Include="NewLife.Stardust.Extensions" Version="2.9.2024.402" />
+    <PackageReference Include="NewLife.XCode" Version="11.11.2024.402" />
   </ItemGroup>
 
   <ItemGroup>
