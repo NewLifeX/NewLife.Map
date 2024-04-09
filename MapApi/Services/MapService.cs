@@ -5,25 +5,51 @@ using NewLife.Caching;
 using NewLife.Data;
 using NewLife.Log;
 using NewLife.Map;
+using NewLife.Map.Models;
 
 namespace MapApi.Services;
 
 public class MapService
 {
-    private readonly IMap _map;
     private readonly ITracer _tracer;
     private readonly ICache _cache = Cache.Default;
 
     public MapService(ITracer tracer)
     {
         _tracer = tracer;
+    }
 
-        var set = MapSetting.Current;
-        if (!set.MapProvider.IsNullOrEmpty())
+    private IList<IMap> _maps;
+    private Int32 _mapIndex;
+    private IMap GetMap()
+    {
+        if (_maps == null)
         {
-            _map = Map.Create(set.MapProvider);
-            _map.AppKey = set.ServiceKey;
+            var ms = new List<IMap>();
+            var list = MapProvider.FindAll();
+            foreach (var item in list)
+            {
+                if (!item.Enable) continue;
+                if (item.Kind < MapKinds.NewLife && item.AppKey.IsNullOrEmpty()) continue;
+
+                // 创建地图实现
+                var map = MapFactory.Create(item.Kind);
+                if (map != null)
+                {
+                    map.AppKey = item.AppKey;
+                    if (!item.Server.IsNullOrEmpty() && map is Map mp) mp.Server = item.Server;
+
+                    ms.Add(map);
+                }
+            }
+
+            _maps = ms;
         }
+
+        if (_maps.Count == 0) throw new InvalidOperationException("未找到可用地图服务提供者");
+
+        var idx = Interlocked.Increment(ref _mapIndex);
+        return _maps[idx % _maps.Count];
     }
 
     public async Task<IGeo> GetAddress(Double longitude, Double latitude, String coordtype, Int32 days = 0)
@@ -52,7 +78,8 @@ public class MapService
             if (gd == null || !gd.IsValid() || gd.UpdateTime.AddDays(days) < DateTime.Now)
             {
                 // 调用接口
-                var geoAddress = await _map.GetReverseGeoAsync(point, coordtype);
+                var map = GetMap();
+                var geoAddress = await map.GetReverseGeoAsync(point, coordtype);
                 if (geoAddress != null)
                 {
                     span?.SetTag(geoAddress);
@@ -65,19 +92,19 @@ public class MapService
                     if (coordtype.EqualIgnoreCase("wgs84", "wgs84ll"))
                     {
                         wgs84 = point;
-                        bd09 = await _map.ConvertAsync(point, "wgs84ll", "bd09ll");
-                        gcj02 = await _map.ConvertAsync(point, "wgs84ll", "gcj02");
+                        bd09 = await map.ConvertAsync(point, "wgs84ll", "bd09ll");
+                        gcj02 = await map.ConvertAsync(point, "wgs84ll", "gcj02");
                     }
                     else if (coordtype.EqualIgnoreCase("bd09", "bd09ll"))
                     {
                         bd09 = point;
-                        //bd09 = await _map.ConvertAsync(point, "wgs84ll", "bd09ll");
-                        gcj02 = await _map.ConvertAsync(point, "bd09ll", "gcj02");
+                        //bd09 = await map.ConvertAsync(point, "wgs84ll", "bd09ll");
+                        gcj02 = await map.ConvertAsync(point, "bd09ll", "gcj02");
                     }
                     else if (coordtype.EqualIgnoreCase("gcj02", "gcj02ll"))
                     {
-                        bd09 = await _map.ConvertAsync(point, "gcj02ll", "bd09ll");
-                        //gcj02 = await _map.ConvertAsync(point, "wgs84ll", "gcj02");
+                        bd09 = await map.ConvertAsync(point, "gcj02ll", "bd09ll");
+                        //gcj02 = await map.ConvertAsync(point, "wgs84ll", "gcj02");
                         gcj02 = point;
                     }
 

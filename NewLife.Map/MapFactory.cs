@@ -32,6 +32,6 @@ public static class MapFactory
     /// <summary>根据地图类型创建提供者</summary>
     /// <param name="dbType"></param>
     /// <returns></returns>
-    public static IMap? Create(MapKinds dbType) => _providers[dbType]?.GetType().CreateInstance() as IMap;
+    public static IMap? Create(MapKinds dbType) => _providers[dbType]?.CreateInstance() as IMap;
     #endregion
 }
