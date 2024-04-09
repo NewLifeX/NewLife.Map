@@ -1,8 +1,6 @@
 ﻿using MapApi.Services;
-using Microsoft.AspNetCore.Builder.Extensions;
 using NewLife.Cube;
 using NewLife.Log;
-using NewLife.Map;
 using XCode;
 
 // 日志输出到控制台，并拦截全局异常
@@ -22,10 +20,7 @@ if (set.IsNew)
     set.Save();
 }
 
-EntityFactory.InitConnection("Geo6");
-EntityFactory.InitConnection("Geo7");
-EntityFactory.InitConnection("Geo8");
-EntityFactory.InitConnection("Geo9");
+_ = EntityFactory.InitAllAsync();
 
 services.AddSingleton<MapService>();
 

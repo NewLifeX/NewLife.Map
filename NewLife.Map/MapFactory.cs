@@ -20,15 +20,18 @@ public static class MapFactory
     #endregion
 
     #region 提供者
-    private static readonly IDictionary<MapKinds, Type> _dbs = new NullableDictionary<MapKinds, Type>();
-    /// <summary>注册数据库提供者</summary>
+    private static readonly IDictionary<MapKinds, Type> _providers = new NullableDictionary<MapKinds, Type>();
+    /// <summary>地图提供者</summary>
+    public static IDictionary<MapKinds, Type> Providers => _providers;
+
+    /// <summary>注册地图提供者</summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="dbType"></param>
-    public static void Register<T>(MapKinds dbType) where T : IMap, new() => _dbs[dbType] = typeof(T);
+    public static void Register<T>(MapKinds dbType) where T : IMap, new() => _providers[dbType] = typeof(T);
 
-    /// <summary>根据数据库类型创建提供者</summary>
+    /// <summary>根据地图类型创建提供者</summary>
     /// <param name="dbType"></param>
     /// <returns></returns>
-    public static IMap? Create(MapKinds dbType) => _dbs[dbType]?.GetType().CreateInstance() as IMap;
+    public static IMap? Create(MapKinds dbType) => _providers[dbType]?.GetType().CreateInstance() as IMap;
     #endregion
 }
