@@ -1,5 +1,6 @@
 ﻿using NewLife.Data;
 using NewLife.Log;
+using NewLife.Map.Models;
 using NewLife.Reflection;
 using NewLife.Serialization;
 using NewLife.Threading;

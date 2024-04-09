@@ -12,8 +12,8 @@ namespace XUnitTest;
 
 public class TianDiMapTests
 {
-    private readonly TianDiMap _map;
-    public TianDiMapTests() => _map = new TianDiMap { AppKey = "3334f7776916effb40f2a11dbae57781" };
+    private readonly TianDiTu _map;
+    public TianDiMapTests() => _map = new TianDiTu { AppKey = "3334f7776916effb40f2a11dbae57781" };
 
     [Fact]
     public async void Geocoder()

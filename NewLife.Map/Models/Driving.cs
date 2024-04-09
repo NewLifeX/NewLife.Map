@@ -1,4 +1,4 @@
-﻿namespace NewLife.Map;
+﻿namespace NewLife.Map.Models;
 
 /// <summary>驾车距离和时间</summary>
 public class Driving

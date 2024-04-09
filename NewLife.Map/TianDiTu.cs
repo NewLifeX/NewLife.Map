@@ -2,6 +2,7 @@
 using System.Web;
 using NewLife.Collections;
 using NewLife.Data;
+using NewLife.Map.Models;
 using NewLife.Serialization;
 
 namespace NewLife.Map;
@@ -11,11 +12,11 @@ namespace NewLife.Map;
 /// 参考手册 http://lbs.tianditu.gov.cn/server/guide.html
 /// </remarks>
 [DisplayName("天地图")]
-public class TianDiMap : Map, IMap
+public class TianDiTu : Map, IMap
 {
     #region 构造
     /// <summary>高德地图</summary>
-    public TianDiMap()
+    public TianDiTu()
     {
         Server = "http://api.tianditu.gov.cn";
         //AppKey = "3334f7776916effb40f2a11dbae57781";
