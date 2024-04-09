@@ -9,14 +9,13 @@ using NewLife.Threading;
 using System.Net.Http;
 #endif
 
-#nullable enable
 namespace NewLife.Map;
 
 /// <summary>地图提供者接口</summary>
 public interface IMap
 {
     #region 属性
-    /// <summary>应用密钥</summary>
+    /// <summary>应用密钥。多个key逗号分隔</summary>
     String AppKey { get; set; }
     #endregion
 
@@ -71,7 +70,7 @@ public interface IMap
 }
 
 /// <summary>地图提供者</summary>
-public class Map : DisposeBase
+public abstract class Map : DisposeBase
 {
     #region 属性
     /// <summary>服务地址</summary>
@@ -324,4 +323,3 @@ public static class MapHelper
         return list.Count == 0 ? null : list[0];
     }
 }
-#nullable restore

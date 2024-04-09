@@ -10,7 +10,7 @@ public enum MapKinds
     AMap = 2,
 
     /// <summary>腾讯地图</summary>
-    WeMap = 3,
+    Tencent = 3,
 
     /// <summary>天地图</summary>
     TianDiTu = 4,

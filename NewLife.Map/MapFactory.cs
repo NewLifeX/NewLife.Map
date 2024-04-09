@@ -12,7 +12,7 @@ public static class MapFactory
     {
         Register<BaiduMap>(MapKinds.Baidu);
         Register<AMap>(MapKinds.AMap);
-        Register<WeMap>(MapKinds.WeMap);
+        Register<WeMap>(MapKinds.Tencent);
         Register<TianDiTu>(MapKinds.TianDiTu);
 
         Register<NewLifeMap>(MapKinds.NewLife);

@@ -34,7 +34,7 @@
         background: #FFF
     }
 </style>
-<h3>地理数据（Geo）</h3>
+<h3>地图提供者（MapProvider）</h3>
 <table>
     <thead>
         <tr>
@@ -61,20 +61,20 @@
         </tr>
 
         <tr>
-            <td>Hash</td>
-            <td>编码</td>
+            <td>Name</td>
+            <td>名称</td>
             <td>String</td>
             <td>50</td>
             <td></td>
             <td></td>
             <td></td>
-            <td>GeoHash编码</td>
+            <td></td>
         </tr>
 
         <tr>
-            <td>Longitude</td>
-            <td>经度</td>
-            <td>Double</td>
+            <td>Kind</td>
+            <td>提供者</td>
+            <td>Int32</td>
             <td></td>
             <td></td>
             <td></td>
@@ -83,9 +83,9 @@
         </tr>
 
         <tr>
-            <td>Latitude</td>
-            <td>纬度</td>
-            <td>Double</td>
+            <td>Enable</td>
+            <td>启用</td>
+            <td>Boolean</td>
             <td></td>
             <td></td>
             <td></td>
@@ -94,85 +94,41 @@
         </tr>
 
         <tr>
-            <td>HashBd09</td>
-            <td>bd09编码</td>
+            <td>Server</td>
+            <td>服务地址</td>
             <td>String</td>
             <td>50</td>
             <td></td>
             <td></td>
             <td></td>
-            <td>GeoHash编码</td>
+            <td></td>
         </tr>
 
         <tr>
-            <td>LongitudeBd09</td>
-            <td>bd09经度</td>
-            <td>Double</td>
+            <td>AppKey</td>
+            <td>应用密钥</td>
+            <td>String</td>
+            <td>500</td>
             <td></td>
             <td></td>
             <td></td>
-            <td>N</td>
-            <td>百度坐标</td>
+            <td>多个密钥逗号隔开</td>
         </tr>
 
         <tr>
-            <td>LatitudeBd09</td>
-            <td>bd09纬度</td>
-            <td>Double</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td>N</td>
-            <td>百度坐标</td>
-        </tr>
-
-        <tr>
-            <td>HashGcj02</td>
-            <td>gcj02编码</td>
+            <td>CreateUser</td>
+            <td>创建者</td>
             <td>String</td>
             <td>50</td>
             <td></td>
             <td></td>
             <td></td>
-            <td>GeoHash编码</td>
+            <td></td>
         </tr>
 
         <tr>
-            <td>LongitudeGcj02</td>
-            <td>gcj02经度</td>
-            <td>Double</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td>N</td>
-            <td>高德坐标</td>
-        </tr>
-
-        <tr>
-            <td>LatitudeGcj02</td>
-            <td>gcj02纬度</td>
-            <td>Double</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td>N</td>
-            <td>高德坐标</td>
-        </tr>
-
-        <tr>
-            <td>Code</td>
-            <td>区划编码</td>
-            <td>Int32</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td>N</td>
-            <td>最高到乡镇级行政区划编码</td>
-        </tr>
-
-        <tr>
-            <td>ProvinceId</td>
-            <td>省份</td>
+            <td>CreateUserID</td>
+            <td>创建用户</td>
             <td>Int32</td>
             <td></td>
             <td></td>
@@ -182,47 +138,14 @@
         </tr>
 
         <tr>
-            <td>CityId</td>
-            <td>城市</td>
-            <td>Int32</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td>N</td>
-            <td></td>
-        </tr>
-
-        <tr>
-            <td>DistrictId</td>
-            <td>区县</td>
-            <td>Int32</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td>N</td>
-            <td></td>
-        </tr>
-
-        <tr>
-            <td>Address</td>
-            <td>地址</td>
+            <td>CreateIP</td>
+            <td>创建地址</td>
             <td>String</td>
-            <td>200</td>
+            <td>50</td>
             <td></td>
             <td></td>
             <td></td>
             <td></td>
-        </tr>
-
-        <tr>
-            <td>Title</td>
-            <td>标题</td>
-            <td>String</td>
-            <td>200</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td>POI语义地址</td>
         </tr>
 
         <tr>
@@ -230,6 +153,39 @@
             <td>创建时间</td>
             <td>DateTime</td>
             <td></td>
+            <td></td>
+            <td></td>
+            <td>N</td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td>UpdateUser</td>
+            <td>更新者</td>
+            <td>String</td>
+            <td>50</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td>UpdateUserID</td>
+            <td>更新用户</td>
+            <td>Int32</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>N</td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td>UpdateIP</td>
+            <td>更新地址</td>
+            <td>String</td>
+            <td>50</td>
             <td></td>
             <td></td>
             <td></td>
@@ -241,6 +197,17 @@
             <td>更新时间</td>
             <td>DateTime</td>
             <td></td>
+            <td></td>
+            <td></td>
+            <td>N</td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td>Remark</td>
+            <td>备注</td>
+            <td>String</td>
+            <td>500</td>
             <td></td>
             <td></td>
             <td></td>
@@ -360,7 +327,7 @@
             <td></td>
             <td></td>
             <td>N</td>
-            <td>高德坐标</td>
+            <td>国测局坐标</td>
         </tr>
 
         <tr>
@@ -371,7 +338,7 @@
             <td></td>
             <td></td>
             <td>N</td>
-            <td>高德坐标</td>
+            <td>国测局坐标</td>
         </tr>
 
         <tr>
@@ -575,7 +542,7 @@
             <td></td>
             <td></td>
             <td>N</td>
-            <td>高德坐标</td>
+            <td>国测局坐标</td>
         </tr>
 
         <tr>
@@ -586,7 +553,7 @@
             <td></td>
             <td></td>
             <td>N</td>
-            <td>高德坐标</td>
+            <td>国测局坐标</td>
         </tr>
 
         <tr>
@@ -790,7 +757,7 @@
             <td></td>
             <td></td>
             <td>N</td>
-            <td>高德坐标</td>
+            <td>国测局坐标</td>
         </tr>
 
         <tr>
@@ -801,7 +768,7 @@
             <td></td>
             <td></td>
             <td>N</td>
-            <td>高德坐标</td>
+            <td>国测局坐标</td>
         </tr>
 
         <tr>
@@ -1005,7 +972,7 @@
             <td></td>
             <td></td>
             <td>N</td>
-            <td>高德坐标</td>
+            <td>国测局坐标</td>
         </tr>
 
         <tr>
@@ -1016,7 +983,7 @@
             <td></td>
             <td></td>
             <td>N</td>
-            <td>高德坐标</td>
+            <td>国测局坐标</td>
         </tr>
 
         <tr>

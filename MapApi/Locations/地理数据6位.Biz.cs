@@ -1,4 +1,4 @@
-﻿using NewLife;
+using NewLife;
 using NewLife.Data;
 using XCode;
 using XCode.Membership;
@@ -139,6 +139,58 @@ public partial class Geo6 : Entity<Geo6>, IGeo
         if (Meta.Session.Count < 1000) return Meta.Cache.FindAll(e => e.Code == code);
 
         return FindAll(_.Code == code);
+    }
+
+    /// <summary>根据编码查找</summary>
+    /// <param name="hash">编码</param>
+    /// <returns>实体列表</returns>
+    public static IList<Geo6> FindAllByHash(String hash)
+    {
+        if (hash.IsNullOrEmpty()) return new List<Geo6>();
+
+        // 实体缓存
+        if (Meta.Session.Count < 1000) return Meta.Cache.FindAll(e => e.Hash.EqualIgnoreCase(hash));
+
+        return FindAll(_.Hash == hash);
+    }
+
+    /// <summary>根据bd09编码查找</summary>
+    /// <param name="hashBd09">bd09编码</param>
+    /// <returns>实体列表</returns>
+    public static IList<Geo6> FindAllByHashBd09(String hashBd09)
+    {
+        if (hashBd09.IsNullOrEmpty()) return new List<Geo6>();
+
+        // 实体缓存
+        if (Meta.Session.Count < 1000) return Meta.Cache.FindAll(e => e.HashBd09.EqualIgnoreCase(hashBd09));
+
+        return FindAll(_.HashBd09 == hashBd09);
+    }
+
+    /// <summary>根据gcj02编码查找</summary>
+    /// <param name="hashGcj02">gcj02编码</param>
+    /// <returns>实体列表</returns>
+    public static IList<Geo6> FindAllByHashGcj02(String hashGcj02)
+    {
+        if (hashGcj02.IsNullOrEmpty()) return new List<Geo6>();
+
+        // 实体缓存
+        if (Meta.Session.Count < 1000) return Meta.Cache.FindAll(e => e.HashGcj02.EqualIgnoreCase(hashGcj02));
+
+        return FindAll(_.HashGcj02 == hashGcj02);
+    }
+
+    /// <summary>根据省份、城市、区县查找</summary>
+    /// <param name="provinceId">省份</param>
+    /// <param name="cityId">城市</param>
+    /// <param name="districtId">区县</param>
+    /// <returns>实体列表</returns>
+    public static IList<Geo6> FindAllByProvinceIdAndCityIdAndDistrictId(Int32 provinceId, Int32 cityId, Int32 districtId)
+    {
+        // 实体缓存
+        if (Meta.Session.Count < 1000) return Meta.Cache.FindAll(e => e.ProvinceId == provinceId && e.CityId == cityId && e.DistrictId == districtId);
+
+        return FindAll(_.ProvinceId == provinceId & _.CityId == cityId & _.DistrictId == districtId);
     }
     #endregion
 
