@@ -47,10 +47,9 @@ public class WeMapTests
     [Fact]
     public async void GetDistanceAsync()
     {
-        var points = new List<GeoPoint>
-        {
-            new() { Longitude = 121.51199904625513, Latitude = 31.239184419374944 },
-            new() { Longitude = 114.21892734521, Latitude = 29.575429778924 }
+        var points = new List<GeoPoint> {
+            new(121.51199904625513, 31.239184419374944),
+            new(114.21892734521, 29.575429778924)
         };
 
         var map = _map;

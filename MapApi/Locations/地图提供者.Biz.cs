@@ -122,7 +122,7 @@ public partial class MapProvider : Entity<MapProvider>
     /// <returns>实体列表</returns>
     public static IList<MapProvider> FindAllByKind(NewLife.Map.Models.MapKinds kind)
     {
-        if (kind <= 0) return new List<MapProvider>();
+        if (kind <= 0) return [];
 
         // 实体缓存
         if (Meta.Session.Count < 1000) return Meta.Cache.FindAll(e => e.Kind == kind);

@@ -143,7 +143,7 @@ public partial class Geo8 : Entity<Geo8>, IGeo
     /// <returns>实体列表</returns>
     public static IList<Geo8> FindAllByHash(String hash)
     {
-        if (hash.IsNullOrEmpty()) return new List<Geo8>();
+        if (hash.IsNullOrEmpty()) return [];
 
         // 实体缓存
         if (Meta.Session.Count < 1000) return Meta.Cache.FindAll(e => e.Hash.EqualIgnoreCase(hash));
@@ -156,7 +156,7 @@ public partial class Geo8 : Entity<Geo8>, IGeo
     /// <returns>实体列表</returns>
     public static IList<Geo8> FindAllByHashBd09(String hashBd09)
     {
-        if (hashBd09.IsNullOrEmpty()) return new List<Geo8>();
+        if (hashBd09.IsNullOrEmpty()) return [];
 
         // 实体缓存
         if (Meta.Session.Count < 1000) return Meta.Cache.FindAll(e => e.HashBd09.EqualIgnoreCase(hashBd09));
@@ -169,7 +169,7 @@ public partial class Geo8 : Entity<Geo8>, IGeo
     /// <returns>实体列表</returns>
     public static IList<Geo8> FindAllByHashGcj02(String hashGcj02)
     {
-        if (hashGcj02.IsNullOrEmpty()) return new List<Geo8>();
+        if (hashGcj02.IsNullOrEmpty()) return [];
 
         // 实体缓存
         if (Meta.Session.Count < 1000) return Meta.Cache.FindAll(e => e.HashGcj02.EqualIgnoreCase(hashGcj02));

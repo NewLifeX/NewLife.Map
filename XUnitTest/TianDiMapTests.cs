@@ -47,10 +47,9 @@ public class TianDiMapTests
     [Fact]
     public async void GetDistanceAsync()
     {
-        var points = new List<GeoPoint>
-        {
-            new() { Longitude = 121.51199904625513, Latitude = 31.239184419374944 },
-            new() { Longitude = 114.21892734521, Latitude = 29.575429778924 },
+        var points = new List<GeoPoint> {
+            new(121.51199904625513, 31.239184419374944),
+            new(114.21892734521, 29.575429778924)
         };
 
         var map = _map;
@@ -64,12 +63,11 @@ public class TianDiMapTests
     [Fact]
     public async void GetDistanceAsync2()
     {
-        var points = new List<GeoPoint>
-        {
-            new() { Longitude = 121.51199904625513, Latitude = 31.239184419374944 },
-            new() { Longitude = 118.21, Latitude = 30.57 },
-            new() { Longitude = 116.21, Latitude = 29.97 },
-            new() { Longitude = 114.21892734521, Latitude = 29.575429778924 },
+        var points = new List<GeoPoint> {
+            new(121.51199904625513, 31.239184419374944),
+            new(118.21, 30.57),
+            new(116.21, 29.97),
+            new(114.21892734521, 29.575429778924)
         };
 
         var map = _map;

@@ -16,7 +16,7 @@ public interface IMap
 {
     #region 属性
     /// <summary>应用密钥。多个key逗号分隔</summary>
-    String AppKey { get; set; }
+    String? AppKey { get; set; }
     #endregion
 
     #region 方法
@@ -33,7 +33,7 @@ public interface IMap
     /// <param name="coordtype">所需要的坐标系</param>
     /// <param name="formatAddress">是否格式化地址</param>
     /// <returns></returns>
-    Task<GeoAddress> GetGeoAsync(String address, String? city = null, String? coordtype = null, Boolean formatAddress = false);
+    Task<GeoAddress?> GetGeoAsync(String address, String? city = null, String? coordtype = null, Boolean formatAddress = false);
     #endregion
 
     #region 逆地理编码
@@ -41,7 +41,7 @@ public interface IMap
     /// <param name="point">坐标</param>
     /// <param name="coordtype">坐标系</param>
     /// <returns></returns>
-    Task<GeoAddress> GetReverseGeoAsync(GeoPoint point, String coordtype);
+    Task<GeoAddress?> GetReverseGeoAsync(GeoPoint point, String? coordtype);
     #endregion
 
     #region 路径规划
@@ -51,7 +51,7 @@ public interface IMap
     /// <param name="coordtype">坐标系</param>
     /// <param name="type">路径计算的方式和方法</param>
     /// <returns></returns>
-    Task<Driving> GetDistanceAsync(GeoPoint origin, GeoPoint destination, String coordtype, Int32 type = 0);
+    Task<Driving?> GetDistanceAsync(GeoPoint origin, GeoPoint destination, String? coordtype, Int32 type = 0);
     #endregion
 
     #region 坐标系转换
@@ -158,7 +158,7 @@ public abstract class Map : DisposeBase
     /// <param name="url">目标Url</param>
     /// <param name="result">结果字段</param>
     /// <returns></returns>
-    protected virtual async Task<T?> InvokeAsync<T>(String url, String result) where T : class
+    protected virtual async Task<T?> InvokeAsync<T>(String url, String? result) where T : class
     {
         LastResult = null;
 
@@ -198,8 +198,10 @@ public abstract class Map : DisposeBase
     /// <summary>移除暂时不可用密钥</summary>
     /// <param name="key"></param>
     /// <param name="reviveTime">复苏时间。达到该时间时，重新启用该key</param>
-    protected void RemoveKey(String key, DateTime reviveTime)
+    protected void RemoveKey(String? key, DateTime reviveTime)
     {
+        if (key.IsNullOrEmpty()) return;
+
         lock (this)
         {
             // 使用本地变量保存数据，避免多线程冲突
@@ -319,7 +321,7 @@ public static class MapHelper
     /// <returns></returns>
     public static async Task<GeoPoint?> ConvertAsync(this IMap map, GeoPoint point, String from, String to)
     {
-        var list = await map.ConvertAsync(new[] { point }, from, to);
-        return list.Count == 0 ? null : list[0];
+        var list = await map.ConvertAsync([point], from, to);
+        return list == null || list.Count == 0 ? null : list[0];
     }
 }

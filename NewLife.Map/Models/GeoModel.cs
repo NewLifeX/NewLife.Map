@@ -7,7 +7,7 @@ public class GeoModel
 {
     #region 属性
     /// <summary>Geo哈希编码。基于wgs84坐标</summary>
-    public String Hash { get; set; }
+    public String? Hash { get; set; }
 
     /// <summary>经度。wgw84坐标</summary>
     public Double Longitude { get; set; }
@@ -16,10 +16,10 @@ public class GeoModel
     public Double Latitude { get; set; }
 
     /// <summary>地址。例如XX高速、XX路</summary>
-    public String Address { get; set; }
+    public String? Address { get; set; }
 
     /// <summary>标题。POI语义地址</summary>
-    public String Title { get; set; }
+    public String? Title { get; set; }
 
     /// <summary>百度经度。bd09坐标</summary>
     public Double LongitudeBd09 { get; set; }
@@ -37,25 +37,25 @@ public class GeoModel
     public Int32 AreaCode { get; set; }
 
     /// <summary>区域名称。乡镇四级地址</summary>
-    public String AreaName { get; set; }
+    public String? AreaName { get; set; }
 
     /// <summary>省份编码</summary>
     public Int32 ProvinceId { get; set; }
 
     /// <summary>省份名称</summary>
-    public String Province { get; set; }
+    public String? Province { get; set; }
 
     /// <summary>城市编码</summary>
     public Int32 CityId { get; set; }
 
     /// <summary>城市名称</summary>
-    public String City { get; set; }
+    public String? City { get; set; }
 
     /// <summary>区县编码</summary>
     public Int32 DistrictId { get; set; }
 
     /// <summary>区县名称</summary>
-    public String District { get; set; }
+    public String? District { get; set; }
     #endregion
 
     #region 方法

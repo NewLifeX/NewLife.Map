@@ -5,46 +5,46 @@ public class GeoAddress
 {
     #region 属性
     /// <summary>名称</summary>
-    public String Name { get; set; }
+    public String? Name { get; set; }
 
     /// <summary>坐标</summary>
-    public GeoPoint Location { get; set; }
+    public GeoPoint? Location { get; set; }
 
     /// <summary>地址</summary>
-    public String Address { get; set; }
+    public String? Address { get; set; }
 
     /// <summary>标题。语义描述，POI详细信息，例如石下村东南282米</summary>
-    public String Title { get; set; }
+    public String? Title { get; set; }
 
     /// <summary>行政区域编码。6位数字</summary>
     public Int32 Code { get; set; }
 
     /// <summary>国家</summary>
-    public String Country { get; set; }
+    public String? Country { get; set; }
 
     /// <summary>省份</summary>
-    public String Province { get; set; }
+    public String? Province { get; set; }
 
     /// <summary>城市</summary>
-    public String City { get; set; }
+    public String? City { get; set; }
 
     /// <summary>区县</summary>
-    public String District { get; set; }
+    public String? District { get; set; }
 
     /// <summary>乡镇</summary>
-    public String Township { get; set; }
+    public String? Township { get; set; }
 
     /// <summary>乡镇编码。9位数字</summary>
     public Int32 Towncode { get; set; }
 
     /// <summary>街道</summary>
-    public String Street { get; set; }
+    public String? Street { get; set; }
 
     /// <summary>街道编码</summary>
-    public String StreetNumber { get; set; }
+    public String? StreetNumber { get; set; }
 
     /// <summary>级别</summary>
-    public String Level { get; set; }
+    public String? Level { get; set; }
 
     /// <summary>精确打点。位置的附加信息，是否精确查找。1为精确查找，即准确打点；0为不精确，即模糊打点。</summary>
     public Boolean Precise { get; set; }
@@ -81,5 +81,5 @@ public class GeoAddress
 
     /// <summary>已重载。</summary>
     /// <returns></returns>
-    public override String ToString() => Address;
+    public override String? ToString() => Address;
 }

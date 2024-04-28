@@ -5,10 +5,10 @@ public class GeoPoint
 {
     #region 属性
     /// <summary>经度</summary>
-    public Double Longitude { get; set; }
+    public Double Longitude { get; }
 
     /// <summary>纬度</summary>
-    public Double Latitude { get; set; }
+    public Double Latitude { get; }
     #endregion
 
     #region 构造
@@ -24,9 +24,18 @@ public class GeoPoint
         Latitude = latitude;
     }
 
+    /// <summary>实例化经纬度坐标</summary>
+    /// <param name="longitude"></param>
+    /// <param name="latitude"></param>
+    public GeoPoint(Object longitude, Object latitude)
+    {
+        Longitude = longitude.ToDouble();
+        Latitude = latitude.ToDouble();
+    }
+
     /// <summary>经纬度坐标</summary>
     /// <param name="location"></param>
-    public GeoPoint(String location)
+    public GeoPoint(String? location)
     {
         if (!location.IsNullOrEmpty())
         {
@@ -52,7 +61,7 @@ public class GeoPoint
     public static GeoPoint Decode(String hash)
     {
         var p = GeoHash.Decode(hash);
-        return new GeoPoint(p.Longitude, p.Latitude);
+        return new(p.Longitude, p.Latitude);
     }
     #endregion
 

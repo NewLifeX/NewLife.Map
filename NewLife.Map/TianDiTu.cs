@@ -29,7 +29,7 @@ public class TianDiTu : Map, IMap
     /// <param name="url">目标Url</param>
     /// <param name="result">结果字段</param>
     /// <returns></returns>
-    protected override async Task<T> InvokeAsync<T>(String url, String result)
+    protected override async Task<T> InvokeAsync<T>(String url, String? result)
     {
         var dic = await base.InvokeAsync<IDictionary<String, Object>>(url, result);
         if (dic == null || dic.Count == 0) return default;
@@ -60,13 +60,13 @@ public class TianDiTu : Map, IMap
     /// <param name="city"></param>
     /// <param name="coordtype"></param>
     /// <returns></returns>
-    protected async Task<IDictionary<String, Object>> GetGeocoderAsync(String address, String city = null, String coordtype = null)
+    protected async Task<IDictionary<String, Object>> GetGeocoderAsync(String address, String? city = null, String? coordtype = null)
     {
         if (address.IsNullOrEmpty()) throw new ArgumentNullException(nameof(address));
 
         // 编码
         address = HttpUtility.UrlEncode(address);
-        city = HttpUtility.UrlEncode(city);
+        //city = HttpUtility.UrlEncode(city);
 
         var url = $"/geocoder?ds={{\"keyWord\":\"{address}\"}}";
 
@@ -79,23 +79,21 @@ public class TianDiTu : Map, IMap
     /// <param name="coordtype"></param>
     /// <param name="formatAddress">是否格式化地址</param>
     /// <returns></returns>
-    public async Task<GeoAddress> GetGeoAsync(String address, String city = null, String coordtype = null, Boolean formatAddress = false)
+    public async Task<GeoAddress?> GetGeoAsync(String address, String? city = null, String? coordtype = null, Boolean formatAddress = false)
     {
         var rs = await GetGeocoderAsync(address, city, coordtype);
         if (rs == null || rs.Count == 0) return null;
 
-        var gp = new GeoPoint
-        {
-            Longitude = rs["lon"].ToDouble(),
-            Latitude = rs["lat"].ToDouble()
-        };
-
         var geo = new GeoAddress
         {
-            Location = gp,
+            Location = new(rs["lon"], rs["lat"]),
         };
 
-        if (formatAddress && gp != null) geo = await GetReverseGeoAsync(gp, coordtype);
+        if (formatAddress)
+        {
+            var geo2 = await GetReverseGeoAsync(geo.Location, coordtype);
+            if (geo2 != null) geo = geo2;
+        }
 
         geo.Level = rs["level"] + "";
         geo.Confidence = rs["score"].ToInt();
@@ -112,7 +110,7 @@ public class TianDiTu : Map, IMap
     /// <param name="point"></param>
     /// <param name="coordtype">坐标系</param>
     /// <returns></returns>
-    protected async Task<IDictionary<String, Object>> GetReverseGeocoderAsync(GeoPoint point, String coordtype)
+    protected async Task<IDictionary<String, Object>> GetReverseGeocoderAsync(GeoPoint point, String? coordtype)
     {
         if (point == null || point.Longitude == 0 || point.Latitude == 0) throw new ArgumentNullException(nameof(point));
 
@@ -125,7 +123,7 @@ public class TianDiTu : Map, IMap
     /// <param name="point"></param>
     /// <param name="coordtype"></param>
     /// <returns></returns>
-    public async Task<GeoAddress> GetReverseGeoAsync(GeoPoint point, String coordtype)
+    public async Task<GeoAddress?> GetReverseGeoAsync(GeoPoint point, String? coordtype)
     {
         var rs = await GetReverseGeocoderAsync(point, coordtype);
         if (rs == null || rs.Count == 0) return null;
@@ -137,11 +135,7 @@ public class TianDiTu : Map, IMap
         };
         if (rs["location"] is IDictionary<String, Object> ds && ds.Count >= 2)
         {
-            addr.Location = new GeoPoint
-            {
-                Longitude = ds["lon"].ToDouble(),
-                Latitude = ds["lat"].ToDouble()
-            };
+            addr.Location = new(ds["lon"], ds["lat"]);
         }
 
         if (rs["addressComponent"] is IDictionary<String, Object> component)
@@ -177,9 +171,9 @@ public class TianDiTu : Map, IMap
     /// <param name="coordtype"></param>
     /// <param name="type">导航路线类型。0：最快路线，1：最短路线，2：避开高速，3：步行</param>
     /// <returns></returns>
-    public async Task<Driving> GetDistanceAsync(GeoPoint origin, GeoPoint destination, String coordtype = null, Int32 type = 0)
+    public async Task<Driving?> GetDistanceAsync(GeoPoint origin, GeoPoint destination, String? coordtype = null, Int32 type = 0)
     {
-        return await GetDistanceAsync(origin, destination, null, coordtype, type);
+        return await GetDistanceAsync(origin, destination, [], coordtype, type);
     }
 
     /// <summary>计算距离和驾车时间</summary>
@@ -192,7 +186,7 @@ public class TianDiTu : Map, IMap
     /// <param name="coordtype"></param>
     /// <param name="type">导航路线类型。0：最快路线，1：最短路线，2：避开高速，3：步行</param>
     /// <returns></returns>
-    public async Task<Driving> GetDistanceAsync(GeoPoint origin, GeoPoint destination, IList<GeoPoint> mids, String coordtype = null, Int32 type = 0)
+    public async Task<Driving?> GetDistanceAsync(GeoPoint origin, GeoPoint destination, IList<GeoPoint> mids, String? coordtype = null, Int32 type = 0)
     {
         if (origin == null || origin.Longitude < 1 && origin.Latitude < 1) throw new ArgumentNullException(nameof(origin));
         if (destination == null || destination.Longitude < 1 && destination.Latitude < 1) throw new ArgumentNullException(nameof(destination));
@@ -209,6 +203,7 @@ public class TianDiTu : Map, IMap
         if (dic == null || dic.Count == 0) return null;
 
         var html = LastString;
+        if (html.IsNullOrEmpty()) return null;
 
         var rs = new Driving
         {
@@ -231,7 +226,7 @@ public class TianDiTu : Map, IMap
     /// <param name="coordtype"></param>
     /// <param name="formatAddress"></param>
     /// <returns></returns>
-    public async Task<GeoAddress> PlaceSearchAsync(String query, String tag, String region, String coordtype = null, Boolean formatAddress = true)
+    public async Task<GeoAddress?> PlaceSearchAsync(String query, String tag, String region, String? coordtype = null, Boolean formatAddress = true)
     {
         // 编码
         query = HttpUtility.UrlEncode(query);
@@ -249,13 +244,7 @@ public class TianDiTu : Map, IMap
 
         if (rs["location"] is IDictionary<String, Object> ds && ds.Count >= 2)
         {
-            var point = new GeoPoint
-            {
-                Longitude = ds["lng"].ToDouble(),
-                Latitude = ds["lat"].ToDouble()
-            };
-
-            geo.Location = point;
+            geo.Location = new(ds["lng"], ds["lat"]);
         }
         //else if (rs["num"] is Int32 num && num > 0 && rs["name"] != null)
         //{
@@ -265,7 +254,14 @@ public class TianDiTu : Map, IMap
         else
             return null;
 
-        if (formatAddress && geo?.Location != null) geo = await GetReverseGeoAsync(geo.Location, coordtype);
+        if (formatAddress)
+        {
+            var geo2 = await GetReverseGeoAsync(geo.Location, coordtype);
+            if (geo2 != null)
+            {
+                geo = geo2;
+            }
+        }
 
         geo.Name = rs["name"] + "";
         var addr = rs["address"] + "";
