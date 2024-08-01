@@ -269,12 +269,79 @@ public abstract class Map : DisposeBase
     #endregion
 
     #region 坐标系转换
-    /// <summary>坐标系转换</summary>
+    /// <summary>坐标系转换。公式来源于网络，未经考证</summary>
     /// <param name="points">需转换的源坐标</param>
     /// <param name="from">源坐标类型。wgs84ll/gcj02/bd09ll</param>
     /// <param name="to">目标坐标类型。gcj02/bd09ll</param>
     /// <returns></returns>
-    public virtual Task<IList<GeoPoint>> ConvertAsync(IList<GeoPoint> points, String from, String to) => throw new NotImplementedException();
+    public virtual Task<IList<GeoPoint>> ConvertAsync(IList<GeoPoint> points, String from, String to)
+    {
+        if (points == null || points.Count == 0) throw new ArgumentNullException(nameof(points));
+        if (from.IsNullOrEmpty()) throw new ArgumentNullException(nameof(from));
+        if (to.IsNullOrEmpty()) throw new ArgumentNullException(nameof(to));
+
+        //if (!from.EndsWithIgnoreCase("ll", "mc")) from += "ll";
+        //if (!to.EndsWithIgnoreCase("ll", "mc")) to += "ll";
+        from = from.ToLower();
+        to = to.ToLower();
+
+        if (from.EqualIgnoreCase(to)) return Task.FromResult(points);
+
+        // 转换坐标
+        var rs = new List<GeoPoint>();
+        if (from == "wgs84" && to == "gcj02")
+        {
+            foreach (var pt in points)
+            {
+                var ps = MapHelper.WGS84ToGCJ02(pt.Latitude, pt.Longitude);
+                rs.Add(new(ps[1], ps[0]));
+            }
+        }
+        else if (from == "gcj02" && to == "wgs84")
+        {
+            foreach (var pt in points)
+            {
+                var ps = MapHelper.GCJ02ToWGS84(pt.Latitude, pt.Longitude);
+                rs.Add(new(ps[1], ps[0]));
+            }
+        }
+        if (from == "wgs84" && to == "bd09")
+        {
+            foreach (var pt in points)
+            {
+                var ps = MapHelper.WGS84ToBD09(pt.Latitude, pt.Longitude);
+                rs.Add(new(ps[1], ps[0]));
+            }
+        }
+        else if (from == "bd09" && to == "wgs84")
+        {
+            foreach (var pt in points)
+            {
+                var ps = MapHelper.BD09ToWGS84(pt.Latitude, pt.Longitude);
+                rs.Add(new(ps[1], ps[0])); 
+            }
+        }
+        if (from == "gcj02" && to == "bd09")
+        {
+            foreach (var pt in points)
+            {
+                var ps = MapHelper.GCJ02ToBD09(pt.Latitude, pt.Longitude);
+                rs.Add(new(ps[1], ps[0]));
+            }
+        }
+        else if (from == "bd09" && to == "gcj02")
+        {
+            foreach (var pt in points)
+            {
+                var ps = MapHelper.BD09ToGCJ02(pt.Latitude, pt.Longitude);
+                rs.Add(new(ps[1], ps[0]));
+            }
+        }
+        else
+            throw new NotSupportedException($"未支持[{from}]坐标系到[{to}]坐标系的转换");
+
+        return Task.FromResult(rs as IList<GeoPoint>);
+    }
     #endregion
 
     #region 静态
@@ -306,22 +373,4 @@ public abstract class Map : DisposeBase
     /// <param name="args"></param>
     public void WriteLog(String format, params Object[] args) => Log?.Info(format, args);
     #endregion
-}
-
-/// <summary>
-/// 助手类
-/// </summary>
-public static class MapHelper
-{
-    /// <summary>坐标系转换</summary>
-    /// <param name="map"></param>
-    /// <param name="point">需转换的源坐标</param>
-    /// <param name="from">源坐标类型。wgs84ll/gcj02/bd09ll</param>
-    /// <param name="to">目标坐标类型。gcj02/bd09ll</param>
-    /// <returns></returns>
-    public static async Task<GeoPoint?> ConvertAsync(this IMap map, GeoPoint point, String from, String to)
-    {
-        var list = await map.ConvertAsync([point], from, to);
-        return list == null || list.Count == 0 ? null : list[0];
-    }
 }
