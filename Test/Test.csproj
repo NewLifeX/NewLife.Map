@@ -12,7 +12,7 @@
   <ItemGroup>
     <PackageReference Include="NewLife.Core" Version="11.0.2024.1001" />
     <PackageReference Include="NewLife.Stardust.Extensions" Version="3.1.2024.1004" />
-    <PackageReference Include="NewLife.XCode" Version="11.16.2024.1004" />
+    <PackageReference Include="NewLife.XCode" Version="11.16.2024.1005" />
     <PackageReference Include="xunit.assert" Version="2.9.2" />
   </ItemGroup>
 
