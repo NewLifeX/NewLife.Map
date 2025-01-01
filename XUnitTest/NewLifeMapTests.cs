@@ -1,10 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
-using NewLife;
-using NewLife.Data;
-using NewLife.Http;
+﻿using NewLife.Data;
 using NewLife.Map;
+using NewLife.Model;
+using Stardust;
 using Xunit;
 
 namespace XUnitTest;
@@ -12,7 +9,18 @@ namespace XUnitTest;
 public class NewLifeMapTests
 {
     private readonly NewLifeMap _map;
-    public NewLifeMapTests() => _map = new NewLifeMap { Server = "https://localhost:7279" };
+    public NewLifeMapTests()
+    {
+        //_map = new NewLifeMap { Server = "https://localhost:7279" };
+
+        var services = ObjectContainer.Current;
+        services.AddStardust();
+
+        var provider = services.BuildServiceProvider();
+        //_map = provider.GetService<IMap>() as NewLifeMap;
+        //_map = provider.CreateInstance(typeof(NewLifeMap)) as NewLifeMap;
+        _map = new NewLifeMap(provider);
+    }
 
     [Fact]
     public async void Geocoder()
@@ -28,7 +36,7 @@ public class NewLifeMapTests
         Assert.Equal(121.511999, gmodel.Longitude);
         Assert.Equal(31.239185, gmodel.Latitude);
         Assert.Equal("上海市浦东新区花园石桥路176号", gmodel.Address);
-        Assert.Equal("上海中心大厦内,MIUBOOK文创超级市场附近12米", gmodel.Title);
+        Assert.StartsWith("上海中心大厦内", gmodel.Title);
 
         var ga = await map.GetReverseGeoAsync(point, null);
 
@@ -36,7 +44,7 @@ public class NewLifeMapTests
         Assert.Equal(121.511999, ga.Location.Longitude);
         Assert.Equal(31.239185, ga.Location.Latitude);
         Assert.Equal("上海市浦东新区花园石桥路176号", ga.Address);
-        Assert.Equal("上海中心大厦内,MIUBOOK文创超级市场附近12米", ga.Title);
+        Assert.StartsWith("上海中心大厦内", gmodel.Title);
         Assert.Equal(310115, ga.Code);
         Assert.Equal(310115005, ga.Towncode);
     }

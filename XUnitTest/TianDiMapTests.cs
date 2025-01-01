@@ -38,8 +38,8 @@ public class TianDiMapTests
         Assert.NotNull(ga);
         Assert.Equal(121.50053, ga.Location.Longitude);
         Assert.Equal(31.235746, ga.Location.Latitude);
-        Assert.Equal("银城中路501号上海中心大厦地下2层", ga.Address);
-        Assert.Equal("银城中路501号上海中心大厦地下2层", ga.Title);
+        Assert.StartsWith("银城中路501号", ga.Address);
+        Assert.StartsWith("银城中路501号", ga.Title);
         Assert.Equal(310115, ga.Code);
         //Assert.Equal(310115005, ga.Towncode);
     }

@@ -100,6 +100,7 @@ public class AMap : Map, IMap
         {
             Location = new(rs["location"] as String)
         };
+        rs.Remove("location");
 
         var reader = new JsonReader();
         reader.ToObject(rs, null, geo);

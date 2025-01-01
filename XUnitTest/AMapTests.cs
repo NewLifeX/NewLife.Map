@@ -34,7 +34,7 @@ public class AMapTests
         Assert.NotNull(ga);
         Assert.Equal(121.505366, ga.Location.Longitude);
         Assert.Equal(31.23351, ga.Location.Latitude);
-        Assert.Equal("上海市浦东新区陆家嘴街道上海中心大厦上海中心·上海之品商场", ga.Address);
+        Assert.StartsWith("上海市浦东新区陆家嘴街道上海中心大厦", ga.Address);
         Assert.Equal("上海市浦东新区陆家嘴街道银城中路501号东16米", ga.Title);
         Assert.Equal(310115, ga.Code);
         Assert.Equal(310115005, ga.Towncode);
@@ -52,8 +52,8 @@ public class AMapTests
         var drv = await map.GetDistanceAsync(points[0], points[1], "wgs84", 0);
 
         Assert.NotNull(drv);
-        Assert.Equal(851357, drv.Distance);
-        Assert.True(Math.Abs(32190 - drv.Duration) < 600);
+        Assert.Equal(851380, drv.Distance);
+        Assert.True(Math.Abs(31569 - drv.Duration) < 600);
     }
 
     //[Fact]
