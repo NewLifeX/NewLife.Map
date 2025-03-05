@@ -48,8 +48,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NewLife.Core" Version="11.3.2025.109-beta0435" />
-    <PackageReference Include="NewLife.Stardust" Version="3.3.2025.109-beta1540" />
+    <PackageReference Include="NewLife.Core" Version="11.4.2025.301" />
+    <PackageReference Include="NewLife.Stardust" Version="3.3.2025.301" />
   </ItemGroup>
 
   <ItemGroup>
