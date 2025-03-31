@@ -112,7 +112,7 @@ public class AMap : Map, IMap
 
         if (formatAddress)
         {
-            var geo2 = await GetReverseGeoAsync(geo.Location, "wcj02");
+            var geo2 = await GetReverseGeoAsync(geo.Location, "gcj02");
             if (geo2 != null)
             {
                 geo = geo2;

@@ -63,7 +63,7 @@ public static class MapHelper
         return ret;
     }
 
-    /// <summary>WGS84到WCJ02</summary>
+    /// <summary>WGS84到GCJ02</summary>
     /// <param name="wgLat"></param>
     /// <param name="wgLon"></param>
     /// <param name="mgLat"></param>
