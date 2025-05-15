@@ -195,8 +195,16 @@ public class AMap : Map, IMap
 
             if (component["streetNumber"] is IDictionary<String, Object> sn && sn.Count > 0)
             {
-                geo.Street = sn["street"] + "";
-                geo.StreetNumber = sn["number"] + "";
+                // 街道地址可能有多个候选项
+                if (sn["street"] is IList<Object> ss && ss.Count > 0)
+                    geo.Street = ss[0] + "";
+                else
+                    geo.Street = sn["street"] + "";
+
+                if (sn["number"] is IList<Object> ns && ns.Count > 0)
+                    geo.StreetNumber = ns[0] + "";
+                else
+                    geo.StreetNumber = sn["number"] + "";
 
                 if (geo.Title.IsNullOrEmpty())
                 {
