@@ -10,9 +10,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NewLife.Core" Version="11.5.2025.501" />
-    <PackageReference Include="NewLife.Stardust.Extensions" Version="3.3.2025.506" />
-    <PackageReference Include="NewLife.XCode" Version="11.19.2025.501" />
+    <PackageReference Include="NewLife.Core" Version="11.5.2025.601" />
+    <PackageReference Include="NewLife.Stardust.Extensions" Version="3.4.2025.601" />
+    <PackageReference Include="NewLife.XCode" Version="11.19.2025.601" />
     <PackageReference Include="xunit.assert" Version="2.9.3" />
   </ItemGroup>
 
