@@ -1,9 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <AssemblyTitle>地图接口平台</AssemblyTitle>
-    <Description>企业内部地图接口平台，为各应用系统提供统一化的地图接口</Description>
+    <AssemblyTitle>企业地图接口平台</AssemblyTitle>
+    <Description>面向企业内部的统一地图接口平台，聚合多地图厂商能力并提供标准化地理服务访问入口</Description>
     <Company>新生命开发团队</Company>
     <Copyright>©2002-2026 新生命开发团队</Copyright>
     <VersionPrefix>1.1</VersionPrefix>

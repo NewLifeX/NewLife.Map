@@ -1,8 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net45;net461;netstandard2.0;netstandard2.1</TargetFrameworks>
-    <AssemblyTitle>地图组件库</AssemblyTitle>
-    <Description>地图组件库，封装百度地图、高德地图和腾讯地图</Description>
+    <AssemblyTitle>统一地图组件库</AssemblyTitle>
+    <Description>统一封装百度、高德、腾讯、天地图与企业聚合地图接口，提供地理编码、逆地理、距离计算、坐标转换与多Key熔断能力</Description>
     <Company>新生命开发团队</Company>
     <Copyright>©2002-2026 新生命开发团队</Copyright>
     <VersionPrefix>2.6</VersionPrefix>

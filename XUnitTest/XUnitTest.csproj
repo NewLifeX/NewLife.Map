@@ -1,7 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
+    <AssemblyTitle>地图组件单元测试</AssemblyTitle>
+    <Description>用于验证地图组件库各地图提供者在地理编码、逆地理编码与坐标转换等核心能力上的行为正确性</Description>
     <OutputPath>..\Bin\UnitTest</OutputPath>
 
     <IsPackable>false</IsPackable>
