@@ -1,5 +1,5 @@
-﻿using NewLife.Data;
-using NewLife.Map;
+﻿using NewLife.Map;
+using NewLife.Map.Models;
 using NewLife.Model;
 using Stardust;
 using Xunit;

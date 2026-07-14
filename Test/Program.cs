@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using NewLife.Data;
 using NewLife.Log;
-using NewLife.Serialization;
 using NewLife.Map;
+using NewLife.Map.Models;
+using NewLife.Serialization;
 using XCode.Membership;
 using Xunit;
 

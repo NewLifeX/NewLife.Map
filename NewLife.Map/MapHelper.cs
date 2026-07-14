@@ -1,4 +1,4 @@
-﻿using NewLife.Data;
+﻿using NewLife.Map.Models;
 
 namespace NewLife.Map;
 

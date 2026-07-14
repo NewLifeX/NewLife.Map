@@ -1,4 +1,4 @@
-﻿namespace NewLife.Data;
+﻿namespace NewLife.Map.Models;
 
 /// <summary>地理地址</summary>
 public class GeoAddress

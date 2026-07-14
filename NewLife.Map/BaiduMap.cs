@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using System.Web;
-using NewLife.Data;
 using NewLife.Map.Models;
 using NewLife.Serialization;
 

@@ -1,5 +1,6 @@
-using NewLife;
+﻿using NewLife;
 using NewLife.Data;
+using NewLife.Map.Models;
 using XCode;
 using XCode.Membership;
 

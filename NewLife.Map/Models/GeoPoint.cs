@@ -1,4 +1,6 @@
-﻿namespace NewLife.Data;
+﻿using NewLife.Data;
+
+namespace NewLife.Map.Models;
 
 /// <summary>经纬度坐标</summary>
 public class GeoPoint

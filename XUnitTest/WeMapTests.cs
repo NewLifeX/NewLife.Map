@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using NewLife;
-using NewLife.Data;
 using NewLife.Http;
 using NewLife.Map;
+using NewLife.Map.Models;
 using Xunit;
 
 namespace XUnitTest;

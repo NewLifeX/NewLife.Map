@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using NewLife.Data;
 using NewLife.Map;
+using NewLife.Map.Models;
 using Xunit;
 
 namespace XUnitTest;

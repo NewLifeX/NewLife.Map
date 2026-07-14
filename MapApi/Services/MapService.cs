@@ -2,7 +2,6 @@
 using MapApi.Locations;
 using NewLife;
 using NewLife.Caching;
-using NewLife.Data;
 using NewLife.Log;
 using NewLife.Map;
 using NewLife.Map.Models;
