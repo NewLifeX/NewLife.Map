@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using NewLife.Data;
 using NewLife.Log;
 using NewLife.Map.Models;
 using NewLife.Model;

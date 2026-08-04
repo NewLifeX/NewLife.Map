@@ -2,6 +2,7 @@
 using MapApi.Locations;
 using NewLife;
 using NewLife.Caching;
+using NewLife.Data;
 using NewLife.Log;
 using NewLife.Map;
 using NewLife.Map.Models;
@@ -84,9 +85,9 @@ public class MapService
                     span?.SetTag(geoAddress);
 
                     // 坐标系转换
-                    GeoPoint wgs84 = null;
-                    GeoPoint bd09 = null;
-                    GeoPoint gcj02 = null;
+                    GeoPoint? wgs84 = null;
+                    GeoPoint? bd09 = null;
+                    GeoPoint? gcj02 = null;
 
                     if (coordtype.EqualIgnoreCase("wgs84", "wgs84ll"))
                     {

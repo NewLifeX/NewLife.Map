@@ -98,7 +98,7 @@ public class AMap : Map, IMap
 
         var geo = new GeoAddress
         {
-            Location = new(rs["location"] as String)
+            Location = MapHelper.Parse(rs["location"] as String)
         };
         rs.Remove("location");
 
@@ -112,7 +112,7 @@ public class AMap : Map, IMap
 
         if (formatAddress)
         {
-            var geo2 = await GetReverseGeoAsync(geo.Location, "gcj02");
+            var geo2 = await GetReverseGeoAsync(geo.Location ?? default, "gcj02");
             if (geo2 != null)
             {
                 geo = geo2;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using NewLife;
+using NewLife.Data;
 using NewLife.Http;
 using NewLife.Map;
 using NewLife.Map.Models;
@@ -28,16 +29,16 @@ public class BaiduMapTests
         var ga = await map.GetGeoAsync(addr, null, null, false);
 
         Assert.NotNull(ga);
-        Assert.True(Math.Abs(121.511937 - ga.Location.Longitude) < 0.000001);
-        Assert.True(Math.Abs(31.239212 - ga.Location.Latitude) < 0.000001);
+        Assert.True(Math.Abs(121.511937 - ga.Location.Value.Longitude) < 0.000001);
+        Assert.True(Math.Abs(31.239212 - ga.Location.Value.Latitude) < 0.000001);
         Assert.Null(ga.Address);
         Assert.True(ga.Confidence > 0);
 
         ga = await map.GetGeoAsync(addr, null, null, true);
 
         Assert.NotNull(ga);
-        Assert.True(Math.Abs(121.511937 - ga.Location.Longitude) < 0.000001);
-        Assert.True(Math.Abs(31.239212 - ga.Location.Latitude) < 0.000001);
+        Assert.True(Math.Abs(121.511937 - ga.Location.Value.Longitude) < 0.000001);
+        Assert.True(Math.Abs(31.239212 - ga.Location.Value.Latitude) < 0.000001);
         Assert.Equal("上海市浦东新区花园石桥路176号", ga.Address);
         Assert.StartsWith("上海中心大厦内", ga.Title);
         Assert.Equal(310115, ga.Code);

@@ -38,18 +38,19 @@
 
   <ItemGroup>
     <Compile Remove="IpHelper.cs" />
+    <Compile Remove="Models\GeoPoint.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.300">
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.301">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NewLife.Core" Version="11.17.2026.701" />
-    <PackageReference Include="NewLife.Stardust" Version="3.9.2026.708" />
+    <PackageReference Include="NewLife.Core" Version="11.18.2026.801" />
+    <PackageReference Include="NewLife.Stardust" Version="3.10.2026.801" />
   </ItemGroup>
 
   <ItemGroup>

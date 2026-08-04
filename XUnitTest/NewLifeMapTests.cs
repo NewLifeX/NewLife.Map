@@ -1,4 +1,5 @@
-﻿using NewLife.Map;
+﻿using NewLife.Data;
+using NewLife.Map;
 using NewLife.Map.Models;
 using NewLife.Model;
 using Stardust;
@@ -41,8 +42,8 @@ public class NewLifeMapTests
         var ga = await map.GetReverseGeoAsync(point, null);
 
         Assert.NotNull(ga);
-        Assert.Equal(121.511999, ga.Location.Longitude);
-        Assert.Equal(31.239185, ga.Location.Latitude);
+        Assert.Equal(121.511999, ga.Location.Value.Longitude);
+        Assert.Equal(31.239185, ga.Location.Value.Latitude);
         Assert.Equal("上海市浦东新区花园石桥路176号", ga.Address);
         Assert.StartsWith("上海中心大厦内", gmodel.Title);
         Assert.Equal(310115, ga.Code);

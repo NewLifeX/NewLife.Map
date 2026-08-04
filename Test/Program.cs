@@ -39,15 +39,15 @@ namespace Test
             var ga = await map.GetGeoAsync(addr, null, null, false);
 
             Assert.NotNull(ga);
-            Assert.Equal(121.5119990462553, ga.Location.Longitude);
-            Assert.Equal(31.239184684191343, ga.Location.Latitude);
+            Assert.Equal(121.5119990462553, ga.Location.Value.Longitude);
+            Assert.Equal(31.239184684191343, ga.Location.Value.Latitude);
             Assert.Null(ga.Address);
 
             ga = await map.GetGeoAsync(addr, null, null, true);
 
             Assert.NotNull(ga);
-            Assert.Equal(121.51199904625521, ga.Location.Longitude);
-            Assert.Equal(31.239184551783151, ga.Location.Latitude);
+            Assert.Equal(121.51199904625521, ga.Location.Value.Longitude);
+            Assert.Equal(31.239184551783151, ga.Location.Value.Latitude);
             Assert.Equal("上海市浦东新区花园石桥路176号", ga.Address);
             Assert.Equal(310115, ga.Code);
             Assert.Equal(310115005, ga.Towncode);
@@ -78,7 +78,7 @@ namespace Test
 
             for (var i = 0; i < 100; i++)
             {
-                var rs = await map.GetReverseGeoAsync(new GeoPoint("109.995837,40.690028"), null);
+                var rs = await map.GetReverseGeoAsync(MapHelper.Parse("109.995837,40.690028"), null);
                 Assert.NotNull(rs);
 
                 XTrace.WriteLine(rs.ToJson(true));

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using NewLife;
+using NewLife.Data;
 using NewLife.Http;
 using NewLife.Map;
 using NewLife.Map.Models;
@@ -28,16 +29,16 @@ public class TianDiMapTests
         var ga = await map.GetGeoAsync(addr, null, null, false);
 
         Assert.NotNull(ga);
-        Assert.Equal(121.50053, ga.Location.Longitude);
-        Assert.Equal(31.235746, ga.Location.Latitude);
+        Assert.Equal(121.50053, ga.Location.Value.Longitude);
+        Assert.Equal(31.235746, ga.Location.Value.Latitude);
         Assert.Null(ga.Address);
         Assert.True(ga.Confidence > 0);
 
         ga = await map.GetGeoAsync(addr, null, null, true);
 
         Assert.NotNull(ga);
-        Assert.Equal(121.50053, ga.Location.Longitude);
-        Assert.Equal(31.235746, ga.Location.Latitude);
+        Assert.Equal(121.50053, ga.Location.Value.Longitude);
+        Assert.Equal(31.235746, ga.Location.Value.Latitude);
         Assert.StartsWith("银城中路501号", ga.Address);
         Assert.StartsWith("银城中路501号", ga.Title);
         Assert.Equal(310115, ga.Code);

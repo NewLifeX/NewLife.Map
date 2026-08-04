@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Web;
 using NewLife.Collections;
+using NewLife.Data;
 using NewLife.Map.Models;
 using NewLife.Serialization;
 
@@ -85,12 +86,12 @@ public class TianDiTu : Map, IMap
 
         var geo = new GeoAddress
         {
-            Location = new(rs["lon"], rs["lat"]),
+            Location = MapHelper.Create(rs["lon"], rs["lat"]),
         };
 
         if (formatAddress)
         {
-            var geo2 = await GetReverseGeoAsync(geo.Location, coordtype);
+            var geo2 = await GetReverseGeoAsync(geo.Location ?? default, coordtype);
             if (geo2 != null) geo = geo2;
         }
 
@@ -134,7 +135,7 @@ public class TianDiTu : Map, IMap
         };
         if (rs["location"] is IDictionary<String, Object> ds && ds.Count >= 2)
         {
-            addr.Location = new(ds["lon"], ds["lat"]);
+            addr.Location = MapHelper.Create(ds["lon"], ds["lat"]);
         }
 
         if (rs["addressComponent"] is IDictionary<String, Object> component)
@@ -243,7 +244,7 @@ public class TianDiTu : Map, IMap
 
         if (rs["location"] is IDictionary<String, Object> ds && ds.Count >= 2)
         {
-            geo.Location = new(ds["lng"], ds["lat"]);
+            geo.Location = MapHelper.Create(ds["lng"], ds["lat"]);
         }
         //else if (rs["num"] is Int32 num && num > 0 && rs["name"] != null)
         //{
@@ -255,7 +256,7 @@ public class TianDiTu : Map, IMap
 
         if (formatAddress)
         {
-            var geo2 = await GetReverseGeoAsync(geo.Location, coordtype);
+            var geo2 = await GetReverseGeoAsync(geo.Location ?? default, coordtype);
             if (geo2 != null)
             {
                 geo = geo2;

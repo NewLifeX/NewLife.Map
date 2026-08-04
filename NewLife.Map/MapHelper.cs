@@ -1,4 +1,4 @@
-﻿using NewLife.Map.Models;
+﻿using NewLife.Data;
 
 namespace NewLife.Map;
 
@@ -159,4 +159,23 @@ public static class MapHelper
         var gcjLat = z * Math.Sin(theta);
         return [gcjLat, gcjLon];
     }
+
+    /// <summary>解析"经度,纬度"字符串为坐标点。临时替代核心库已移除的 GeoPoint(String)</summary>
+    /// <param name="location">坐标字符串，如"109.995837,40.690028"</param>
+    /// <returns>坐标点；字符串为空或格式非法时返回默认坐标(0,0)</returns>
+    public static GeoPoint Parse(String? location)
+    {
+        if (!location.IsNullOrEmpty())
+        {
+            var ss = location.Split(',');
+            if (ss.Length >= 2) return new GeoPoint(ss[0].ToDouble(), ss[1].ToDouble());
+        }
+        return default;
+    }
+
+    /// <summary>从任意类型经纬度创建坐标点。临时替代核心库已移除的 GeoPoint(Object, Object)</summary>
+    /// <param name="longitude">经度</param>
+    /// <param name="latitude">纬度</param>
+    /// <returns>坐标点</returns>
+    public static GeoPoint Create(Object longitude, Object latitude) => new(longitude.ToDouble(), latitude.ToDouble());
 }

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Web;
+using NewLife.Data;
 using NewLife.Map.Models;
 using NewLife.Serialization;
 
@@ -90,7 +91,7 @@ public class WeMap : Map, IMap
 
         var geo = new GeoAddress
         {
-            Location = new(ds["lng"], ds["lat"])
+            Location = MapHelper.Create(ds["lng"], ds["lat"])
         };
 
         var reader = new JsonReader();
@@ -114,7 +115,7 @@ public class WeMap : Map, IMap
 
         if (formatAddress)
         {
-            var geo2 = await GetReverseGeoAsync(geo.Location, coordtype);
+            var geo2 = await GetReverseGeoAsync(geo.Location ?? default, coordtype);
             if (geo2 != null)
             {
                 geo2.Comprehension = geo.Comprehension;

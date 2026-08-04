@@ -1,4 +1,6 @@
-﻿namespace NewLife.Map.Models;
+﻿using NewLife.Data;
+
+namespace NewLife.Map.Models;
 
 /// <summary>Geo模型</summary>
 public class GeoModel

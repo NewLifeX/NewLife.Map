@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using NewLife;
+using NewLife.Data;
 using NewLife.Http;
 using NewLife.Map;
 using NewLife.Map.Models;
@@ -28,16 +29,16 @@ public class WeMapTests
         var ga = await map.GetGeoAsync(addr, null, null, false);
 
         Assert.NotNull(ga);
-        Assert.Equal(121.505406, ga.Location.Longitude);
-        Assert.Equal(31.233501, ga.Location.Latitude);
+        Assert.Equal(121.505406, ga.Location.Value.Longitude);
+        Assert.Equal(31.233501, ga.Location.Value.Latitude);
         //Assert.Null(ga.Address);
         Assert.True(ga.Confidence > 0);
 
         ga = await map.GetGeoAsync(addr, null, null, true);
 
         Assert.NotNull(ga);
-        Assert.Equal(121.505406, ga.Location.Longitude);
-        Assert.Equal(31.233501, ga.Location.Latitude);
+        Assert.Equal(121.505406, ga.Location.Value.Longitude);
+        Assert.Equal(31.233501, ga.Location.Value.Latitude);
         Assert.StartsWith("上海市浦东新区陆家嘴", ga.Address);
         Assert.Equal("上海市浦东新区花园石桥路", ga.Title);
         Assert.Equal(310115, ga.Code);

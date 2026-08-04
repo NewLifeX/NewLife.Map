@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Web;
+using NewLife.Data;
 using NewLife.Map.Models;
 using NewLife.Serialization;
 
@@ -88,12 +89,12 @@ public class BaiduMap : Map, IMap
 
         var geo = new GeoAddress
         {
-            Location = new(ds["lng"], ds["lat"]),
+            Location = MapHelper.Create(ds["lng"], ds["lat"]),
         };
 
         if (formatAddress)
         {
-            var geo2 = await GetReverseGeoAsync(geo.Location, coordtype);
+            var geo2 = await GetReverseGeoAsync(geo.Location ?? default, coordtype);
             if (geo2 != null) geo = geo2;
         }
 
@@ -139,7 +140,7 @@ public class BaiduMap : Map, IMap
         };
         if (rs["location"] is IDictionary<String, Object> ds && ds.Count >= 2)
         {
-            addr.Location = new(ds["lng"], ds["lat"]);
+            addr.Location = MapHelper.Create(ds["lng"], ds["lat"]);
         }
 
         if (rs["addressComponent"] is IDictionary<String, Object> component)
@@ -228,7 +229,7 @@ public class BaiduMap : Map, IMap
 
         if (rs["location"] is IDictionary<String, Object> ds && ds.Count >= 2)
         {
-            geo.Location = new(ds["lng"], ds["lat"]);
+            geo.Location = MapHelper.Create(ds["lng"], ds["lat"]);
         }
         //else if (rs["num"] is Int32 num && num > 0 && rs["name"] != null)
         //{
@@ -240,7 +241,7 @@ public class BaiduMap : Map, IMap
 
         if (formatAddress && geo.Location != null)
         {
-            var geo2 = await GetReverseGeoAsync(geo.Location, coordtype);
+            var geo2 = await GetReverseGeoAsync(geo.Location.Value, coordtype);
             if (geo2 != null) geo = geo2;
         }
 
@@ -325,7 +326,7 @@ public class BaiduMap : Map, IMap
 
         foreach (var item in rs.Cast<IDictionary<String, Object>>())
         {
-            list.Add(new(item["x"], item["y"]));
+            list.Add(new(item["x"].ToDouble(), item["y"].ToDouble()));
         }
 
         return list;

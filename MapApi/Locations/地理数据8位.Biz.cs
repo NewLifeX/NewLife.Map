@@ -94,11 +94,11 @@ public partial class Geo8 : Entity<Geo8>, IGeo
     /// </summary>
     /// <param name="point"></param>
     /// <returns></returns>
-    public static Geo8 FindByHash(GeoPoint point)
+    public static Geo8 FindByHash(GeoPoint? point)
     {
         if (point == null) return null;
 
-        var hash = GeoHash.Encode(point.Longitude, point.Latitude, 8);
+        var hash = GeoHash.Encode(point.Value.Longitude, point.Value.Latitude, 8);
         return Meta.SingleCache.GetItemWithSlaveKey(hash) as Geo8;
     }
 
@@ -107,11 +107,11 @@ public partial class Geo8 : Entity<Geo8>, IGeo
     /// </summary>
     /// <param name="point"></param>
     /// <returns></returns>
-    public static Geo8 FindByHashBd09(GeoPoint point)
+    public static Geo8 FindByHashBd09(GeoPoint? point)
     {
         if (point == null) return null;
 
-        var hash = GeoHash.Encode(point.Longitude, point.Latitude, 8);
+        var hash = GeoHash.Encode(point.Value.Longitude, point.Value.Latitude, 8);
         return Find(_.HashBd09 == hash);
     }
 
@@ -120,11 +120,11 @@ public partial class Geo8 : Entity<Geo8>, IGeo
     /// </summary>
     /// <param name="point"></param>
     /// <returns></returns>
-    public static Geo8 FindByHashGcj02(GeoPoint point)
+    public static Geo8 FindByHashGcj02(GeoPoint? point)
     {
         if (point == null) return null;
 
-        var hash = GeoHash.Encode(point.Longitude, point.Latitude, 8);
+        var hash = GeoHash.Encode(point.Value.Longitude, point.Value.Latitude, 8);
         return Find(_.HashGcj02 == hash);
     }
 
@@ -221,9 +221,9 @@ public partial class Geo8 : Entity<Geo8>, IGeo
     #region 业务操作
     public Boolean IsValid() => Address.IsNullOrEmpty() && Longitude != 0 && LongitudeBd09 != 0 && LongitudeGcj02 != 0;
 
-    public static Geo8 Upsert(GeoAddress geoAddress, GeoPoint wgs84, GeoPoint bd09, GeoPoint gcj02, Int32 days)
+    public static Geo8 Upsert(GeoAddress geoAddress, GeoPoint? wgs84, GeoPoint? bd09, GeoPoint? gcj02, Int32 days)
     {
-        Geo8 onCreate(GeoPoint k)
+        Geo8 onCreate(GeoPoint? k)
         {
             var gd = new Geo8 { CreateTime = DateTime.Now };
             gd.Fill(geoAddress, wgs84, bd09, gcj02);
@@ -250,7 +250,7 @@ public partial class Geo8 : Entity<Geo8>, IGeo
         return g;
     }
 
-    public void Fill(GeoAddress geo, GeoPoint wgs84, GeoPoint bd09, GeoPoint gcj02)
+    public void Fill(GeoAddress geo, GeoPoint? wgs84, GeoPoint? bd09, GeoPoint? gcj02)
     {
         Code = geo.Towncode > 0 ? geo.Towncode : geo.Code;
 
@@ -259,23 +259,23 @@ public partial class Geo8 : Entity<Geo8>, IGeo
 
         if (wgs84 != null)
         {
-            Longitude = Math.Round(wgs84.Longitude, 6);
-            Latitude = Math.Round(wgs84.Latitude, 6);
-            if (wgs84.Longitude != 0) Hash = GeoHash.Encode(wgs84.Longitude, wgs84.Latitude, 8);
+            Longitude = Math.Round(wgs84.Value.Longitude, 6);
+            Latitude = Math.Round(wgs84.Value.Latitude, 6);
+            if (wgs84.Value.Longitude != 0) Hash = GeoHash.Encode(wgs84.Value.Longitude, wgs84.Value.Latitude, 8);
         }
 
         if (bd09 != null)
         {
-            LongitudeBd09 = Math.Round(bd09.Longitude, 6);
-            LatitudeBd09 = Math.Round(bd09.Latitude, 6);
-            HashBd09 = GeoHash.Encode(bd09.Longitude, bd09.Latitude, 8);
+            LongitudeBd09 = Math.Round(bd09.Value.Longitude, 6);
+            LatitudeBd09 = Math.Round(bd09.Value.Latitude, 6);
+            HashBd09 = GeoHash.Encode(bd09.Value.Longitude, bd09.Value.Latitude, 8);
         }
 
         if (gcj02 != null)
         {
-            LongitudeGcj02 = Math.Round(gcj02.Longitude, 6);
-            LatitudeGcj02 = Math.Round(gcj02.Latitude, 6);
-            HashGcj02 = GeoHash.Encode(gcj02.Longitude, gcj02.Latitude, 8);
+            LongitudeGcj02 = Math.Round(gcj02.Value.Longitude, 6);
+            LatitudeGcj02 = Math.Round(gcj02.Value.Latitude, 6);
+            HashGcj02 = GeoHash.Encode(gcj02.Value.Longitude, gcj02.Value.Latitude, 8);
         }
     }
     #endregion

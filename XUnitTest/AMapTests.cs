@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using NewLife.Data;
 using NewLife.Map;
 using NewLife.Map.Models;
 using Xunit;
@@ -24,16 +25,16 @@ public class AMapTests
         var ga = await map.GetGeoAsync(addr, null, null, false);
 
         Assert.NotNull(ga);
-        Assert.Equal(121.505366, ga.Location.Longitude);
-        Assert.Equal(31.23351, ga.Location.Latitude);
+        Assert.Equal(121.505366, ga.Location.Value.Longitude);
+        Assert.Equal(31.23351, ga.Location.Value.Latitude);
         Assert.Equal("上海市浦东新区上海中心大厦", ga.Address);
         //Assert.True(ga.Confidence > 0);
 
         ga = await map.GetGeoAsync(addr, null, null, true);
 
         Assert.NotNull(ga);
-        Assert.Equal(121.505366, ga.Location.Longitude);
-        Assert.Equal(31.23351, ga.Location.Latitude);
+        Assert.Equal(121.505366, ga.Location.Value.Longitude);
+        Assert.Equal(31.23351, ga.Location.Value.Latitude);
         Assert.StartsWith("上海市浦东新区陆家嘴街道上海中心大厦", ga.Address);
         Assert.Equal("上海市浦东新区陆家嘴街道银城中路501号东16米", ga.Title);
         Assert.Equal(310115, ga.Code);
