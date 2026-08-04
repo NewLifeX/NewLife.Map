@@ -26,3 +26,7 @@ bld/
 /MapApi/Locations/Config
 # 本地临时 SQLite 驱动调试目录
 /.sqlite_tmp
+# 本地临时 IP 库反射目录
+/.ip_tmp
+# BenchmarkDotNet 产物
+/BenchmarkDotNet.Artifacts
