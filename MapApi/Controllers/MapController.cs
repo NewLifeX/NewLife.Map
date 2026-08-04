@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NewLife;
 using NewLife.Cube;
+using NewLife.Data;
 using NewLife.Log;
 using NewLife.Map.Models;
 using XCode.Membership;
@@ -112,6 +113,63 @@ public class MapController : ControllerBaseX
             };
 
             return Json(0, null, gm);
+        }
+        catch (Exception ex)
+        {
+            span?.SetError(ex, null);
+            XTrace.WriteException(ex);
+
+            return Json(500, ex.Message, ex);
+        }
+    }
+
+    /// <summary>正向地理编码。地址转坐标</summary>
+    /// <param name="address">地址</param>
+    /// <param name="city">城市</param>
+    /// <param name="coordtype">坐标系。wgs84/gcj02/bd09</param>
+    /// <returns></returns>
+    [AllowAnonymous]
+    [HttpGet(nameof(GeoAddress))]
+    public async Task<ActionResult> GeoAddress(String address, String? city = null, String? coordtype = null)
+    {
+        using var span = _tracer?.NewSpan(nameof(GeoAddress), new { address, city, coordtype });
+        try
+        {
+            if (address.IsNullOrEmpty()) throw new ArgumentNullException(nameof(address), "地址为空");
+
+            var gm = await _mapService.GetGeo(address, city, coordtype) ?? throw new Exception("error");
+
+            return Json(0, null, gm);
+        }
+        catch (Exception ex)
+        {
+            span?.SetError(ex, null);
+            XTrace.WriteException(ex);
+
+            return Json(500, ex.Message, ex);
+        }
+    }
+
+    /// <summary>计算距离和驾车时间</summary>
+    /// <param name="fromLng">起始经度</param>
+    /// <param name="fromLat">起始纬度</param>
+    /// <param name="toLng">目的经度</param>
+    /// <param name="toLat">目的纬度</param>
+    /// <param name="coordtype">坐标系</param>
+    /// <param name="type">路径计算方式</param>
+    /// <returns></returns>
+    [AllowAnonymous]
+    [HttpGet(nameof(Distance))]
+    public async Task<ActionResult> Distance(Double fromLng, Double fromLat, Double toLng, Double toLat, String? coordtype = null, Int32 type = 0)
+    {
+        using var span = _tracer?.NewSpan(nameof(Distance), new { fromLng, fromLat, toLng, toLat, coordtype, type });
+        try
+        {
+            if (fromLng == 0 || fromLat == 0 || toLng == 0 || toLat == 0) throw new ArgumentNullException(nameof(fromLng), "坐标为空");
+
+            var d = await _mapService.GetDistance(new GeoPoint(fromLng, fromLat), new GeoPoint(toLng, toLat), coordtype, type) ?? throw new Exception("error");
+
+            return Json(0, null, d);
         }
         catch (Exception ex)
         {

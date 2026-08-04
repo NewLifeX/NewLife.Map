@@ -27,6 +27,8 @@
     <PackageReference Include="NewLife.Cube.Core" Version="6.13.2026.802" />
     <PackageReference Include="NewLife.Stardust.Extensions" Version="3.10.2026.801" />
     <PackageReference Include="NewLife.XCode" Version="12.1.2026.801" />
+    <!-- SQLite 数据源驱动（appsettings.json 连接串 Provider=Sqlite）。缺少该驱动时平台初始化数据库会报"未找到 System.Data.SQLite.dll" -->
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.119" />
   </ItemGroup>
 
   <ItemGroup>

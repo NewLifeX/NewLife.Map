@@ -49,4 +49,28 @@ public class NewLifeMapTests
         Assert.Equal(310115, ga.Code);
         Assert.Equal(310115005, ga.Towncode);
     }
+
+    [Fact]
+    public async void Geo()
+    {
+        var map = _map;
+
+        var ga = await map.GetGeoAsync("上海中心");
+
+        Assert.NotNull(ga);
+        Assert.NotNull(ga.Location);
+        Assert.True(ga.Location.Value.Longitude > 100);
+        Assert.True(ga.Location.Value.Latitude > 20);
+    }
+
+    [Fact]
+    public async void Distance()
+    {
+        var map = _map;
+
+        var d = await map.GetDistanceAsync(new GeoPoint(121.505366, 31.23351), new GeoPoint(121.511999, 31.239184), null);
+
+        Assert.NotNull(d);
+        Assert.True(d.Distance > 0);
+    }
 }

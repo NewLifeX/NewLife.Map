@@ -81,15 +81,26 @@ public class NewLifeMap : Map, IMap
 
     #region 地理编码
     /// <summary>
-    /// 地址解析。
+    /// 地址解析。调用 MapApi 平台正向地理编码端点
     /// </summary>
-    /// <param name="address"></param>
-    /// <param name="city"></param>
-    /// <param name="coordtype"></param>
-    /// <param name="formatAddress"></param>
+    /// <param name="address">地址</param>
+    /// <param name="city">城市</param>
+    /// <param name="coordtype">坐标系</param>
+    /// <param name="formatAddress">是否格式化地址</param>
     /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
-    public Task<GeoAddress?> GetGeoAsync(String address, String? city = null, String? coordtype = null, Boolean formatAddress = false) => throw new NotImplementedException();
+    public async Task<GeoAddress?> GetGeoAsync(String address, String? city = null, String? coordtype = null, Boolean formatAddress = false)
+    {
+        if (address.IsNullOrEmpty()) throw new ArgumentNullException(nameof(address));
+
+        var gm = await GetClient().GetAsync<GeoModel>("/Map/GeoAddress", new
+        {
+            address,
+            city,
+            coordtype
+        });
+
+        return gm?.ToGeoAddress();
+    }
     #endregion
 
     #region 逆地理编码
@@ -122,14 +133,24 @@ public class NewLifeMap : Map, IMap
 
     #region 驾驶距离
     /// <summary>
-    /// 驾驶距离。（未实现）
+    /// 驾驶距离。调用 MapApi 平台距离端点
     /// </summary>
-    /// <param name="origin"></param>
-    /// <param name="destination"></param>
-    /// <param name="coordtype"></param>
-    /// <param name="type"></param>
+    /// <param name="origin">起始坐标</param>
+    /// <param name="destination">目的坐标</param>
+    /// <param name="coordtype">坐标系</param>
+    /// <param name="type">路径计算方式</param>
     /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
-    public Task<Driving?> GetDistanceAsync(GeoPoint origin, GeoPoint destination, String? coordtype, Int32 type = 0) => throw new NotImplementedException();
+    public async Task<Driving?> GetDistanceAsync(GeoPoint origin, GeoPoint destination, String? coordtype, Int32 type = 0)
+    {
+        return await GetClient().GetAsync<Driving>("/Map/Distance", new
+        {
+            fromLng = origin.Longitude,
+            fromLat = origin.Latitude,
+            toLng = destination.Longitude,
+            toLat = destination.Latitude,
+            coordtype,
+            type
+        });
+    }
     #endregion
 }

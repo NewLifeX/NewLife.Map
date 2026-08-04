@@ -129,4 +129,62 @@ public class MapService
             throw;
         }
     }
+
+    /// <summary>正向地理编码。地址转坐标</summary>
+    /// <param name="address">地址</param>
+    /// <param name="city">城市</param>
+    /// <param name="coordtype">坐标系。wgs84/gcj02/bd09</param>
+    /// <returns>地理模型；地址为空或厂商无结果时返回 null</returns>
+    public async Task<GeoModel?> GetGeo(String address, String? city = null, String? coordtype = null)
+    {
+        if (address.IsNullOrEmpty()) return null;
+
+        // 内存缓存
+        var key = $"geo:{address},{city},{coordtype}";
+        if (_cache.TryGetValue<GeoModel>(key, out var gm) && gm != null) return gm;
+
+        using var span = _tracer?.NewSpan(nameof(GetGeo), new { address, city, coordtype });
+        try
+        {
+            // 调用厂商正向地理编码
+            var map = GetMap();
+            var geoAddress = await map.GetGeoAsync(address, city, coordtype);
+            if (geoAddress == null) return null;
+
+            gm = new GeoModel
+            {
+                Longitude = geoAddress.Location?.Longitude ?? 0,
+                Latitude = geoAddress.Location?.Latitude ?? 0,
+                Address = geoAddress.Address,
+                Title = geoAddress.Title,
+                AreaCode = geoAddress.Code,
+                Province = geoAddress.Province,
+                City = geoAddress.City,
+                District = geoAddress.District,
+            };
+
+            _cache.Set(key, gm, 10 * 60);
+
+            return gm;
+        }
+        catch (Exception ex)
+        {
+            span?.SetError(ex, null);
+
+            throw;
+        }
+    }
+
+    /// <summary>计算距离和驾车时间</summary>
+    /// <param name="origin">起始坐标</param>
+    /// <param name="destination">目的坐标</param>
+    /// <param name="coordtype">坐标系</param>
+    /// <param name="type">路径计算方式</param>
+    /// <returns>驾驶距离</returns>
+    public async Task<Driving?> GetDistance(GeoPoint origin, GeoPoint destination, String? coordtype = null, Int32 type = 0)
+    {
+        var map = GetMap();
+
+        return await map.GetDistanceAsync(origin, destination, coordtype, type);
+    }
 }
