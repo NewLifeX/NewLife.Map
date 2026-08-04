@@ -100,8 +100,11 @@ public abstract class Map : DisposeBase
     /// <summary>收到异常响应时是否抛出异常</summary>
     public Boolean ThrowException { get; set; }
 
-    /// <summary>是否有效。当前是否有可用key</summary>
-    public Boolean Available => _Keys == null ? !AcquireKey().IsNullOrEmpty() : (_Keys.Length > 0);
+    /// <summary>是否需要密钥。默认true；免费数据源（如Nominatim）可重写为false</summary>
+    public virtual Boolean NeedKey => true;
+
+    /// <summary>是否有效。当前是否有可用key；无需密钥的提供者始终可用</summary>
+    public Boolean Available => KeyName.IsNullOrEmpty() || (_Keys == null ? !AcquireKey().IsNullOrEmpty() : _Keys.Length > 0);
     #endregion
 
     #region 构造
@@ -125,7 +128,9 @@ public abstract class Map : DisposeBase
     public virtual async Task<String> GetStringAsync(String url)
     {
         var key = AcquireKey();
-        if (key.IsNullOrEmpty()) throw new ArgumentNullException(nameof(AppKey), "没有可用密钥");
+
+        // 无需密钥的免费数据源（如 Nominatim）跳过密钥校验；否则必须配置 AppKey
+        if (!KeyName.IsNullOrEmpty() && key.IsNullOrEmpty()) throw new ArgumentNullException(nameof(AppKey), "没有可用密钥");
 
         if (_Client == null)
         {
@@ -140,7 +145,7 @@ public abstract class Map : DisposeBase
         else
             url += "?";
 
-        url += KeyName + "=" + key;
+        if (!KeyName.IsNullOrEmpty()) url += KeyName + "=" + key;
 
         LastUrl = url;
         LastString = null;

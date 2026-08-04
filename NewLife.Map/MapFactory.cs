@@ -14,6 +14,7 @@ public static class MapFactory
         Register<AMap>(MapKinds.AMap);
         Register<WeMap>(MapKinds.Tencent);
         Register<TianDiTu>(MapKinds.TianDiTu);
+        Register<NominatimMap>(MapKinds.Nominatim);
 
         Register<NewLifeMap>(MapKinds.NewLife);
     }

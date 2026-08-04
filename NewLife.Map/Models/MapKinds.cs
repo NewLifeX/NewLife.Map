@@ -15,6 +15,9 @@ public enum MapKinds
     /// <summary>天地图</summary>
     TianDiTu = 4,
 
+    /// <summary>OSM/Nominatim 开源地图。免费无Key</summary>
+    Nominatim = 5,
+
     /// <summary>新生命地图</summary>
     NewLife = 99,
 }

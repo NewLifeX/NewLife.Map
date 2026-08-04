@@ -30,17 +30,18 @@ public class MapService
             foreach (var item in list)
             {
                 if (!item.Enable) continue;
-                if (item.Kind < MapKinds.NewLife && item.AppKey.IsNullOrEmpty()) continue;
 
                 // 创建地图实现
                 var map = MapFactory.Create(item.Kind);
-                if (map != null)
-                {
-                    map.AppKey = item.AppKey;
-                    if (!item.Server.IsNullOrEmpty() && map is Map mp) mp.Server = item.Server;
+                if (map == null) continue;
 
-                    ms.Add(map);
-                }
+                // 需要 Key 的普通厂商必须配置 Key；无 Key 厂商（如 Nominatim）与聚合平台（NewLife）不要求
+                if (item.Kind < MapKinds.NewLife && map is Map { NeedKey: true } && item.AppKey.IsNullOrEmpty()) continue;
+
+                map.AppKey = item.AppKey;
+                if (!item.Server.IsNullOrEmpty() && map is Map mp) mp.Server = item.Server;
+
+                ms.Add(map);
             }
 
             _maps = ms;
