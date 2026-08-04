@@ -1,4 +1,4 @@
-# NewLife.Map - 地图组件库
+# NewLife.Map - 统一地图组件库
 
 ![GitHub top language](https://img.shields.io/github/languages/top/newlifex/NewLife.Map?logo=github)
 ![GitHub License](https://img.shields.io/github/license/newlifex/NewLife.Map?logo=github)
@@ -6,24 +6,34 @@
 ![Nuget](https://img.shields.io/nuget/v/NewLife.Map?logo=nuget)
 ![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/NewLife.Map?label=dev%20nuget&logo=nuget)
 
-地图组件库  
+统一封装百度、高德、腾讯、天地图与企业地图接口平台的地图组件库，以一套接口屏蔽各家差异，提供地理编码、逆地理编码、距离计算、坐标转换与多 Key 熔断能力。  
 
 源码： https://github.com/NewLifeX/NewLife.Map  
 Nuget：`NewLife.Map`  
 
+## 仓库组成
+| 工程 | 定位 | 说明 |
+| ---- | ---- | ---- |
+| `NewLife.Map` | 地图组件库（NuGet 包） | 统一接口 `IMap` + 多厂商适配 + 坐标转换 + Key 熔断 |
+| `MapApi` | 企业地图接口平台（Web 服务） | 聚合多厂商 + GeoHash 多级缓存 + 魔方后台管理 |
+| `XUnitTest` | 单元测试 | 各提供者地理编码 / 逆地理 / 距离 / 坐标转换测试 |
+
+## 文档
+- [需求文档](Doc/需求文档.md) — 愿景、核心目标、功能需求、暂缓清单
+- [功能清单](Doc/功能清单.md) — 模块/功能编码与实现/测试/注释三维状态追踪
+- [架构设计](Doc/架构设计.md) — 分层、组件、关键流程与设计决策
+
 ## 功能特性
-- 统一接口 IMap，屏蔽百度 / 高德 / 腾讯 / 天地图 / 企业自建(NewLifeMap) 差异
-- 地理编码（地址→坐标）/ 逆地理编码（坐标→地址）
-- 路径距离/驾车时间（不同厂商策略参数差异已抽象）
-- 行政区划查询（高德）
-- POI / 语义信息融合，自动补充地址组件
-- IP 定位（百度）
-- 多 Key 轮询与自动熔断 + 定时恢复（内置限流/失效关键字识别）
-- 坐标系互转：WGS84 / GCJ02 / BD09（内置常用转换公式）及厂商在线批量转换（百度特殊 from/to 映射）
+- 统一接口 `IMap`，屏蔽百度 / 高德 / 腾讯 / 天地图 / 企业自建（NewLifeMap）差异，切换厂商零改动
+- 地理编码（地址→坐标）/ 逆地理编码（坐标→地址），自动融合 POI 语义信息补全地址组件
+- 路径距离 / 驾车时间，不同厂商策略参数差异已抽象
+- 行政区划查询（高德）、POI / 区域检索（百度 / 天地图）、IP 定位（百度 / 腾讯）
+- 坐标系互转：WGS84 / GCJ02 / BD09 内置离线公式 + 厂商在线批量转换（百度特殊 from/to 映射已封装）
+- 多 Key 轮询与自动熔断 + 定时恢复，单个 Key 超限 / 封禁不影响整体可用
 - 可选抛出异常 `ThrowException`，便于上层统一处理
 - 多目标框架：net45 / net461 / netstandard2.0 / netstandard2.1（兼容老项目与现代 .NET）
 - 强命名签名，适合反射与插件体系
-- Stardust 注册中心集成（`NewLifeMap` 提供者）支持服务发现与多实例地址自动刷新
+- 星尘注册中心集成：`NewLifeMap` 提供者自动发现服务端地址，多实例 / 蓝绿发布无感切换
 
 ## 安装
 ```bash
@@ -38,7 +48,7 @@ Nuget：`NewLife.Map`
 using NewLife.Map;
 using NewLife.Data;
 
-// 选择一个具体地图提供者（BaiduMap / AMap / TencentMap / TianDiMap / NewLifeMap）
+// 选择一个具体地图提供者（BaiduMap / AMap / WeMap / TianDiTu / NewLifeMap）
 var map = new BaiduMap { AppKey = "<BAIDU_AK>" }; // 多个 key 用逗号分隔
 
 // 1. 正向地理编码：地址 -> 坐标
@@ -61,24 +71,50 @@ Console.WriteLine(list[0]);
 
 ## 通过工厂动态创建
 ```csharp
-var m1 = Map.Create("Baidu");     // 自动匹配 *Map 后缀
-var m2 = Map.Create("AMap");      // 高德
+var m1 = Map.Create("Baidu");           // 自动匹配 *Map 后缀
+var m2 = Map.Create("AMap");            // 高德
 var m3 = Map.Create("NewLifeMap");
+
+// 或按枚举创建
+var m4 = MapFactory.Create(MapKinds.TianDiTu);
 ```
 > `AppKey` 在实例化后设置；多个 key 以逗号分隔，内部轮询使用。
 
-## 提供者说明
+## 地图提供者
 | 提供者 | 类名 | 主要能力 | 备注 |
 | ------ | ---- | -------- | ---- |
 | 百度地图 | `BaiduMap` | 地理/逆地理/距离/POI检索/IP定位/坐标转换(在线+离线) | `KeyName=ak` |
-| 高德地图 | `AMap` | 地理/逆地理/距离/行政区划/坐标转换(离线) | `KeyName=key` |
-| 腾讯地图 | `TencentMap` | (若实现) 地理/逆地理/距离 | 同模式 |
-| 天地图 | `TianDiMap` | (若实现) 地理/逆地理 | |
-| 新生命地图平台 | `NewLifeMap` | 企业聚合接口（后端微服务统一封装） | 通过 Stardust 服务发现 |
+| 高德地图 | `AMap` | 地理/逆地理/距离/行政区划 | `KeyName=key` |
+| 腾讯地图 | `WeMap` | 地理/逆地理/距离/IP定位 | `KeyName=key` |
+| 天地图 | `TianDiTu` | 地理/逆地理/距离(含途经点)/POI检索 | `KeyName=tk` |
+| 新生命地图平台 | `NewLifeMap` | 企业聚合接口（对接 MapApi 平台） | 通过 Stardust 服务发现 |
 
-`TencentMap.cs` / `TianDiMap.cs` 若为空或未实现，可按 AMap/BaiduMap 模式扩展。
+> 新增提供者请参考下文「扩展一个新地图提供者步骤」，按 AMap/BaiduMap 模式实现。
 
-## NewLifeMap & 星尘集成
+## 坐标系转换
+| 名称 | 说明 | 常见厂商 |
+| ---- | ---- | -------- |
+| WGS84 | 国际通用 GPS | 设备原始定位 |
+| GCJ02 | 国测局加偏 | 高德 / 腾讯 / 绝大多数国内在线地图 |
+| BD09 | 百度加偏 | 百度 |
+
+```csharp
+// 离线公式转换，不消耗厂商配额
+var p = await map.ConvertAsync(new GeoPoint(lng, lat), from: "wgs84", to: "gcj02");
+
+// 百度在线批量转换，from/to 索引值已封装
+var list = await map.ConvertAsync(points, from: "wgs84ll", to: "bd09ll");
+```
+
+## AppKey 多 Key 轮询与熔断
+- 传入 `AppKey="k1,k2,k3"`，每次请求递增索引取余轮询
+- 响应命中无效关键字（如 `TOO_FREQUENT` / `LIMIT` / `INVALID` 等）时调用 `RemoveKey()` 暂时下线
+- 下线 Key 进入 `_pendingKeys`，由 `TimerX` 定时扫描，到期自动恢复
+- 恢复时间策略：当前实现为调用处自行传入（例如 1 小时）
+
+## NewLifeMap 聚合平台
+`NewLifeMap` 指向仓库内置的 `MapApi` 企业地图接口平台，平台侧聚合多家厂商并缓存结果，客户端无需感知底层差异。
+
 ```csharp
 // 方式1：直接指定服务端
 var map = new NewLifeMap("http://mapapi.company.local") { AppKey = "<KEY>" };
@@ -87,27 +123,14 @@ var map = new NewLifeMap("http://mapapi.company.local") { AppKey = "<KEY>" };
 services.AddSingleton<IMap, NewLifeMap>();
 // NewLifeMap(IServiceProvider) 构造函数中会尝试：IRegistry -> StarFactory
 ```
-当后端 MapApi 节点列表变化时，绑定的 `ApiHttpClient` 会自动更新，可在多副本/蓝绿发布中无感切换。
 
-## AppKey 多 Key 轮询与熔断
-- 传入 `AppKey="k1,k2,k3"`
-- 每次请求递增索引取余
-- 若响应命中无效关键字（如：`TOO_FREQUENT`, `LIMIT`, `INVALID` 等），调用 `RemoveKey()` 将其暂时下线
-- 下线 key 会放入 `_pendingKeys`，定时器到期后自动恢复
-- 恢复时间策略：当前实现为调用处自行传入（例如 1 小时）
+- 绑定的 `ApiHttpClient` 会自动更新服务端地址列表，MapApi 多副本 / 蓝绿发布时无感切换
+- 平台侧提供 `GET /Map/Geo` 与 `GET /Map/ReverseGeo` 统一接口，GeoHash 6~9 位四级缓存降低厂商调用量
 
-## 坐标系说明
-| 名称 | 说明 | 常见厂商 |
-| ---- | ---- | -------- |
-| WGS84 | 国际通用 GPS | 设备原始定位 |
-| GCJ02 | 国测局加偏 | 高德 / 腾讯 / 绝大多数国内在线地图 |
-| BD09 | 百度加偏 | 百度 |
-
-调用示例：
-```csharp
-var rs = await map.ConvertAsync(new [] { new GeoPoint(lng, lat) }, from:"wgs84", to:"gcj02");
-```
-百度在线转换需要 from/to 索引值，本库已封装。
+## 错误处理
+- 默认：接口返回非成功状态不抛异常，方法返回 `null`
+- 设置 `map.ThrowException = true;` 后抛出 `Exception`，便于外层统一捕获
+- 最近一次请求调试信息：`LastUrl` / `LastString` / `LastResult` / `LastKey`
 
 ## 常用 API 一览
 ```csharp
@@ -116,29 +139,25 @@ Task<GeoAddress?> GetReverseGeoAsync(GeoPoint point, string? coordtype);
 Task<Driving?>    GetDistanceAsync(GeoPoint origin, GeoPoint destination, string? coordtype, int type=0);
 Task<IList<GeoPoint>> ConvertAsync(IList<GeoPoint> points, string from, string to);
 ```
-扩展（BaiduMap / AMap 特有）：
+扩展（部分提供者特有）：
 ```csharp
-Task<GeoAddress?> PlaceSearchAsync(...);      // BaiduMap POI / 区域检索
+Task<GeoAddress?> PlaceSearchAsync(...);      // BaiduMap / TianDiTu POI / 区域检索
 Task<IList<GeoArea>> GetAreaAsync(...);       // AMap 行政区划
-Task<IDictionary<string, object?>> IpLocationAsync(...); // BaiduMap IP 定位
+Task<IDictionary<string, object?>> IpLocationAsync(...); // BaiduMap / WeMap IP 定位
 ```
 
-## 错误处理
-- 默认：接口返回非成功状态不会抛异常，方法返回 null
-- 设置 `map.ThrowException = true;` 后抛出 `Exception`，便于外层统一捕获
-- 最近一次请求调试信息：`LastUrl` / `LastString` / `LastResult` / `LastKey`
-
-## 扩展一个新地图提供者步骤
+## 扩展一个新地图提供者
 1. 新建类 `XXXMap : Map, IMap`
 2. 设置 `Server` / `KeyName`
 3. 重写 `InvokeAsync<T>` 解析该厂商统一返回结构 & 错误码
 4. 实现 `GetGeoAsync` / `GetReverseGeoAsync` / 其它所需能力
 5. 若有专属限流/失效特征，重写 `IsValidKey` 返回 true 触发临时下线
-6. 提交单元测试覆盖主要功能与边界
+6. 在 `MapFactory` 静态构造中 `Register<XXXMap>(MapKinds.XXX)` 注册
+7. 提交单元测试覆盖主要功能与边界
 
 ## 单元测试
 仓库包含 `XUnitTest` 工程：
-- `*MapTests`：针对不同提供者的编码/逆编码测试
+- `*MapTests`：针对不同提供者的编码 / 逆编码 / 距离 / 坐标转换测试
 - 请将真实 Key 放入本地用户机密或环境变量，不要提交到仓库
 
 运行：
@@ -153,7 +172,6 @@ dotnet build -c Release
 输出（多框架编译）位于 `Bin/`。
 
 ## Roadmap / TODO
-- [ ] 补全 `TencentMap` / `TianDiMap` 具体实现（若仍为空）
 - [ ] 为 `NewLifeMap` 聚合平台补充正向地理编码与距离计算接口
 - [ ] 增加并发限速（令牌桶）可选适配，避免密钥整体封禁
 - [ ] 添加 Benchmark 基准对比（批量坐标转换）
@@ -169,10 +187,6 @@ dotnet build -c Release
 MIT，保留版权声明即可自由使用于商业 / 开源项目。
 
 ---
-
-## NewLifeMap
-地图提供者NewLifeMap指向内置MapApi地图接口平台，屏蔽各家接口差异，支持自定义修改。  
-NewLifeMap 可明文制定服务端地址，也可以借助依赖注入自动从星尘注册中心获取。  
 
 ## 新生命项目矩阵
 各项目默认支持net9.0/netstandard2.1/netstandard2.0/net4.62/net4.5，旧版（2024.0801）支持net4.0/net2.0  

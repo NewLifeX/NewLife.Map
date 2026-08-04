@@ -305,7 +305,7 @@ public abstract class Map : DisposeBase
                 rs.Add(new(ps[1], ps[0]));
             }
         }
-        if (from == "wgs84" && to == "bd09")
+        else if (from == "wgs84" && to == "bd09")
         {
             foreach (var pt in points)
             {
@@ -321,7 +321,7 @@ public abstract class Map : DisposeBase
                 rs.Add(new(ps[1], ps[0])); 
             }
         }
-        if (from == "gcj02" && to == "bd09")
+        else if (from == "gcj02" && to == "bd09")
         {
             foreach (var pt in points)
             {
