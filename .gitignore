@@ -24,3 +24,5 @@ bld/
 /BinTest
 /BinUnitTest
 /MapApi/Locations/Config
+# 本地临时 SQLite 驱动调试目录
+/.sqlite_tmp
