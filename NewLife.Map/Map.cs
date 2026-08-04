@@ -235,6 +235,8 @@ public abstract class Map : DisposeBase
         }
     }
 
+    /// <summary>检查挂起密钥，到期后恢复可用。由 TimerX 定时调用</summary>
+    /// <param name="state">定时器状态</param>
     void CheckPending(Object state)
     {
         var now = DateTime.Now;
@@ -260,6 +262,7 @@ public abstract class Map : DisposeBase
         }
     }
 
+    /// <summary>失效关键字。命中即视为密钥失效（禁用或超限）</summary>
     private readonly String[] _KeyWords = ["INVALID", "LIMIT"];
     /// <summary>是否无效Key。可能禁用或超出限制</summary>
     /// <param name="result"></param>

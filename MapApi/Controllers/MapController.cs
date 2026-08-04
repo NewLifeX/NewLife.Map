@@ -23,6 +23,11 @@ public class MapController : ControllerBaseX
         _tracer = tracer;
     }
 
+    /// <summary>逆地理编码。坐标转地址</summary>
+    /// <param name="lng">经度</param>
+    /// <param name="lat">纬度</param>
+    /// <param name="coordtype">坐标系。wgs84/gcj02/bd09</param>
+    /// <returns></returns>
     [AllowAnonymous]
     [HttpGet(nameof(Geo))]
     public async Task<ActionResult> Geo(Double lng, Double lat, String coordtype)
@@ -73,6 +78,11 @@ public class MapController : ControllerBaseX
         }
     }
 
+    /// <summary>逆地理编码。坐标转地址，别名端点</summary>
+    /// <param name="lng">经度</param>
+    /// <param name="lat">纬度</param>
+    /// <param name="coordtype">坐标系。wgs84/gcj02/bd09</param>
+    /// <returns></returns>
     [AllowAnonymous]
     [HttpGet(nameof(ReverseGeo))]
     public async Task<ActionResult> ReverseGeo(Double lng, Double lat, String coordtype)

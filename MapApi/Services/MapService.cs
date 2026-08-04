@@ -9,6 +9,7 @@ using NewLife.Map.Models;
 
 namespace MapApi.Services;
 
+/// <summary>地图服务。聚合多厂商提供地理编码、逆地理编码与距离计算，内置内存缓存降低厂商调用量</summary>
 public class MapService
 {
     private readonly ITracer _tracer;
@@ -53,6 +54,12 @@ public class MapService
         return _maps[idx % _maps.Count];
     }
 
+    /// <summary>逆地理编码。坐标转地址：内存缓存 → 数据库四级查询 → 厂商调用 → 坐标系转换 → 落库</summary>
+    /// <param name="longitude">经度</param>
+    /// <param name="latitude">纬度</param>
+    /// <param name="coordtype">坐标系。wgs84/gcj02/bd09</param>
+    /// <param name="days">缓存天数。&lt;=0 时使用平台配置</param>
+    /// <returns>地理数据；坐标为空时返回 null</returns>
     public async Task<IGeo> GetAddress(Double longitude, Double latitude, String coordtype, Int32 days = 0)
     {
         if (longitude == 0 && latitude == 0) return null;
