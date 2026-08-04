@@ -88,6 +88,7 @@ var m4 = MapFactory.Create(MapKinds.TianDiTu);
 | 高德地图 | `AMap` | 地理/逆地理/距离/行政区划 | `KeyName=key` |
 | 腾讯地图 | `WeMap` | 地理/逆地理/距离/IP定位 | `KeyName=key` |
 | 天地图 | `TianDiTu` | 地理/逆地理/距离(含途经点)/POI检索 | `KeyName=tk` |
+| OSM/Nominatim | `NominatimMap` | 地理/逆地理（开源免费无 Key，WGS84） | 无需 Key |
 | 新生命地图平台 | `NewLifeMap` | 企业聚合接口（对接 MapApi 平台） | 通过 Stardust 服务发现 |
 
 > 新增提供者请参考下文「扩展一个新地图提供者步骤」，按 AMap/BaiduMap 模式实现。
@@ -126,7 +127,7 @@ services.AddSingleton<IMap, NewLifeMap>();
 ```
 
 - 绑定的 `ApiHttpClient` 会自动更新服务端地址列表，MapApi 多副本 / 蓝绿发布时无感切换
-- 平台侧提供 `GET /Map/Geo` 与 `GET /Map/ReverseGeo` 统一接口，GeoHash 6~9 位四级缓存降低厂商调用量
+- 平台侧提供 `GET /Map/Geo`、`/Map/ReverseGeo`（逆地理）、`/Map/GeoAddress`（正向地理）、`/Map/Distance`（距离）统一接口，GeoHash 6~9 位四级缓存降低厂商调用量
 
 ## 错误处理
 - 默认：接口返回非成功状态不抛异常，方法返回 `null`
@@ -173,7 +174,6 @@ dotnet build -c Release
 输出（多框架编译）位于 `Bin/`。
 
 ## Roadmap / TODO
-- [ ] 为 `NewLifeMap` 聚合平台补充正向地理编码与距离计算接口
 - [ ] 增加并发限速（令牌桶）可选适配，避免密钥整体封禁
 - [ ] 添加 Benchmark 基准对比（批量坐标转换）
 - [ ] 丰富故障统计 / Metrics（成功率、平均耗时、Key 命中率）
