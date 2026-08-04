@@ -86,7 +86,7 @@ var m4 = MapFactory.Create(MapKinds.TianDiTu);
 | ------ | ---- | -------- | ---- |
 | 百度地图 | `BaiduMap` | 地理/逆地理/距离/POI检索/IP定位/坐标转换(在线+离线) | `KeyName=ak` |
 | 高德地图 | `AMap` | 地理/逆地理/距离/行政区划 | `KeyName=key` |
-| 腾讯地图 | `WeMap` | 地理/逆地理/距离/IP定位 | `KeyName=key` |
+| 腾讯地图 | `WeMap` | 地理/逆地理/距离/IP定位/行政区划 | `KeyName=key` |
 | 天地图 | `TianDiTu` | 地理/逆地理/距离(含途经点)/POI检索 | `KeyName=tk` |
 | OSM/Nominatim | `NominatimMap` | 地理/逆地理（开源免费无 Key，WGS84） | 无需 Key |
 | 新生命地图平台 | `NewLifeMap` | 企业聚合接口（对接 MapApi 平台） | 通过 Stardust 服务发现 |
@@ -174,9 +174,7 @@ dotnet build -c Release
 输出（多框架编译）位于 `Bin/`。
 
 ## Roadmap / TODO
-- [ ] 增加并发限速（令牌桶）可选适配，避免密钥整体封禁
-- [ ] 添加 Benchmark 基准对比（批量坐标转换）
-- [ ] 丰富故障统计 / Metrics（成功率、平均耗时、Key 命中率）
+> 2026-08-04 已全部完成：并发限速（MAP-12）、故障统计 Metrics（MAP-13）、Benchmark 基准对比（MAP-14）
 
 ## 版本策略
 主版本 = 兼容性变更；次版本 = 新功能；修订号 = 修复 / 优化。`VersionSuffix` 带日期，便于快速定位构建。

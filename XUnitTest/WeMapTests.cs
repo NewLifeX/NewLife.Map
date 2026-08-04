@@ -79,4 +79,16 @@ public class WeMapTests
     //    Assert.True(points2[0].Longitude > 0);
     //    Assert.True(points2[0].Latitude > 0);
     //}
+
+    [Fact]
+    public async void GetArea()
+    {
+        // 腾讯 district API 行政区划。依赖真实 Key 与网络
+        var list = await _map.GetAreaAsync(0);
+
+        Assert.NotNull(list);
+        Assert.True(list.Count > 0);
+        Assert.True(list[0].Code > 0);
+        Assert.False(String.IsNullOrEmpty(list[0].Name));
+    }
 }

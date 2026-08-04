@@ -189,4 +189,28 @@ public class MapController : ControllerBaseX
             return Json(500, ex.Message, ex);
         }
     }
+
+    /// <summary>IP 解析。离线 IP 库查询物理地址</summary>
+    /// <param name="ip">IP 地址</param>
+    /// <returns></returns>
+    [AllowAnonymous]
+    [HttpGet(nameof(Ip))]
+    public ActionResult Ip(String ip)
+    {
+        try
+        {
+            if (ip.IsNullOrEmpty()) throw new ArgumentNullException(nameof(ip), "IP 为空");
+
+            var (area, addr) = MapService.IpDb.GetAddress(ip);
+            if (area.IsNullOrEmpty()) return Json(1, "未查询到地址，请确认 IP 数据库已就绪", null);
+
+            return Json(0, null, new { ip, area, addr });
+        }
+        catch (Exception ex)
+        {
+            XTrace.WriteException(ex);
+
+            return Json(500, ex.Message, ex);
+        }
+    }
 }

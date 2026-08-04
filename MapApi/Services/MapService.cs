@@ -12,6 +12,32 @@ namespace MapApi.Services;
 /// <summary>地图服务。聚合多厂商提供地理编码、逆地理编码与距离计算，内置内存缓存降低厂商调用量</summary>
 public class MapService
 {
+    private static NewLife.IP.Ip? _ipDb;
+
+    /// <summary>离线 IP 库。懒加载初始化，数据文件缺失时自动下载</summary>
+    public static NewLife.IP.Ip IpDb => _ipDb ??= CreateIpDb();
+
+    /// <summary>创建离线 IP 库实例。指定 Data 目录下的 ip.gz，缺失时交给库自动下载</summary>
+    /// <returns></returns>
+    private static NewLife.IP.Ip CreateIpDb()
+    {
+        var ip = new NewLife.IP.Ip();
+
+        var dbFile = Path.Combine(AppContext.BaseDirectory, "Data", "ip.gz");
+        if (File.Exists(dbFile)) ip.DbFile = dbFile;
+
+        try
+        {
+            ip.Init();
+        }
+        catch (Exception ex)
+        {
+            XTrace.WriteLine("离线 IP 库初始化失败：{0}", ex.Message);
+        }
+
+        return ip;
+    }
+
     private readonly ITracer _tracer;
     private readonly ICache _cache = Cache.Default;
 

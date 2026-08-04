@@ -1,4 +1,6 @@
-﻿using NewLife.Data;
+﻿using System.Collections.Concurrent;
+using System.Diagnostics;
+using NewLife.Data;
 using NewLife.Log;
 using NewLife.Map.Models;
 using NewLife.Reflection;
@@ -105,6 +107,24 @@ public abstract class Map : DisposeBase
 
     /// <summary>是否有效。当前是否有可用key；无需密钥的提供者始终可用</summary>
     public Boolean Available => KeyName.IsNullOrEmpty() || (_Keys == null ? !AcquireKey().IsNullOrEmpty() : _Keys.Length > 0);
+
+    /// <summary>每秒请求上限。0 表示不限速（默认），用于避免单 Key 高频请求被厂商封禁</summary>
+    public Int32 MaxQps { get; set; }
+
+    /// <summary>请求总数</summary>
+    public Int64 Total => Interlocked.Read(ref _total);
+
+    /// <summary>成功次数</summary>
+    public Int64 Success => Interlocked.Read(ref _success);
+
+    /// <summary>失败次数</summary>
+    public Int64 Fail => Interlocked.Read(ref _fail);
+
+    /// <summary>成功率。0~1</summary>
+    public Double SuccessRate => Total == 0 ? 0 : (Double)Success / Total;
+
+    /// <summary>平均耗时。单位毫秒</summary>
+    public Double AvgTime => Total == 0 ? 0 : (Double)Interlocked.Read(ref _totalTime) / Total;
     #endregion
 
     #region 构造
@@ -122,11 +142,57 @@ public abstract class Map : DisposeBase
 
     private HttpClient? _Client;
 
+    // 限速与统计
+    private DateTime _lastRequest;
+    private Int64 _total;
+    private Int64 _success;
+    private Int64 _fail;
+    private Int64 _totalTime;
+    private readonly ConcurrentDictionary<String, Int64> _keyStats = new();
+
+    /// <summary>按 MaxQps 限速等待。固定间隔控制请求频率，默认不限速</summary>
+    /// <returns></returns>
+    protected async Task WaitTokenAsync()
+    {
+        if (MaxQps <= 0) return;
+
+        var interval = 1000 / MaxQps;
+        var wait = 0;
+
+        lock (this)
+        {
+            var now = DateTime.Now;
+            var elapsed = (Int32)(now - _lastRequest).TotalMilliseconds;
+            if (elapsed >= interval)
+            {
+                _lastRequest = now;
+                return;
+            }
+
+            wait = interval - elapsed;
+        }
+
+        if (wait > 0) await Task.Delay(wait).ConfigureAwait(false);
+
+        lock (this)
+        {
+            _lastRequest = DateTime.Now;
+        }
+    }
+
+    /// <summary>获取指定 Key 的请求次数</summary>
+    /// <param name="key">应用密钥</param>
+    /// <returns></returns>
+    public Int64 GetKeyCount(String key) => _keyStats.TryGetValue(key, out var n) ? n : 0;
+
     /// <summary>异步获取字符串</summary>
     /// <param name="url"></param>
     /// <returns></returns>
     public virtual async Task<String> GetStringAsync(String url)
     {
+        // 限速：MaxQps 大于 0 时按固定间隔控制请求频率，避免单 Key 高频请求被厂商封禁
+        await WaitTokenAsync().ConfigureAwait(false);
+
         var key = AcquireKey();
 
         // 无需密钥的免费数据源（如 Nominatim）跳过密钥校验；否则必须配置 AppKey
@@ -151,12 +217,31 @@ public abstract class Map : DisposeBase
         LastString = null;
         LastKey = key;
 
-        var rs = await _Client.GetStringAsync(url).ConfigureAwait(false);
+        if (!key.IsNullOrEmpty()) _keyStats.AddOrUpdate(key, 1, (_, n) => n + 1);
 
-        //// 删除无效密钥
-        //if (IsValidKey(rs)) RemoveKey(key);
+        var sw = Stopwatch.StartNew();
+        try
+        {
+            var rs = await _Client.GetStringAsync(url).ConfigureAwait(false);
 
-        return LastString = rs;
+            Interlocked.Increment(ref _success);
+
+            //// 删除无效密钥
+            //if (IsValidKey(rs)) RemoveKey(key);
+
+            return LastString = rs;
+        }
+        catch
+        {
+            Interlocked.Increment(ref _fail);
+
+            throw;
+        }
+        finally
+        {
+            Interlocked.Increment(ref _total);
+            Interlocked.Add(ref _totalTime, sw.ElapsedMilliseconds);
+        }
     }
 
     /// <summary>远程调用</summary>

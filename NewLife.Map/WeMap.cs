@@ -252,7 +252,61 @@ public class WeMap : Map, IMap
     #endregion
 
     #region 行政区划
+    /// <summary>行政区划查询。腾讯 district API</summary>
+    /// <remarks>
+    /// https://lbs.qq.com/service/webService/webServiceGuide/webServiceDistrict
+    /// list 返回省/市/区三级；getchildren 返回指定区域子级。需真实 Key 验证响应结构
+    /// </remarks>
+    /// <param name="id">父级行政区划编码。0 表示省级列表</param>
+    /// <returns></returns>
+    public async Task<IList<GeoArea>> GetAreaAsync(Int32 id = 0)
+    {
+        var url = id <= 0 ? "/ws/district/v1/list" : $"/ws/district/v1/getchildren?id={id}";
 
+        var rs = await InvokeAsync<IDictionary<String, Object>>(url, "data");
+        if (rs == null || rs.Count == 0) return [];
+
+        var addrs = new List<GeoArea>();
+        if (rs["data"] is IList<Object> list)
+        {
+            // list 接口 data.data 为 [省,市,区] 嵌套数组；getchildren 为平级子级数组
+            foreach (var item in list)
+            {
+                if (item is IList<Object> childs)
+                {
+                    foreach (var child in childs)
+                    {
+                        if (child is IDictionary<String, Object> dic) addrs.Add(ParseArea(dic, id));
+                    }
+                }
+                else if (item is IDictionary<String, Object> dic)
+                {
+                    addrs.Add(ParseArea(dic, id));
+                }
+            }
+        }
+
+        return addrs;
+    }
+
+    /// <summary>解析行政区划节点</summary>
+    /// <param name="dic">区划字典</param>
+    /// <param name="parentCode">父级编码</param>
+    /// <returns></returns>
+    private static GeoArea ParseArea(IDictionary<String, Object> dic, Int32 parentCode)
+    {
+        var area = new GeoArea
+        {
+            Code = (dic["id"] + "").ToInt(),
+            Name = dic["name"] + "",
+        };
+        if (parentCode > 0) area.ParentCode = parentCode;
+
+        if (dic["location"] is IDictionary<String, Object> loc)
+            area.Center = $"{loc["lng"]},{loc["lat"]}";
+
+        return area;
+    }
     #endregion
 
     #region IP定位
