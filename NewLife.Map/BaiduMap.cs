@@ -179,7 +179,7 @@ public class BaiduMap : Map, IMap
 
         if (type <= 0) type = 13;
         var coord = coordtype;
-        if (!coord.IsNullOrEmpty() && coord.Length > 6) coord = coord.TrimEnd("ll");
+        if (!coord.IsNullOrEmpty() && coord.Length > 6) coord = coord.TrimSuffix("ll");
         var url = $"/routematrix/v2/driving?origins={origin.Latitude},{origin.Longitude}&destinations={destination.Latitude},{destination.Longitude}&tactics={type}&coord_type={coord}&output=json";
 
         var list = await InvokeAsync<IList<Object>>(url, "result");

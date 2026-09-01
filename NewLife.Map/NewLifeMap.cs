@@ -40,7 +40,7 @@ public class NewLifeMap : Map, IMap
         if (registry != null)
         {
             // 星尘创建客户端，绑定注册中心，可自动更新服务端地址
-            _client = await registry.CreateForServiceAsync("NewLife.Map") as ApiHttpClient;
+            _client = await registry.GetClientAsync("NewLife.Map") as ApiHttpClient;
 
             if (_client != null)
             {

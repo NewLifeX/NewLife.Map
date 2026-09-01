@@ -148,7 +148,7 @@ public class TianDiTu : Map, IMap
             addr.City = component["city"] + "";
             addr.District = component["county"] + "";
 
-            addr.Code = (component["county_code"] + "").TrimStart("156").ToInt();
+            addr.Code = (component["county_code"] + "").TrimPrefix("156").ToInt();
 
             addr.Name = component["poi"] + "";
             addr.Title = component["address"] + "";
