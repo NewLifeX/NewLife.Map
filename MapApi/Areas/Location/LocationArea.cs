@@ -7,6 +7,6 @@ namespace MapApi.Areas.Location
     [DisplayName("地理编码")]
     public class LocationArea : AreaBase
     {
-        public LocationArea() : base(nameof(LocationArea).TrimEnd("Area")) { }
+        public LocationArea() : base(nameof(LocationArea).TrimSuffix("Area")) { }
     }
 }

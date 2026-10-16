@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using NewLife.Data;
 using NewLife.Log;
 using NewLife.Map.Models;
@@ -248,17 +249,18 @@ public abstract class Map : DisposeBase
     /// <param name="url">目标Url</param>
     /// <param name="result">结果字段</param>
     /// <returns></returns>
-    protected virtual async Task<T?> InvokeAsync<T>(String url, String? result) where T : class
+    protected virtual async Task<T?> InvokeAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.PublicProperties)] T>(String url, String? result) where T : class
     {
         LastResult = null;
 
         var html = await GetStringAsync(url).ConfigureAwait(false);
         if (html.IsNullOrEmpty()) return default;
 
-        var rs = html[0] == '<' && html[^1] == '>' ? XmlParser.Decode(html) : JsonParser.Decode(html);
+        // 使用实例解析器，兼容 JSON 对象与数组根（Nominatim search 返回数组）
+        var rs = html[0] == '<' && html[^1] == '>' ? XmlParser.Decode(html) : new JsonParser(html).Decode();
         if (rs == null) return default;
 
-        LastResult = rs;
+        LastResult = rs as IDictionary<String, Object?>;
 
         return JsonHelper.Convert<T>(rs);
     }
@@ -440,18 +442,38 @@ public abstract class Map : DisposeBase
     #region 静态
     private static Dictionary<String, Type>? _providers;
     /// <summary>创建指定提供者的实例</summary>
-    /// <param name="provider"></param>
+    /// <param name="provider">提供者名称。支持类型名、类型全名，或省略 Map 后缀，如 Baidu、BaiduMap、NewLife.Map.BaiduMap</param>
     /// <returns></returns>
     public static IMap? Create(String provider)
     {
-        _providers ??= AssemblyX.FindAllPlugins(typeof(IMap), true).ToDictionary(e => e.Name, e => e);
+        if (provider.IsNullOrEmpty()) return null;
 
-        if (_providers.TryGetValue(provider, out var type) ||
-            _providers.TryGetValue(provider + "Map", out type))
-            return type.CreateInstance() as IMap;
+        // 优先匹配工厂已注册的提供者。NativeAOT/裁剪环境下程序集反射扫描不可用，注册表是唯一可靠路径
+        foreach (var item in MapFactory.Providers)
+        {
+            var type = item.Value;
+            if (type.Name.EqualIgnoreCase(provider) ||
+                type.Name.EqualIgnoreCase(provider + "Map") ||
+                type.FullName.EqualIgnoreCase(provider))
+                return type.CreateInstance() as IMap;
+        }
 
-        type = provider.GetTypeEx();
-        if (type != null) return type.CreateInstance() as IMap;
+        // 反射扫描程序集，发现未注册的自定义提供者；部分裁剪/AOT 环境不支持程序集类型扫描
+        try
+        {
+            _providers ??= AssemblyX.FindAllPlugins(typeof(IMap), true).ToDictionary(e => e.Name, e => e);
+
+            if (_providers.TryGetValue(provider, out var type2) ||
+                _providers.TryGetValue(provider + "Map", out type2))
+                return type2.CreateInstance() as IMap;
+
+            type2 = provider.GetTypeEx();
+            if (type2 != null) return type2.CreateInstance() as IMap;
+        }
+        catch (NotSupportedException)
+        {
+            // NativeAOT 等环境不支持程序集类型扫描，按找不到处理
+        }
 
         return null;
     }

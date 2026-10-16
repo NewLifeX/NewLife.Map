@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Web;
 using NewLife.Collections;
 using NewLife.Data;
@@ -29,7 +30,7 @@ public class TianDiTu : Map, IMap
     /// <param name="url">目标Url</param>
     /// <param name="result">结果字段</param>
     /// <returns></returns>
-    protected override async Task<T> InvokeAsync<T>(String url, String? result)
+    protected override async Task<T?> InvokeAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.PublicProperties)] T>(String url, String? result) where T : class
     {
         var dic = await base.InvokeAsync<IDictionary<String, Object>>(url, result);
         if (dic == null || dic.Count == 0) return default;
@@ -60,7 +61,7 @@ public class TianDiTu : Map, IMap
     /// <param name="city"></param>
     /// <param name="coordtype"></param>
     /// <returns></returns>
-    protected async Task<IDictionary<String, Object>> GetGeocoderAsync(String address, String? city = null, String? coordtype = null)
+    protected async Task<IDictionary<String, Object>?> GetGeocoderAsync(String address, String? city = null, String? coordtype = null)
     {
         if (address.IsNullOrEmpty()) throw new ArgumentNullException(nameof(address));
 
@@ -110,7 +111,7 @@ public class TianDiTu : Map, IMap
     /// <param name="point"></param>
     /// <param name="coordtype">坐标系</param>
     /// <returns></returns>
-    protected async Task<IDictionary<String, Object>> GetReverseGeocoderAsync(GeoPoint point, String? coordtype)
+    protected async Task<IDictionary<String, Object>?> GetReverseGeocoderAsync(GeoPoint point, String? coordtype)
     {
         if (point == null || point.Longitude == 0 || point.Latitude == 0) throw new ArgumentNullException(nameof(point));
 

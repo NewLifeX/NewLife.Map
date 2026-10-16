@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Web;
 using NewLife.Data;
 using NewLife.Map.Models;
@@ -30,7 +31,7 @@ public class WeMap : Map, IMap
     /// <param name="url">目标Url</param>
     /// <param name="result">结果字段</param>
     /// <returns></returns>
-    protected override async Task<T> InvokeAsync<T>(String url, String? result)
+    protected override async Task<T?> InvokeAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.PublicProperties)] T>(String url, String? result) where T : class
     {
         var dic = await base.InvokeAsync<IDictionary<String, Object>>(url, result);
         if (dic == null || dic.Count == 0) return default;
@@ -60,7 +61,7 @@ public class WeMap : Map, IMap
     /// https://lbs.qq.com/service/webService/webServiceGuide/webServiceGeocoder
     /// 未使用smart_address参数，（智能地址解析作为高级版服务，还可支持地址标准化整理、补全、地址切分及要素识别、提取姓名与手机号的功能。）
     /// </remarks>
-    public async Task<IDictionary<String, Object>> GetGeocoderAsync(String address, String? city = null, String? coordtype = null)
+    public async Task<IDictionary<String, Object>?> GetGeocoderAsync(String address, String? city = null, String? coordtype = null)
     {
         if (address.IsNullOrEmpty()) throw new ArgumentNullException(nameof(address));
 
@@ -68,7 +69,7 @@ public class WeMap : Map, IMap
         city = HttpUtility.UrlEncode(city);
         address = HttpUtility.UrlEncode(address);
 
-        var url = $"https://apis.map.qq.com/ws/geocoder/v1/?output=json";
+        var url = $"/ws/geocoder/v1/?output=json";
         if (!String.IsNullOrWhiteSpace(city)) url += $"&region={city}";//region为城市可选参数，如果address里包含城市信息，可以不带region参数请求
         url += $"&address={city}{address}";
         //url += $"&smart_address={city}{address}";//智能接口，高级服务，你懂的~
@@ -146,7 +147,7 @@ public class WeMap : Map, IMap
     /// <remarks> 不会返回周边地点（POI）列表
     /// https://lbs.qq.com/service/webService/webServiceGuide/webServiceGcoder
     /// </remarks>
-    public async Task<IDictionary<String, Object>> GetReverseGeocoderAsync(GeoPoint point, String? coordtype)
+    public async Task<IDictionary<String, Object>?> GetReverseGeocoderAsync(GeoPoint point, String? coordtype)
     {
         if (point.Longitude < 0.1 || point.Latitude < 0.1) throw new ArgumentNullException(nameof(point));
 

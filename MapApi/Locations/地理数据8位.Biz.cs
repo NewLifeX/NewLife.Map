@@ -15,8 +15,8 @@ public partial class Geo8 : Entity<Geo8>, IGeo
         //var df = Meta.Factory.AdditionalFields;
         //df.Add(nameof(Code));
 
-        // 过滤器 UserModule、TimeModule、IPModule
-        Meta.Modules.Add<TimeModule>();
+        // 过滤器 UserInterceptor、TimeInterceptor、IPInterceptor
+        Meta.Interceptors.Add<TimeInterceptor>();
 
         var sc = Meta.SingleCache;
         sc.Expire = 20 * 60;

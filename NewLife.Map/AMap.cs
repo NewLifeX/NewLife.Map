@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Web;
 using NewLife.Data;
 using NewLife.Map.Models;
@@ -43,7 +44,7 @@ public class AMap : Map, IMap
     /// <param name="url">目标Url</param>
     /// <param name="result">结果字段</param>
     /// <returns></returns>
-    protected override async Task<T> InvokeAsync<T>(String url, String? result)
+    protected override async Task<T?> InvokeAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.PublicProperties)] T>(String url, String? result) where T : class
     {
         var dic = await base.InvokeAsync<IDictionary<String, Object>>(url, result);
         if (dic == null || dic.Count == 0) return default;
@@ -79,7 +80,7 @@ public class AMap : Map, IMap
         address = HttpUtility.UrlEncode(address);
         city = HttpUtility.UrlEncode(city);
 
-        var url = $"http://restapi.amap.com/v3/geocode/geo?address={address}&city={city}&output=json";
+        var url = $"/v3/geocode/geo?address={address}&city={city}&output=json";
 
         var list = await InvokeAsync<IList<Object>>(url, "geocodes");
         return list?.FirstOrDefault() as IDictionary<String, Object>;
@@ -147,11 +148,11 @@ public class AMap : Map, IMap
     /// <param name="point"></param>
     /// <param name="coordtype"></param>
     /// <returns></returns>
-    protected async Task<IDictionary<String, Object>> GetReverseGeocoderAsync(GeoPoint point, String? coordtype)
+    protected async Task<IDictionary<String, Object>?> GetReverseGeocoderAsync(GeoPoint point, String? coordtype)
     {
         if (point.Longitude < 0.1 || point.Latitude < 0.1) throw new ArgumentNullException(nameof(point));
 
-        var url = $"http://restapi.amap.com/v3/geocode/regeo?location={point.Longitude},{point.Latitude}&extensions=base&output=json";
+        var url = $"/v3/geocode/regeo?location={point.Longitude},{point.Latitude}&extensions=base&output=json";
 
         return await InvokeAsync<IDictionary<String, Object>>(url, "regeocode");
     }
@@ -251,7 +252,7 @@ public class AMap : Map, IMap
         if (destination == null || destination.Longitude < 1 && destination.Latitude < 1) throw new ArgumentNullException(nameof(destination));
 
         if (type <= 0) type = 1;
-        var url = $"http://restapi.amap.com/v3/distance?origins={origin.Longitude},{origin.Latitude}&destination={destination.Longitude},{destination.Latitude}&type={type}&output=json";
+        var url = $"/v3/distance?origins={origin.Longitude},{origin.Latitude}&destination={destination.Longitude},{destination.Latitude}&type={type}&output=json";
 
         var list = await InvokeAsync<IList<Object>>(url, "results");
         if (list == null || list.Count == 0) return null;
@@ -284,7 +285,7 @@ public class AMap : Map, IMap
         // 编码
         keywords = HttpUtility.UrlEncode(keywords);
 
-        var url = $"http://restapi.amap.com/v3/config/district?keywords={keywords}&subdistrict={subdistrict}&filter={code}&extensions=base&output=json";
+        var url = $"/v3/config/district?keywords={keywords}&subdistrict={subdistrict}&filter={code}&extensions=base&output=json";
 
         var list = await InvokeAsync<IList<Object>>(url, "districts");
         if (list == null || list.Count == 0) return [];
