@@ -1,5 +1,10 @@
 name: test
 
+# 单元测试矩阵：必选覆盖 win-x64 / linux-x64 / linux-arm64（阻断）+ linux-la64（龙芯，QEMU 仿真）。
+# 触发：push / pull_request / 手动（workflow_dispatch）；不采用夜间定时。
+# 默认仅运行确定性测试；真实厂商/平台联调测试标记 Category=Integration（依赖外部网络与真实 Key），
+# 在 CI 中以 --filter "Category!=Integration" 排除，配置密钥后可在本地以 --filter "Category=Integration" 运行。
+
 on:
   push:
     branches: [ '*' ]
@@ -7,10 +12,16 @@ on:
     branches: [ '*' ]
   workflow_dispatch:
 
-jobs:
-  build-publish:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
+jobs:
+  # 编译：库全部目标框架（net45/net461/netstandard2.0/netstandard2.1）+ 测试与 AOT 冒烟工程
+  build:
+    name: build
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     steps:
     - uses: actions/checkout@v4
@@ -26,6 +37,69 @@ jobs:
     - name: Build
       run: |
         dotnet build -c Release
+
+  # 单元测试矩阵：win-x64 / linux-x64 / linux-arm64（阻断）
+  test:
+    name: test (${{ matrix.rid }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - rid: win-x64
+            os: windows-latest
+          - rid: linux-x64
+            os: ubuntu-latest
+          - rid: linux-arm64
+            os: ubuntu-24.04-arm
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup dotNET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 10.x
     - name: Test
       run: |
-        dotnet test -c Release XUnitTest/XUnitTest.csproj
+        dotnet test XUnitTest/XUnitTest.csproj -c Release --filter "Category!=Integration"
+
+  # LA64（linux-loongarch64，龙芯，必选）：官方无 runner，QEMU 用户态仿真 + 龙芯 .NET SDK 执行全量确定性测试。
+  # 龙芯运行时为解释器模式（不支持动态代码），MSBuild/csc/vstest 在仿真下不可用，
+  # 采用「x64 runner 编译 IL → LA64 运行时执行」：用 xunit 独立控制台运行器（纯 IL）承载测试。
+  test-la64:
+    name: test (linux-loongarch64 qemu)
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup dotNET (x64 build host)
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 10.x
+    - name: Build tests on x64 (IL)
+      run: dotnet build -c Release XUnitTest/XUnitTest.csproj
+    - name: Setup LA64 Toolchain
+      uses: ./.github/actions/setup-la64
+    - name: Fetch xunit console runner
+      # xunit.runner.console 的 net6.0 版是纯 IL 控制台程序，可在 LA64 仿真下作为测试宿主
+      run: |
+        curl -fsSL -o /tmp/xunit-console.nupkg https://www.nuget.org/api/v2/package/xunit.runner.console/2.9.3
+        mkdir -p /tmp/xunit-console
+        unzip -q -o /tmp/xunit-console.nupkg 'tools/net6.0/*' -d /tmp/xunit-console
+    - name: Test (LA64)
+      # 龙芯仿真下偶发崩溃由最多 3 次重试兜底（真实回归会稳定失败）；测试不含外部网络依赖
+      run: |
+        set -uo pipefail
+        runner=/tmp/xunit-console/tools/net6.0/xunit.console.dll
+        asm="$GITHUB_WORKSPACE/Bin/UnitTest/net10.0/XUnitTest.dll"
+        ok=0
+        for attempt in 1 2 3; do
+          echo "==== xunit (attempt $attempt)"
+          if out=$(dotnet "$runner" "$asm" -nocolor -notrait "Category=Integration"); then ok=1; break; fi
+          echo "$out" | tail -20
+        done
+        echo "$out" | grep -E 'Tests run|Total tests' || true
+        [ "$ok" = "1" ]
+

@@ -1,0 +1,115 @@
+name: aot
+
+# NativeAOT 兼容性矩阵：win-x64 / linux-x64 / linux-arm64（原生发布运行）+ linux-la64（QEMU JIT 冒烟，必选）。
+# 触发：push / pull_request / 手动（workflow_dispatch）；不采用夜间定时。
+# NativeAOT 官方不支持跨 OS 编译，每个 RID 均使用原生 runner 发布运行；
+# linux-loongarch64 无 NativeAOT 后端（官方不支持），以 JIT 冒烟覆盖运行期场景。
+#
+# 已知 IL 告警白名单（1 条，工具链限制）：库以旧目标框架（net45/net461/ns2.0/ns2.1）发布时，
+# Roslyn 不会把泛型参数裁剪注解传入异步状态机，Map.InvokeAsync 泛型调用 JsonHelper.Convert
+# 会报告 IL2091；运行期行为已由 AotSmoke 各场景在原生 AOT 产物下实际执行验证。
+
+on:
+  push:
+    branches: [ '*' ]
+  pull_request:
+    branches: [ '*' ]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # AOT 防回归：IL 告警门禁（除白名单外 0 告警，单一 job，与 RID 无关）
+  aot-analyzer:
+    name: aot analyzer check
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup dotNET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 10.x
+    - name: Install NativeAOT Prerequisites (Linux)
+      run: sudo apt-get update && sudo apt-get install -y clang zlib1g-dev
+    - name: Publish NativeAOT & Gate on IL Warnings
+      run: |
+        set -eo pipefail
+        dotnet publish AotSmoke/AotSmoke.csproj -c Release -r linux-x64 -o /tmp/aot-analyzer -p:TrimmerSingleWarn=false 2>&1 | tee publish.log
+        bad=$(grep -E 'warning IL[0-9]+' publish.log | grep -v -E 'warning IL2091: NewLife\.Map\.Map\.<InvokeAsync>d__' || true)
+        if [ -n "$bad" ]; then
+          echo "$bad"
+          echo "发现白名单之外的 AOT/裁剪告警，阻断"
+          exit 1
+        fi
+        echo "IL 告警门禁通过（仅白名单 1 条 IL2091，见文件头注释）"
+
+  # NativeAOT 冒烟矩阵：win-x64 / linux-x64 / linux-arm64（阻断基线）
+  aot:
+    name: aot (${{ matrix.rid }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - rid: win-x64
+            os: windows-latest
+            bin: AotSmoke.exe
+          - rid: linux-x64
+            os: ubuntu-latest
+            bin: AotSmoke
+          - rid: linux-arm64
+            os: ubuntu-24.04-arm
+            bin: AotSmoke
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup dotNET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 10.x
+    - name: Install NativeAOT Prerequisites (Linux)
+      if: runner.os == 'Linux'
+      run: sudo apt-get update && sudo apt-get install -y clang zlib1g-dev
+    - name: JIT Baseline
+      # 同一冒烟工程以 JIT 运行，为 AOT 结果提供对照；平台问题与 AOT 问题由此可区分
+      run: dotnet run -c Release --project AotSmoke/AotSmoke.csproj
+    - name: Publish NativeAOT Smoke
+      run: dotnet publish AotSmoke/AotSmoke.csproj -c Release -r ${{ matrix.rid }} -o AotSmoke/bin/aot-out
+    - name: Run NativeAOT Smoke
+      # 任一场景失败即非 0 退出码
+      shell: bash
+      run: ./AotSmoke/bin/aot-out/${{ matrix.bin }}
+
+  # linux-la64（龙芯，必选）：QEMU 用户态仿真 + 龙芯 SDK；NativeAOT 无 LA64 后端，
+  # 以「x64 编译 IL → LA64 运行时执行」验证同一套冒烟场景，覆盖该平台的运行期兼容性。
+  aot-la64:
+    name: aot (linux-loongarch64 qemu, JIT)
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup dotNET (x64 build host)
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 10.x
+    - name: Build smoke on x64 (IL)
+      # 龙芯运行时为解释器模式，仿真下不能跑 MSBuild/csc，冒烟程序集必须在 x64 上编译
+      run: dotnet build -c Release AotSmoke/AotSmoke.csproj
+    - name: Setup LA64 Toolchain
+      uses: ./.github/actions/setup-la64
+    - name: JIT Smoke (LA64)
+      # 仿真偶发崩溃由最多 3 次重试兜底；冒烟全部场景通过即退出码 0
+      run: |
+        set -uo pipefail
+        ok=0
+        for attempt in 1 2 3; do
+          echo "==== AotSmoke (attempt $attempt)"
+          if dotnet Bin/AotSmoke/net10.0/AotSmoke.dll; then ok=1; break; fi
+        done
+        [ "$ok" = "1" ]

@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <AssemblyTitle>地图组件 AOT 冒烟</AssemblyTitle>
+    <Description>NativeAOT 兼容冒烟：工厂创建/坐标转换/GeoHash/多Key熔断/JSON 序列化等核心场景，任一失败以非 0 退出码反馈</Description>
+    <OutputPath>..\Bin\AotSmoke</OutputPath>
+    <!-- 被测项目 NewLife.Map 使用通配符 AssemblyVersion，需关闭确定性以保持与 Benchmark 项目一致 -->
+    <Deterministic>false</Deterministic>
+    <PublishAot>true</PublishAot>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NewLife.Map\NewLife.Map.csproj" />
+  </ItemGroup>
+
+</Project>

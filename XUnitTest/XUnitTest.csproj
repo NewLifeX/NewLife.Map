@@ -7,13 +7,16 @@
     <OutputPath>..\Bin\UnitTest</OutputPath>
 
     <IsPackable>false</IsPackable>
+
+    <!-- 默认仅运行确定性测试；真实厂商/平台联调测试（Category=Integration）以过滤器显式运行 -->
+    <VSTestTestCaseFilter Condition="'$(VSTestTestCaseFilter)' == ''">Category!=Integration</VSTestTestCaseFilter>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.11" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
-    <PackageReference Include="NewLife.Core" Version="11.19.2026.901" />
-    <PackageReference Include="NewLife.UnitTest" Version="1.1.2026.102" />
+    <PackageReference Include="NewLife.Core" Version="12.0.2026.1016-beta0911" />
+    <PackageReference Include="NewLife.UnitTest" Version="1.1.2026.301-beta0617" />
     <PackageReference Include="xunit" Version="2.9.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="4.0.0">
       <PrivateAssets>all</PrivateAssets>
