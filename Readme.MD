@@ -160,12 +160,14 @@ Task<IDictionary<string, object?>> IpLocationAsync(...); // BaiduMap / WeMap IP 
 
 ## 单元测试
 仓库包含 `XUnitTest` 工程：
-- `*MapTests`：针对不同提供者的编码 / 逆编码 / 距离 / 坐标转换测试
+- 默认仅运行**确定性测试**：本地 HTTP 桩服务覆盖各厂商 URL 构造与响应解析，可在全部 RID（含 CI）稳定执行
+- 真实厂商 / OSM / 平台在线测试标记 `Category=Integration`，默认过滤；配置真实 Key 后以 `--filter "Category=Integration"` 运行
 - 请将真实 Key 放入本地用户机密或环境变量，不要提交到仓库
 
 运行：
 ```bash
 dotnet test -c Release
+dotnet test -c Release --filter "Category=Integration"   # 可选：真实环境联调
 ```
 
 ## 构建
@@ -173,6 +175,11 @@ dotnet test -c Release
 dotnet build -c Release
 ```
 输出（多框架编译）位于 `Bin/`。
+
+## 兼容性测试（CI）
+push / PR 触发，覆盖主流 RID：
+- 单元测试矩阵：win-x64 / linux-x64 / linux-arm64 / linux-la64（龙芯，QEMU 仿真 + 龙芯 .NET SDK，见 `test.yml`）
+- NativeAOT 冒烟矩阵：同上四个 RID（`AotSmoke` 工程，17 个场景），见 `aot.yml`
 
 ## Roadmap / TODO
 > 2026-08-04 已全部完成：并发限速（MAP-12）、故障统计 Metrics（MAP-13）、Benchmark 基准对比（MAP-14）
