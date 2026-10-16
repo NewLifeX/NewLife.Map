@@ -11,9 +11,13 @@ namespace XUnitTest;
 
 public class NewLifeMapTests
 {
-    private readonly NewLifeMap _map;
-    public NewLifeMapTests()
+    private NewLifeMap _map;
+
+    /// <summary>集成测试共用地图实例。延迟初始化星尘注册中心，确定性桩测试不触发，避免测试环境差异</summary>
+    private NewLifeMap GetMap()
     {
+        if (_map != null) return _map;
+
         //_map = new NewLifeMap { Server = "https://localhost:7279" };
 
         var services = ObjectContainer.Current;
@@ -22,14 +26,14 @@ public class NewLifeMapTests
         var provider = services.BuildServiceProvider();
         //_map = provider.GetService<IMap>() as NewLifeMap;
         //_map = provider.CreateInstance(typeof(NewLifeMap)) as NewLifeMap;
-        _map = new NewLifeMap(provider);
+        return _map = new NewLifeMap(provider);
     }
 
     [Fact]
     [Trait("Category", "Integration")]
     public async Task Geocoder()
     {
-        var map = _map;
+        var map = GetMap();
         var point = new GeoPoint(121.5119990462553, 31.239184684191343);
 
         var gmodel = await map.GetGeoInfo(point, null);
@@ -55,7 +59,7 @@ public class NewLifeMapTests
     [Trait("Category", "Integration")]
     public async Task Geo()
     {
-        var map = _map;
+        var map = GetMap();
 
         var ga = await map.GetGeoAsync("上海中心");
 
@@ -69,7 +73,7 @@ public class NewLifeMapTests
     [Trait("Category", "Integration")]
     public async Task Distance()
     {
-        var map = _map;
+        var map = GetMap();
 
         var d = await map.GetDistanceAsync(new GeoPoint(121.505366, 31.23351), new GeoPoint(121.511999, 31.239184), null);
 
