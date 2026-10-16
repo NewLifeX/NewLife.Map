@@ -16,7 +16,7 @@ public class MapRateLimitTests
     }
 
     [Fact]
-    public async void MaxQps_Default_NoWait()
+    public async Task MaxQps_Default_NoWait()
     {
         // 默认 0 不限速，立即通过
         var map = new TestMap { MaxQps = 0 };
@@ -29,7 +29,7 @@ public class MapRateLimitTests
     }
 
     [Fact]
-    public async void MaxQps_High_NoWait()
+    public async Task MaxQps_High_NoWait()
     {
         // 高 QPS 间隔极小，几乎不等待
         var map = new TestMap { MaxQps = 1000 };
@@ -42,7 +42,7 @@ public class MapRateLimitTests
     }
 
     [Fact]
-    public async void MaxQps_1_Throttled()
+    public async Task MaxQps_1_Throttled()
     {
         // 每秒 1 次：首次通过，第二次需等待约 1 秒
         var map = new TestMap { MaxQps = 1 };

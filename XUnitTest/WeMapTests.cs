@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Net.Http;
@@ -20,7 +20,7 @@ public class WeMapTests
 
     [Fact]
     [Trait("Category", "Integration")]
-    public async void Geocoder()
+    public async Task Geocoder()
     {
         var addr = "上海中心";
         var map = _map;
@@ -50,7 +50,7 @@ public class WeMapTests
 
     [Fact]
     [Trait("Category", "Integration")]
-    public async void GetDistanceAsync()
+    public async Task GetDistanceAsync()
     {
         var points = new List<GeoPoint> {
             new(121.51199904625513, 31.239184419374944),
@@ -66,7 +66,7 @@ public class WeMapTests
     }
 
     //[Fact]
-    //public async void ConvertAsync()
+    //public async Task ConvertAsync()
     //{
     //    var points = new List<GeoPoint>
     //    {
@@ -86,7 +86,7 @@ public class WeMapTests
 
     [Fact]
     [Trait("Category", "Integration")]
-    public async void GetArea()
+    public async Task GetArea()
     {
         // 腾讯 district API 行政区划。依赖真实 Key 与网络
         var list = await _map.GetAreaAsync(0);

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Net.Http;
@@ -20,7 +21,7 @@ public class TianDiMapTests
 
     [Fact]
     [Trait("Category", "Integration")]
-    public async void Geocoder()
+    public async Task Geocoder()
     {
         var addr = "浦东上海中心";
         var map = _map;
@@ -50,7 +51,7 @@ public class TianDiMapTests
 
     [Fact]
     [Trait("Category", "Integration")]
-    public async void GetDistanceAsync()
+    public async Task GetDistanceAsync()
     {
         var points = new List<GeoPoint> {
             new(121.51199904625513, 31.239184419374944),
@@ -67,7 +68,7 @@ public class TianDiMapTests
 
     [Fact]
     [Trait("Category", "Integration")]
-    public async void GetDistanceAsync2()
+    public async Task GetDistanceAsync2()
     {
         var points = new List<GeoPoint> {
             new(121.51199904625513, 31.239184419374944),
@@ -145,6 +146,58 @@ public class TianDiMapTests
         Assert.NotNull(drv);
         Assert.Equal(853030, drv.Distance);
         Assert.Equal(33118, drv.Duration);
+        Assert.Empty(stub.Unmatched);
+    }
+
+    [Fact]
+    [DisplayName("天地图_桩服务_POI行政区划区域检索解析")]
+    public async Task PlaceSearch_Region_Stub()
+    {
+        using var stub = new StubHttpServer();
+        stub.Map("/v2/search", """
+            {"status":0,"resultType":1,"count":1,"keyword":"上海中心","pois":[{"name":"上海中心大厦","address":"上海市浦东新区银城中路501号","lonlat":"121.505366,31.23351","poiType":101,"province":"上海市","city":"上海市","county":"浦东新区","countyCode":"156310115"}]}
+            """);
+
+        var map = new TianDiTu { Server = stub.Server, AppKey = "test" };
+        var ga = await map.PlaceSearchAsync("上海中心", null, "上海", null, false);
+
+        Assert.NotNull(ga);
+        Assert.Equal("上海中心大厦", ga.Name);
+        Assert.Equal("上海市浦东新区银城中路501号", ga.Address);
+        Assert.Equal("上海市", ga.Province);
+        Assert.Equal("浦东新区", ga.District);
+        Assert.Equal(310115, ga.Code);
+        Assert.NotNull(ga.Location);
+        Assert.Equal(121.505366, ga.Location.Value.Longitude);
+
+        var raw = Uri.UnescapeDataString(stub.LastRequest);
+        Assert.Contains("\"queryType\":12", raw);
+        Assert.Contains("\"specify\":\"上海\"", raw);
+        Assert.Contains("tk=test", map.LastUrl);
+        Assert.Empty(stub.Unmatched);
+    }
+
+    [Fact]
+    [DisplayName("天地图_桩服务_POI普通搜索解析")]
+    public async Task PlaceSearch_Plain_Stub()
+    {
+        using var stub = new StubHttpServer();
+        stub.Map("/v2/search", """
+            {"status":0,"resultType":1,"count":1,"pois":[{"name":"北京大学","address":"北京市海淀区颐和园路5号","lonlat":"116.310556,39.992626","province":"北京市","city":"北京市","county":"海淀区","countyCode":"156110108"}]}
+            """);
+
+        var map = new TianDiTu { Server = stub.Server, AppKey = "test" };
+        var ga = await map.PlaceSearchAsync("北京大学", "高校", null, null, false);
+
+        Assert.NotNull(ga);
+        Assert.Equal("北京大学", ga.Name);
+        Assert.Equal("海淀区", ga.District);
+        Assert.Equal(110108, ga.Code);
+
+        var raw = Uri.UnescapeDataString(stub.LastRequest);
+        Assert.Contains("\"queryType\":1", raw);
+        Assert.Contains("\"mapBound\":\"-180,-90,180,90\"", raw);
+        Assert.Contains("\"dataTypes\":\"高校\"", raw);
         Assert.Empty(stub.Unmatched);
     }
     #endregion

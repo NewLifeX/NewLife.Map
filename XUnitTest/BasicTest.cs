@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿﻿﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using NewLife.Data;
 using NewLife.Map;
 using NewLife.Map.Models;
@@ -11,7 +12,7 @@ public class BasicTest
     private readonly NewLifeMap _map = new();
 
     [Fact]
-    public async void ConvertAsync()
+    public async Task ConvertAsync()
     {
         var points = new List<GeoPoint> {
             new(121.51199904625513, 31.239184419374944),

@@ -14,7 +14,7 @@ public class NominatimMapTests
 
     [Fact]
     [Trait("Category", "Integration")]
-    public async void Geocoder()
+    public async Task Geocoder()
     {
         var ga = await _map.GetGeoAsync("上海中心");
 
@@ -27,7 +27,7 @@ public class NominatimMapTests
 
     [Fact]
     [Trait("Category", "Integration")]
-    public async void ReverseGeocoder()
+    public async Task ReverseGeocoder()
     {
         // 上海中心，WGS84 坐标
         var point = new GeoPoint(121.511999, 31.239184);
@@ -40,14 +40,14 @@ public class NominatimMapTests
     }
 
     [Fact]
-    public async void Geocoder_EmptyAddress_Throws()
+    public async Task Geocoder_EmptyAddress_Throws()
     {
         // 空地址触发参数校验，不依赖网络
         await Assert.ThrowsAsync<ArgumentNullException>(() => _map.GetGeoAsync(""));
     }
 
     [Fact]
-    public async void GetDistanceAsync_Null()
+    public async Task GetDistanceAsync_Null()
     {
         // Nominatim 不提供驾车距离，返回 null
         var d = await _map.GetDistanceAsync(new GeoPoint(116.30815, 40.056885), new GeoPoint(116.39745, 39.909187), null);

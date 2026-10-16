@@ -217,55 +217,63 @@ public class TianDiTu : Map, IMap
     #endregion
 
     #region 地址检索
-    /// <summary>行政区划区域检索</summary>
+    /// <summary>行政区划区域检索。检索行政区划范围内的 POI</summary>
     /// <remarks>
-    /// https://lbsyun.baidu.com/index.php?title=webapi/guide/webservice-placeapi
+    /// 参考手册 http://lbs.tianditu.gov.cn/server/search2.html
+    /// 指定 region 时使用行政区划区域搜索（queryType=12，specify 传行政区名称或 9 位国标码）；
+    /// 未指定 region 时使用普通搜索（queryType=1），以全球范围与 12 级视野检索。tag 映射到数据分类 dataTypes
     /// </remarks>
-    /// <param name="query"></param>
-    /// <param name="tag"></param>
-    /// <param name="region"></param>
-    /// <param name="coordtype"></param>
-    /// <param name="formatAddress"></param>
+    /// <param name="query">检索关键字</param>
+    /// <param name="tag">数据分类。可为分类名称或分类编码，多个分类用英文逗号隔开</param>
+    /// <param name="region">指定行政区。9 位国标码或行政区名称，如 156110000 或 北京</param>
+    /// <param name="coordtype">坐标系。天地图检索返回 WGS84 经纬度，该参数不适用</param>
+    /// <param name="formatAddress">是否格式化地址。为真时补充调用逆地理编码</param>
     /// <returns></returns>
     public async Task<GeoAddress?> PlaceSearchAsync(String query, String tag, String region, String? coordtype = null, Boolean formatAddress = true)
     {
-        // 编码
-        query = HttpUtility.UrlEncode(query);
-        tag = HttpUtility.UrlEncode(tag);
-        region = HttpUtility.UrlEncode(region);
+        if (query.IsNullOrEmpty()) throw new ArgumentNullException(nameof(query));
 
-        var url = $"https://api.map.baidu.com/place/v2/search?output=json&query={query}&tag={tag}&region={region}&city_limit=true&ret_coordtype={coordtype}";
-
-        var list = await InvokeAsync<IList<Object>>(url, "results");
-        if (list == null || list.Count == 0) return null;
-
-        if (list.FirstOrDefault() is not IDictionary<String, Object> rs) return null;
-
-        var geo = new GeoAddress();
-
-        if (rs["location"] is IDictionary<String, Object> ds && ds.Count >= 2)
+        var post = new Dictionary<String, Object>
         {
-            geo.Location = MapHelper.Create(ds["lng"], ds["lat"]);
-        }
-        //else if (rs["num"] is Int32 num && num > 0 && rs["name"] != null)
-        //{
-        //    // 多个目标城市匹配，重新搜索
-        //    return await PlaceSearchAsync(query, tag, rs["name"] + "", formatAddress);
-        //}
+            ["keyWord"] = query,
+            ["queryType"] = region.IsNullOrEmpty() ? 1 : 12,
+            ["start"] = 0,
+            ["count"] = 10,
+        };
+        if (!tag.IsNullOrEmpty()) post["dataTypes"] = tag;
+        if (!region.IsNullOrEmpty())
+            post["specify"] = region;
         else
-            return null;
-
-        if (formatAddress)
         {
-            var geo2 = await GetReverseGeoAsync(geo.Location ?? default, coordtype);
-            if (geo2 != null)
-            {
-                geo = geo2;
-            }
+            post["mapBound"] = "-180,-90,180,90";
+            post["level"] = 12;
         }
 
-        geo.Name = rs["name"] + "";
-        var addr = rs["address"] + "";
+        var url = $"/v2/search?postStr={HttpUtility.UrlEncode(post.ToJson())}&type=query";
+
+        var rs = await InvokeAsync<IDictionary<String, Object>>(url, null);
+        if (rs == null || rs.Count == 0) return null;
+
+        if (rs["pois"] is not IList<Object> pois || pois.Count == 0) return null;
+        if (pois[0] is not IDictionary<String, Object> poi) return null;
+
+        var geo = new GeoAddress
+        {
+            Location = MapHelper.Parse(poi["lonlat"] as String),
+        };
+        if (poi["province"] is String province) geo.Province = province;
+        if (poi["city"] is String city) geo.City = city;
+        if (poi["county"] is String county) geo.District = county;
+        if (poi["countyCode"] is String code) geo.Code = code.TrimPrefix("156").ToInt();
+
+        if (formatAddress && geo.Location != null)
+        {
+            var geo2 = await GetReverseGeoAsync(geo.Location.Value, coordtype);
+            if (geo2 != null) geo = geo2;
+        }
+
+        geo.Name = poi["name"] + "";
+        var addr = poi["address"] + "";
         if (!addr.IsNullOrEmpty()) geo.Address = addr;
 
         return geo;

@@ -8,7 +8,8 @@
 
     <IsPackable>false</IsPackable>
 
-    <!-- 默认仅运行确定性测试；真实厂商/平台联调测试（Category=Integration）以过滤器显式运行 -->
+    <!-- 默认仅运行确定性测试；真实厂商/平台联调测试（Category=Integration）以过滤器显式运行。
+         dotnet test 默认生效；VS 测试资源管理器仍会列出全部用例，可在筛选器中排除 Integration -->
     <VSTestTestCaseFilter Condition="'$(VSTestTestCaseFilter)' == ''">Category!=Integration</VSTestTestCaseFilter>
   </PropertyGroup>
 

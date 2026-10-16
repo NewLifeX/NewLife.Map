@@ -1,4 +1,4 @@
-﻿using NewLife.Data;
+﻿﻿using NewLife.Data;
 using NewLife.Map;
 using NewLife.Map.Models;
 using NewLife.Model;
@@ -27,11 +27,9 @@ public class NewLifeMapTests
 
     [Fact]
     [Trait("Category", "Integration")]
-    public async void Geocoder()
+    public async Task Geocoder()
     {
-        var addr = "上海中心";
         var map = _map;
-
         var point = new GeoPoint(121.5119990462553, 31.239184684191343);
 
         var gmodel = await map.GetGeoInfo(point, null);
@@ -55,7 +53,7 @@ public class NewLifeMapTests
 
     [Fact]
     [Trait("Category", "Integration")]
-    public async void Geo()
+    public async Task Geo()
     {
         var map = _map;
 
@@ -69,7 +67,7 @@ public class NewLifeMapTests
 
     [Fact]
     [Trait("Category", "Integration")]
-    public async void Distance()
+    public async Task Distance()
     {
         var map = _map;
 

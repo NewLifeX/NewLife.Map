@@ -12,7 +12,7 @@ namespace MapApi.Services;
 /// <summary>地图服务。聚合多厂商提供地理编码、逆地理编码与距离计算，内置内存缓存降低厂商调用量</summary>
 public class MapService
 {
-    private static NewLife.IP.Ip? _ipDb;
+    private static NewLife.IP.Ip _ipDb;
 
     /// <summary>离线 IP 库。懒加载初始化，数据文件缺失时自动下载</summary>
     public static NewLife.IP.Ip IpDb => _ipDb ??= CreateIpDb();
@@ -168,7 +168,7 @@ public class MapService
     /// <param name="city">城市</param>
     /// <param name="coordtype">坐标系。wgs84/gcj02/bd09</param>
     /// <returns>地理模型；地址为空或厂商无结果时返回 null</returns>
-    public async Task<GeoModel?> GetGeo(String address, String? city = null, String? coordtype = null)
+    public async Task<GeoModel> GetGeo(String address, String city = null, String coordtype = null)
     {
         if (address.IsNullOrEmpty()) return null;
 
@@ -214,7 +214,7 @@ public class MapService
     /// <param name="coordtype">坐标系</param>
     /// <param name="type">路径计算方式</param>
     /// <returns>驾驶距离</returns>
-    public async Task<Driving?> GetDistance(GeoPoint origin, GeoPoint destination, String? coordtype = null, Int32 type = 0)
+    public async Task<Driving> GetDistance(GeoPoint origin, GeoPoint destination, String coordtype = null, Int32 type = 0)
     {
         var map = GetMap();
 

@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
@@ -16,7 +16,7 @@ public class AMapTests
 
     [Fact]
     [Trait("Category", "Integration")]
-    public async void Geocoder()
+    public async Task Geocoder()
     {
         var addr = "上海中心大厦";
         var map = _map;
@@ -46,7 +46,7 @@ public class AMapTests
 
     [Fact]
     [Trait("Category", "Integration")]
-    public async void GetDistanceAsync()
+    public async Task GetDistanceAsync()
     {
         var points = new List<GeoPoint> {
             new(121.51199904625513, 31.239184419374944),
@@ -62,7 +62,7 @@ public class AMapTests
     }
 
     //[Fact]
-    //public async void ConvertAsync()
+    //public async Task ConvertAsync()
     //{
     //    var points = new List<GeoPoint>
     //    {

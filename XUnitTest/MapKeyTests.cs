@@ -51,9 +51,10 @@ public class MapKeyTests
     {
         var map = new TestMap { AppKey = "k1" };
 
-        // 命中失效关键字（避免包含 KeyName 的文本，如 "INVALID_KEY"）
         Assert.True(map.IsInvalid("INVALID"));
         Assert.True(map.IsInvalid("LIMIT_EXCEEDED"));
+        // 消息同时包含密钥参数名与失效关键词时，仍应判定失效（高德真实消息形态）
+        Assert.True(map.IsInvalid("INVALID_USER_KEY"));
         Assert.False(map.IsInvalid("正常结果"));
     }
 
@@ -62,7 +63,7 @@ public class MapKeyTests
     {
         var map = new TestMap { AppKey = "k1" };
 
-        // 包含 KeyName 本身不算失效
+        // 仅回显密钥参数名、无失效关键词的消息不算失效
         Assert.False(map.IsInvalid("key=xxx"));
     }
 }

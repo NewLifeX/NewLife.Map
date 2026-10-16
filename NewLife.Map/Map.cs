@@ -357,8 +357,9 @@ public abstract class Map : DisposeBase
     protected virtual Boolean IsValidKey(String result)
     {
         if (result.IsNullOrEmpty()) return false;
-        if (!KeyName.IsNullOrEmpty() && result.Contains(KeyName.ToUpper())) return false;
 
+        // 仅在错误消息中命中失效关键词（INVALID/LIMIT 等）时判定失效；
+        // 消息回显密钥参数名（key/ak/tk）本身不改变判定，例如 "INVALID_USER_KEY" 属于失效消息，须能被识别
         return _KeyWords.Any(result.Contains);
     }
     #endregion
@@ -443,6 +444,7 @@ public abstract class Map : DisposeBase
     private static Dictionary<String, Type>? _providers;
     /// <summary>创建指定提供者的实例</summary>
     /// <param name="provider">提供者名称。支持类型名、类型全名，或省略 Map 后缀，如 Baidu、BaiduMap、NewLife.Map.BaiduMap</param>
+    /// <remarks>优先匹配工厂注册表（可用 MapFactory.Register 注册自定义提供者，NativeAOT 下同样生效）；未命中时回退程序集反射扫描，该回退在部分裁剪/AOT 环境不可用</remarks>
     /// <returns></returns>
     public static IMap? Create(String provider)
     {

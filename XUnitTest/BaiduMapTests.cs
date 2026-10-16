@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Net.Http;
@@ -20,7 +20,7 @@ public class BaiduMapTests
 
     [Fact]
     [Trait("Category", "Integration")]
-    public async void Geocoder()
+    public async Task Geocoder()
     {
         var addr = "上海中心";
         var map = _map;
@@ -50,7 +50,7 @@ public class BaiduMapTests
 
     [Fact]
     [Trait("Category", "Integration")]
-    public async void IpLocation()
+    public async Task IpLocation()
     {
         var html = new HttpClient().GetString("http://myip.ipip.net");
         var ip = html?.Substring("IP：", " ");
@@ -67,7 +67,7 @@ public class BaiduMapTests
 
     [Fact]
     [Trait("Category", "Integration")]
-    public async void GetDistanceAsync()
+    public async Task GetDistanceAsync()
     {
         var points = new List<GeoPoint> {
             new(121.51199904625513, 31.239184419374944),
@@ -84,7 +84,7 @@ public class BaiduMapTests
 
     [Fact]
     [Trait("Category", "Integration")]
-    public async void ConvertAsync()
+    public async Task ConvertAsync()
     {
         var points = new List<GeoPoint> {
             new(121.51199904625513, 31.239184419374944),

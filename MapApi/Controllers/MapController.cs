@@ -140,7 +140,7 @@ public class MapController : ControllerBaseX
     /// <returns></returns>
     [AllowAnonymous]
     [HttpGet(nameof(GeoAddress))]
-    public async Task<ActionResult> GeoAddress(String address, String? city = null, String? coordtype = null)
+    public async Task<ActionResult> GeoAddress(String address, String city = null, String coordtype = null)
     {
         using var span = _tracer?.NewSpan(nameof(GeoAddress), new { address, city, coordtype });
         try
@@ -170,7 +170,7 @@ public class MapController : ControllerBaseX
     /// <returns></returns>
     [AllowAnonymous]
     [HttpGet(nameof(Distance))]
-    public async Task<ActionResult> Distance(Double fromLng, Double fromLat, Double toLng, Double toLat, String? coordtype = null, Int32 type = 0)
+    public async Task<ActionResult> Distance(Double fromLng, Double fromLat, Double toLng, Double toLat, String coordtype = null, Int32 type = 0)
     {
         using var span = _tracer?.NewSpan(nameof(Distance), new { fromLng, fromLat, toLng, toLat, coordtype, type });
         try
