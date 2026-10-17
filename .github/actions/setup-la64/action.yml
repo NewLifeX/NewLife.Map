@@ -87,50 +87,6 @@ runs:
         echo "DOTNET_EnableWriteXorExecute=0"
       } >> "$GITHUB_ENV"
 
-  # Ubuntu 自带的 qemu 8.2 在 loongarch64 用户态仿真上会偶发内存损坏：xunit 并行执行测试时，
-  # 运行期 AssemblyLoadContext 解析程序集用的字典被并发写坏，表现为 FileLoadException: xunit.assert。
-  # 这里换成 Debian sid 的 qemu-user-static（静态链接，解包即用）并替换 binfmt 解释器；
-  # 升级后立刻用 LA64 dotnet 自检，自检不过就回滚发行版 QEMU，保证 LA64 至少能跑（只是偶发不稳）。
-  - name: Upgrade QEMU (best effort, Debian sid)
-    shell: bash
-    run: |
-      set -uo pipefail
-      bf=/proc/sys/fs/binfmt_misc/qemu-loongarch64
-      interp=$(awk '$1=="interpreter"{print $2}' "$bf" 2>/dev/null || true)
-      if [ -z "$interp" ]; then echo "binfmt 未注册，跳过 QEMU 升级"; exit 0; fi
-      echo "发行版 QEMU: $("$interp" --version 2>/dev/null | head -1)"
-
-      base=https://deb.debian.org/debian
-      idx=/tmp/sid-amd64-Packages.xz
-      got=0
-      for i in 1 2 3; do
-        if curl -fsSL --retry 3 --max-time 300 -o "$idx" "$base/dists/sid/main/binary-amd64/Packages.xz"; then got=1; break; fi
-        echo "索引重试 $i"; sleep 5
-      done
-      if [ "$got" != "1" ]; then echo "索引下载失败，沿用发行版 QEMU"; exit 0; fi
-      fn=$(xzcat "$idx" | awk '$1=="Package:" && $2=="qemu-user-static"{f=1} f && $1=="Filename:"{print $2; exit}')
-      if [ -z "$fn" ]; then echo "索引中未找到 qemu-user-static，沿用发行版 QEMU"; exit 0; fi
-      if ! curl -fsSL --retry 3 --max-time 300 -o /tmp/qemu-sid.deb "$base/$fn"; then echo "包下载失败，沿用发行版 QEMU"; exit 0; fi
-      rm -rf /tmp/qemu-sid && dpkg-deb -x /tmp/qemu-sid.deb /tmp/qemu-sid
-      new=/tmp/qemu-sid/usr/bin/qemu-loongarch64-static
-      if [ ! -x "$new" ]; then echo "静态 QEMU 缺失，沿用发行版 QEMU"; exit 0; fi
-      echo "候选 QEMU: $("$new" --version | head -1)"
-
-      sudo cp -a "$interp" "$interp.dist"
-      sudo cp "$new" "$interp"
-      sudo chmod 755 "$interp"
-
-      # 自检：必须在新的解释器下真实跑起 LA64 运行时
-      if DOTNET_ROOT="$HOME/la64" QEMU_LD_PREFIX="$HOME/la64root" \
-         DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1 DOTNET_EnableWriteXorExecute=0 \
-         timeout 300 "$HOME/la64/dotnet" --version >/tmp/qemu-selfcheck.txt 2>&1; then
-        echo "QEMU 升级自检通过: $(cat /tmp/qemu-selfcheck.txt)"
-      else
-        echo "升级后自检失败，回滚发行版 QEMU"
-        cat /tmp/qemu-selfcheck.txt || true
-        sudo cp -a "$interp.dist" "$interp"
-      fi
-
   - name: Verify LA64 runtime
     shell: bash
     run: |

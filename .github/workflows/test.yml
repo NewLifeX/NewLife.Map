@@ -91,7 +91,9 @@ jobs:
         mkdir -p /tmp/xunit-console
         unzip -q -o /tmp/xunit-console.nupkg 'tools/net6.0/*' -d /tmp/xunit-console
     - name: Test (LA64)
-      # 仿真环境放大了运行期竞态：关闭并发 GC 与分层编译，尽量只留单一线程模型
+      # 仿真环境放大了运行期竞态：关闭并发 GC 与分层编译，尽量只留单一线程模型。
+      # 实测（run 39021179834）不加这两项时，xunit 并行执行会让运行期程序集解析用的字典被并发写坏，
+      # 表现为 53 个用例全部 FileLoadException: xunit.assert。
       env:
         DOTNET_gcConcurrent: 0
         DOTNET_TieredCompilation: 0
