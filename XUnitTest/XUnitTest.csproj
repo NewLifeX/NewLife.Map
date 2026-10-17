@@ -8,18 +8,17 @@
 
     <IsPackable>false</IsPackable>
 
-    <!-- 默认仅运行确定性测试；真实厂商/平台联调测试（Category=Integration）以过滤器显式运行。
-         dotnet test 默认生效；VS 测试资源管理器仍会列出全部用例，可在筛选器中排除 Integration -->
-    <VSTestTestCaseFilter Condition="'$(VSTestTestCaseFilter)' == ''">Category!=Integration</VSTestTestCaseFilter>
+    <!-- 默认仅运行确定性测试；真实厂商/平台联调测试（Category=Integration）由 IntegrationFact 默认跳过，
+         dotnet test 与 VS 测试资源管理器行为一致。设置环境变量 NEWLIFE_MAP_INTEGRATION=1 后显式运行集成测试 -->
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.11" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
-    <PackageReference Include="NewLife.Core" Version="12.0.2026.1016-beta0911" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
+    <PackageReference Include="NewLife.Core" Version="12.0.2026.1017-beta1103" />
     <PackageReference Include="NewLife.UnitTest" Version="1.1.2026.301-beta0617" />
     <PackageReference Include="xunit" Version="2.9.3" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="4.0.0">
+    <PackageReference Include="xunit.runner.visualstudio" Version="4.0.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -27,6 +26,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NewLife.Map\NewLife.Map.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="xunit.runner.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

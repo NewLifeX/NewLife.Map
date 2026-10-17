@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using NewLife.Map;
@@ -42,10 +43,11 @@ public class MapRateLimitTests
     }
 
     [Fact]
-    public async Task MaxQps_1_Throttled()
+    [DisplayName("限速_每秒10次_第二次请求需等待")]
+    public async Task MaxQps_10_Throttled()
     {
-        // 每秒 1 次：首次通过，第二次需等待约 1 秒
-        var map = new TestMap { MaxQps = 1 };
+        // 每秒 10 次：首次通过，第二次需等待约 100 毫秒。相比每秒 1 次可缩短单测耗时
+        var map = new TestMap { MaxQps = 10 };
 
         await map.WaitToken();
 
@@ -53,7 +55,7 @@ public class MapRateLimitTests
         await map.WaitToken();
         sw.Stop();
 
-        Assert.True(sw.ElapsedMilliseconds >= 500);
+        Assert.True(sw.ElapsedMilliseconds >= 50);
     }
 
     [Fact]

@@ -16,7 +16,7 @@ Nuget：`NewLife.Map`
 | ---- | ---- | ---- |
 | `NewLife.Map` | 地图组件库（NuGet 包） | 统一接口 `IMap` + 多厂商适配 + 坐标转换 + Key 熔断 |
 | `MapApi` | 企业地图接口平台（Web 服务） | 聚合多厂商 + GeoHash 多级缓存 + 魔方后台管理 |
-| `XUnitTest` | 单元测试 | 各提供者地理编码 / 逆地理 / 距离 / 坐标转换测试 |
+| `XUnitTest` | 单元测试 | 各提供者地理编码 / 逆地理 / 距离 / 坐标转换测试（真实服务集成用例默认跳过） |
 
 ## 文档
 - [需求文档](Doc/需求文档.md) — 愿景、核心目标、功能需求、暂缓清单
@@ -159,14 +159,16 @@ Task<IDictionary<string, object?>> IpLocationAsync(...); // BaiduMap / WeMap IP 
 7. 提交单元测试覆盖主要功能与边界
 
 ## 单元测试
-仓库包含 `XUnitTest` 工程：
-- 默认仅运行**确定性测试**：本地 HTTP 桩服务覆盖各厂商 URL 构造与响应解析，可在全部 RID（含 CI）稳定执行
-- 真实厂商 / OSM / 平台在线测试标记 `Category=Integration`，默认过滤；配置真实 Key 后以 `--filter "Category=Integration"` 运行
+仓库包含 `XUnitTest` 工程，解决方案为 `NewLife.Map.slnx`（VS 2026 / .NET 10 新版 XML 格式）：
+- 默认运行**确定性测试**：84 个用例，本地 HTTP 桩服务覆盖各厂商 URL 构造与响应解析，测试执行约 0.4~1 秒，可在全部 RID（含 CI）稳定执行
+- 真实厂商 / OSM / 平台在线测试标记 `Category=Integration`，并由 `IntegrationFact` **默认跳过**；VS 测试资源管理器「全部运行」与 `dotnet test` 行为一致
+- 启用集成测试：先设置环境变量 `NEWLIFE_MAP_INTEGRATION=1`，再以 `--filter "Category=Integration"` 运行
 - 请将真实 Key 放入本地用户机密或环境变量，不要提交到仓库
 
-运行：
-```bash
+运行（Windows PowerShell）：
+```powershell
 dotnet test -c Release
+$env:NEWLIFE_MAP_INTEGRATION = 1
 dotnet test -c Release --filter "Category=Integration"   # 可选：真实环境联调
 ```
 

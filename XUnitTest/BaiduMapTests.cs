@@ -18,7 +18,7 @@ public class BaiduMapTests
     private readonly BaiduMap _map;
     public BaiduMapTests() => _map = new BaiduMap { AppKey = "C73357a276668f8b0563d3f936475007" };
 
-    [Fact]
+    [IntegrationFact]
     [Trait("Category", "Integration")]
     public async Task Geocoder()
     {
@@ -48,7 +48,7 @@ public class BaiduMapTests
         Assert.Equal(310115005, ga.Towncode);
     }
 
-    [Fact]
+    [IntegrationFact]
     [Trait("Category", "Integration")]
     public async Task IpLocation()
     {
@@ -65,7 +65,7 @@ public class BaiduMapTests
         Assert.Equal(7, addrs.Length);
     }
 
-    [Fact]
+    [IntegrationFact]
     [Trait("Category", "Integration")]
     public async Task GetDistanceAsync()
     {
@@ -82,7 +82,7 @@ public class BaiduMapTests
         Assert.True(Math.Abs(30544 - drv.Duration) < 600);
     }
 
-    [Fact]
+    [IntegrationFact]
     [Trait("Category", "Integration")]
     public async Task ConvertAsync()
     {
@@ -205,6 +205,32 @@ public class BaiduMapTests
         Assert.Equal(121.516204, pt.Longitude);
         Assert.Equal(31.241021, pt.Latitude);
         Assert.Contains("from=1&to=3", map.LastUrl);
+        Assert.Empty(stub.Unmatched);
+    }
+
+    [Fact]
+    [DisplayName("百度地图_桩服务_POI检索解析")]
+    public async Task PlaceSearch_Stub()
+    {
+        using var stub = new StubHttpServer();
+        stub.Map("/place/v2/search", """
+            {"status":0,"results":[{"name":"上海中心大厦","location":{"lng":121.505366,"lat":31.23351},"address":"上海市浦东新区银城中路501号"}]}
+            """);
+
+        var map = new BaiduMap { Server = stub.Server, AppKey = "test" };
+        var ga = await map.PlaceSearchAsync("上海中心", null, "上海", null, false);
+
+        Assert.NotNull(ga);
+        Assert.Equal("上海中心大厦", ga.Name);
+        Assert.Equal("上海市浦东新区银城中路501号", ga.Address);
+        Assert.NotNull(ga.Location);
+        Assert.Equal(121.505366, ga.Location.Value.Longitude);
+        Assert.Equal(31.23351, ga.Location.Value.Latitude);
+
+        var raw = Uri.UnescapeDataString(map.LastUrl);
+        Assert.Contains("query=上海中心", raw);
+        Assert.Contains("region=上海", raw);
+        Assert.Contains("ak=test", raw);
         Assert.Empty(stub.Unmatched);
     }
     #endregion

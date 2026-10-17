@@ -1,10 +1,11 @@
-﻿﻿using NewLife.Data;
+using System;
+using System.ComponentModel;
+using System.Threading.Tasks;
+using NewLife.Data;
 using NewLife.Map;
 using NewLife.Map.Models;
 using NewLife.Model;
 using Stardust;
-using System.ComponentModel;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace XUnitTest;
@@ -29,7 +30,7 @@ public class NewLifeMapTests
         return _map = new NewLifeMap(provider);
     }
 
-    [Fact]
+    [IntegrationFact]
     [Trait("Category", "Integration")]
     public async Task Geocoder()
     {
@@ -55,7 +56,7 @@ public class NewLifeMapTests
         Assert.Equal(310115005, ga.Towncode);
     }
 
-    [Fact]
+    [IntegrationFact]
     [Trait("Category", "Integration")]
     public async Task Geo()
     {
@@ -69,7 +70,7 @@ public class NewLifeMapTests
         Assert.True(ga.Location.Value.Latitude > 20);
     }
 
-    [Fact]
+    [IntegrationFact]
     [Trait("Category", "Integration")]
     public async Task Distance()
     {
@@ -143,4 +144,24 @@ public class NewLifeMapTests
         Assert.Empty(stub.Unmatched);
     }
     #endregion
+
+    [Fact]
+    [DisplayName("新生命地图_未配置服务端_抛出异常")]
+    public async Task NoServer_Throws()
+    {
+        var map = new NewLifeMap();
+
+        var ex = await Assert.ThrowsAsync<Exception>(() => map.GetGeoAsync("上海中心"));
+
+        Assert.Contains("服务端地址未指定", ex.Message);
+    }
+
+    [Fact]
+    [DisplayName("新生命地图_空地址_参数校验")]
+    public async Task EmptyAddress_Throws()
+    {
+        var map = new NewLifeMap("http://127.0.0.1:1");
+
+        await Assert.ThrowsAsync<ArgumentNullException>(() => map.GetGeoAsync(""));
+    }
 }

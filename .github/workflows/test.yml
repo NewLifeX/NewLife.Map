@@ -3,7 +3,8 @@ name: test
 # 单元测试矩阵：必选覆盖 win-x64 / linux-x64 / linux-arm64（阻断）+ linux-la64（龙芯，QEMU 仿真）。
 # 触发：push / pull_request / 手动（workflow_dispatch）；不采用夜间定时。
 # 默认仅运行确定性测试；真实厂商/平台联调测试标记 Category=Integration（依赖外部网络与真实 Key），
-# 在 CI 中以 --filter "Category!=Integration" 排除，配置密钥后可在本地以 --filter "Category=Integration" 运行。
+# 本地由 IntegrationFact 默认跳过，CI 再以 --filter "Category!=Integration" 双重排除；
+# 设置环境变量 NEWLIFE_MAP_INTEGRATION=1 后可在本地以 --filter "Category=Integration" 运行。
 
 on:
   push:

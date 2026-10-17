@@ -12,7 +12,7 @@ public class NominatimMapTests
 {
     private readonly NominatimMap _map = new();
 
-    [Fact]
+    [IntegrationFact]
     [Trait("Category", "Integration")]
     public async Task Geocoder()
     {
@@ -25,7 +25,7 @@ public class NominatimMapTests
         Assert.False(String.IsNullOrEmpty(ga.Address));
     }
 
-    [Fact]
+    [IntegrationFact]
     [Trait("Category", "Integration")]
     public async Task ReverseGeocoder()
     {

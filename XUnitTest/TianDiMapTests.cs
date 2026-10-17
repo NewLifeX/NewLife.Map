@@ -19,7 +19,7 @@ public class TianDiMapTests
     private readonly TianDiTu _map;
     public TianDiMapTests() => _map = new TianDiTu { AppKey = "3334f7776916effb40f2a11dbae57781" };
 
-    [Fact]
+    [IntegrationFact]
     [Trait("Category", "Integration")]
     public async Task Geocoder()
     {
@@ -49,7 +49,7 @@ public class TianDiMapTests
         //Assert.Equal(310115005, ga.Towncode);
     }
 
-    [Fact]
+    [IntegrationFact]
     [Trait("Category", "Integration")]
     public async Task GetDistanceAsync()
     {
@@ -66,7 +66,7 @@ public class TianDiMapTests
         Assert.Equal(33118, drv.Duration);
     }
 
-    [Fact]
+    [IntegrationFact]
     [Trait("Category", "Integration")]
     public async Task GetDistanceAsync2()
     {
@@ -198,6 +198,28 @@ public class TianDiMapTests
         Assert.Contains("\"queryType\":1", raw);
         Assert.Contains("\"mapBound\":\"-180,-90,180,90\"", raw);
         Assert.Contains("\"dataTypes\":\"高校\"", raw);
+        Assert.Empty(stub.Unmatched);
+    }
+
+    [Fact]
+    [DisplayName("天地图_桩服务_途经点距离解析")]
+    public async Task GetDistanceAsync_Waypoints_Stub()
+    {
+        using var stub = new StubHttpServer();
+        stub.Map("/drive", """
+            <response><distance>958.79</distance><duration>49091</duration></response>
+            """);
+
+        var map = new TianDiTu { Server = stub.Server, AppKey = "test" };
+        var mids = new List<GeoPoint> { new(118.21, 30.57), new(116.21, 29.97) };
+        var drv = await map.GetDistanceAsync(new GeoPoint(121.511999, 31.239184), new GeoPoint(114.218927, 29.575429), mids);
+
+        Assert.NotNull(drv);
+        Assert.Equal(958790, drv.Distance);
+        Assert.Equal(49091, drv.Duration);
+
+        var raw = Uri.UnescapeDataString(stub.LastRequest);
+        Assert.Contains("\"mid\":\"118.21,30.57;116.21,29.97\"", raw);
         Assert.Empty(stub.Unmatched);
     }
     #endregion

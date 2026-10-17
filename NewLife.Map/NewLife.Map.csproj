@@ -28,7 +28,7 @@
     <RepositoryUrl>https://github.com/NewLifeX/NewLife.Map</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>新生命团队;X组件;NewLife;$(AssemblyName)</PackageTags>
-    <PackageReleaseNotes>新增 OSM/Nominatim 开源无 Key 海外地图源；腾讯地图新增行政区划查询；Map 基类新增令牌桶限速与故障统计；NewLifeMap/MapApi 补齐正向地理编码与驾驶距离端点；MapApi 新增在线 IP 解析；新增坐标转换基准测试项目；修复坐标转换健壮性问题并升级依赖至 2026.7</PackageReleaseNotes>
+    <PackageReleaseNotes>新增 OSM/Nominatim 开源无 Key 海外地图源；腾讯地图新增行政区划查询；Map 基类新增令牌桶限速与故障统计；NewLifeMap/MapApi 补齐正向地理编码与驾驶距离端点；MapApi 新增在线 IP 解析；新增坐标转换基准测试项目；修复坐标转换健壮性问题并升级依赖至 2026.10</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
@@ -42,15 +42,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.400">
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.402">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NewLife.Core" Version="12.0.2026.1016-beta0911" />
-    <PackageReference Include="NewLife.Stardust" Version="3.10.2026.910-beta1512" />
+    <PackageReference Include="NewLife.Core" Version="12.0.2026.1017-beta1103" />
+    <PackageReference Include="NewLife.Stardust" Version="3.10.2026.1017-beta1056" />
   </ItemGroup>
 
   <ItemGroup>

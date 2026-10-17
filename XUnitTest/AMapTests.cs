@@ -14,7 +14,7 @@ public class AMapTests
     private readonly AMap _map;
     public AMapTests() => _map = new AMap { AppKey = "2aada76e462af71e1b67ba1df22d0fa4" };
 
-    [Fact]
+    [IntegrationFact]
     [Trait("Category", "Integration")]
     public async Task Geocoder()
     {
@@ -44,7 +44,7 @@ public class AMapTests
         Assert.Equal(310115005, ga.Towncode);
     }
 
-    [Fact]
+    [IntegrationFact]
     [Trait("Category", "Integration")]
     public async Task GetDistanceAsync()
     {

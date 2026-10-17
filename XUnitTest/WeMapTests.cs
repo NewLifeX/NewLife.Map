@@ -18,7 +18,7 @@ public class WeMapTests
     private readonly WeMap _map;
     public WeMapTests() => _map = new WeMap { AppKey = "YGEBZ-BDCCX-AJG4X-ZUH6W-MESMV-P2BFF" };
 
-    [Fact]
+    [IntegrationFact]
     [Trait("Category", "Integration")]
     public async Task Geocoder()
     {
@@ -48,7 +48,7 @@ public class WeMapTests
         //Assert.Equal(310115005, ga.Towncode);
     }
 
-    [Fact]
+    [IntegrationFact]
     [Trait("Category", "Integration")]
     public async Task GetDistanceAsync()
     {
@@ -84,7 +84,7 @@ public class WeMapTests
     //    Assert.True(points2[0].Latitude > 0);
     //}
 
-    [Fact]
+    [IntegrationFact]
     [Trait("Category", "Integration")]
     public async Task GetArea()
     {
@@ -197,6 +197,24 @@ public class WeMapTests
         Assert.Equal("114.247.50.2", rs["ip"] + "");
         Assert.Equal("北京市", rs["province"] + "");
         Assert.True((rs["lng"] + "").ToDouble() > 116);
+        Assert.Empty(stub.Unmatched);
+    }
+
+    [Fact]
+    [DisplayName("腾讯地图_桩服务_原始地理编码字典解析")]
+    public async Task GetGeocoderAsync_Stub()
+    {
+        using var stub = new StubHttpServer();
+        stub.Map("/ws/geocoder/v1/", """
+            {"status":0,"message":"query ok","result":{"title":"上海中心","location":{"lng":121.505406,"lat":31.233501}}}
+            """, "address=");
+
+        var map = new WeMap { Server = stub.Server, AppKey = "test" };
+        var rs = await map.GetGeocoderAsync("上海中心");
+
+        Assert.NotNull(rs);
+        Assert.True(rs.ContainsKey("location"));
+        Assert.Equal("上海中心", rs["title"] + "");
         Assert.Empty(stub.Unmatched);
     }
     #endregion
