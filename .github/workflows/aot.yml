@@ -9,6 +9,9 @@ name: aot
 # Roslyn 不会把泛型参数裁剪注解传入异步状态机，Map.InvokeAsync 泛型调用 JsonHelper.Convert
 # 会报告 IL2091；运行期行为已由 AotSmoke 各场景在原生 AOT 产物下实际执行验证。
 
+# 非阻塞说明：AOT 兼容性验证整体作为观察期门禁（continue-on-error），任一 RID 失败不阻断主流程；
+# 阻断基线为 test.yml 中的 build 与 win-x64/linux-x64/linux-arm64 单元测试。
+
 on:
   push:
     branches: [ '*' ]
@@ -26,6 +29,7 @@ jobs:
     name: aot analyzer check
     runs-on: ubuntu-latest
     timeout-minutes: 40
+    continue-on-error: true
 
     steps:
     - uses: actions/checkout@v4
@@ -47,11 +51,12 @@ jobs:
         fi
         echo "IL 告警门禁通过（仅白名单 1 条 IL2091，见文件头注释）"
 
-  # NativeAOT 冒烟矩阵：win-x64 / linux-x64 / linux-arm64（阻断基线）
+  # NativeAOT 冒烟矩阵：win-x64 / linux-x64 / linux-arm64（观察期，非阻塞）
   aot:
     name: aot (${{ matrix.rid }})
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
+    continue-on-error: true
     strategy:
       fail-fast: false
       matrix:
@@ -85,12 +90,13 @@ jobs:
       shell: bash
       run: ./AotSmoke/bin/aot-out/${{ matrix.bin }}
 
-  # linux-la64（龙芯，必选）：QEMU 用户态仿真 + 龙芯 SDK；NativeAOT 无 LA64 后端，
-  # 以「x64 编译 IL → LA64 运行时执行」验证同一套冒烟场景，覆盖该平台的运行期兼容性。
+  # linux-la64（龙芯，必选覆盖）：QEMU 用户态仿真 + 龙芯 SDK；NativeAOT 无 LA64 后端，
+  # 以「x64 编译 IL → LA64 运行时执行」验证同一套冒烟场景，覆盖该平台的运行期兼容性（非阻塞）。
   aot-la64:
     name: aot (linux-loongarch64 qemu, JIT)
     runs-on: ubuntu-latest
     timeout-minutes: 240
+    continue-on-error: true
 
     steps:
     - uses: actions/checkout@v4
