@@ -91,17 +91,26 @@ jobs:
         mkdir -p /tmp/xunit-console
         unzip -q -o /tmp/xunit-console.nupkg 'tools/net6.0/*' -d /tmp/xunit-console
     - name: Test (LA64)
+      # 仿真环境放大了运行期竞态：关闭并发 GC 与分层编译，尽量只留单一线程模型
+      env:
+        DOTNET_gcConcurrent: 0
+        DOTNET_TieredCompilation: 0
       # 龙芯仿真下偶发崩溃由最多 3 次重试兜底（真实回归会稳定失败）；测试不含外部网络依赖
       run: |
         set -uo pipefail
         runner=/tmp/xunit-console/tools/net6.0/xunit.console.dll
         asm="$GITHUB_WORKSPACE/Bin/UnitTest/net10.0/XUnitTest.dll"
         ok=0
+        # -parallel none：xunit 默认并行跑测试集合，会并发触发程序集加载，仿真下容易写坏运行期内部字典
         for attempt in 1 2 3; do
           echo "==== xunit (attempt $attempt)"
-          if out=$(dotnet "$runner" "$asm" -nocolor -notrait "Category=Integration"); then ok=1; break; fi
+          if out=$(dotnet "$runner" "$asm" -nocolor -parallel none -notrait "Category=Integration"); then ok=1; break; fi
           echo "$out" | tail -20
         done
-        echo "$out" | grep -E 'Tests run|Total tests' || true
+        echo "$out" | grep -E 'Total: ' || true
         [ "$ok" = "1" ]
+    - name: Report non-blocking failure
+      # continue-on-error 会把失败的 job 结论显示为 success，这里显式标注，避免"假绿"
+      if: failure()
+      run: echo "::warning title=LA64 非阻塞::LA64 仿真测试未通过，已按非阻塞策略跳过，详见上方日志。"
 

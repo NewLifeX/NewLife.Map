@@ -119,3 +119,7 @@ jobs:
           if dotnet Bin/AotSmoke/net10.0/AotSmoke.dll; then ok=1; break; fi
         done
         [ "$ok" = "1" ]
+    - name: Report non-blocking failure
+      # continue-on-error 会把失败的 job 结论显示为 success，这里显式标注，避免"假绿"
+      if: failure()
+      run: echo "::warning title=LA64 非阻塞::LA64 冒烟未通过，已按非阻塞策略跳过，详见上方日志。"
