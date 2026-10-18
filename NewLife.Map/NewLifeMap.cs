@@ -6,6 +6,7 @@ using NewLife.Model;
 using NewLife.Remoting;
 using Stardust;
 using Stardust.Registry;
+using NewLife;
 
 namespace NewLife.Map;
 
@@ -71,7 +72,7 @@ public class NewLifeMap : Map, IMap
     {
         if (_client != null && !_client.Disposed) return _client;
 
-        if (Server.IsNullOrEmpty()) throw new Exception("NewLifeMap服务端地址未指定");
+        if (Server.IsNullOrEmpty()) throw new Exception(L.T("The NewLifeMap server address is not specified."));
 
         _client = new ApiHttpClient(Server);
 

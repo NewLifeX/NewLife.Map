@@ -10,6 +10,7 @@ using NewLife.Threading;
 
 #if NET45 || NET461 
 using System.Net.Http;
+using NewLife;
 #endif
 
 namespace NewLife.Map;
@@ -197,7 +198,7 @@ public abstract class Map : DisposeBase
         var key = AcquireKey();
 
         // 无需密钥的免费数据源（如 Nominatim）跳过密钥校验；否则必须配置 AppKey
-        if (!KeyName.IsNullOrEmpty() && key.IsNullOrEmpty()) throw new ArgumentNullException(nameof(AppKey), "没有可用密钥");
+        if (!KeyName.IsNullOrEmpty() && key.IsNullOrEmpty()) throw new ArgumentNullException(nameof(AppKey), L.T("No available key."));
 
         if (_Client == null)
         {
@@ -434,7 +435,7 @@ public abstract class Map : DisposeBase
             }
         }
         else
-            throw new NotSupportedException($"未支持[{from}]坐标系到[{to}]坐标系的转换");
+            throw new NotSupportedException(L.T("Coordinate system conversion from [{0}] to [{1}] is not supported.", from, to));
 
         return Task.FromResult(rs as IList<GeoPoint>);
     }

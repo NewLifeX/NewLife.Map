@@ -35,7 +35,7 @@ public class MapController : ControllerBaseX
         using var span = _tracer?.NewSpan(nameof(ReverseGeo), new { lng, lat, coordtype });
         try
         {
-            if (lng == 0 || lat == 0) throw new ArgumentNullException(nameof(lng), "坐标为空");
+            if (lng == 0 || lat == 0) throw new ArgumentNullException(nameof(lng), L.T("Coordinates are empty."));
 
             if (coordtype.IsNullOrEmpty()) coordtype = "wgs84";
             coordtype = coordtype.ToLower();
@@ -90,7 +90,7 @@ public class MapController : ControllerBaseX
         using var span = _tracer?.NewSpan(nameof(ReverseGeo), new { lng, lat, coordtype });
         try
         {
-            if (lng == 0 || lat == 0) throw new ArgumentNullException(nameof(lng), "坐标为空");
+            if (lng == 0 || lat == 0) throw new ArgumentNullException(nameof(lng), L.T("Coordinates are empty."));
 
             if (coordtype.IsNullOrEmpty()) coordtype = "wgs84";
             coordtype = coordtype.ToLower();
@@ -145,7 +145,7 @@ public class MapController : ControllerBaseX
         using var span = _tracer?.NewSpan(nameof(GeoAddress), new { address, city, coordtype });
         try
         {
-            if (address.IsNullOrEmpty()) throw new ArgumentNullException(nameof(address), "地址为空");
+            if (address.IsNullOrEmpty()) throw new ArgumentNullException(nameof(address), L.T("Address is empty."));
 
             var gm = await _mapService.GetGeo(address, city, coordtype) ?? throw new Exception("error");
 
@@ -175,7 +175,7 @@ public class MapController : ControllerBaseX
         using var span = _tracer?.NewSpan(nameof(Distance), new { fromLng, fromLat, toLng, toLat, coordtype, type });
         try
         {
-            if (fromLng == 0 || fromLat == 0 || toLng == 0 || toLat == 0) throw new ArgumentNullException(nameof(fromLng), "坐标为空");
+            if (fromLng == 0 || fromLat == 0 || toLng == 0 || toLat == 0) throw new ArgumentNullException(nameof(fromLng), L.T("Coordinates are empty."));
 
             var d = await _mapService.GetDistance(new GeoPoint(fromLng, fromLat), new GeoPoint(toLng, toLat), coordtype, type) ?? throw new Exception("error");
 
@@ -199,7 +199,7 @@ public class MapController : ControllerBaseX
     {
         try
         {
-            if (ip.IsNullOrEmpty()) throw new ArgumentNullException(nameof(ip), "IP 为空");
+            if (ip.IsNullOrEmpty()) throw new ArgumentNullException(nameof(ip), L.T("IP is empty."));
 
             var (area, addr) = MapService.IpDb.GetAddress(ip);
             if (area.IsNullOrEmpty()) return Json(1, "未查询到地址，请确认 IP 数据库已就绪", null);

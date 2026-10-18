@@ -74,7 +74,7 @@ public class MapService
             _maps = ms;
         }
 
-        if (_maps.Count == 0) throw new InvalidOperationException("未找到可用地图服务提供者");
+        if (_maps.Count == 0) throw new InvalidOperationException(L.T("No available map service provider was found."));
 
         var idx = Interlocked.Increment(ref _mapIndex);
         return _maps[idx % _maps.Count];

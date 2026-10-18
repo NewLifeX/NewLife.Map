@@ -1,0 +1,4 @@
+# 简体中文译文。键为英文源文，缺失时运行期回退英文。
+"No available key.": "没有可用密钥"
+"Coordinate system conversion from [{0}] to [{1}] is not supported.": "未支持[{0}]坐标系到[{1}]坐标系的转换"
+"The NewLifeMap server address is not specified.": "NewLifeMap服务端地址未指定"

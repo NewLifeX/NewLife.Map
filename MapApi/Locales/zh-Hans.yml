@@ -1,0 +1,5 @@
+# 简体中文译文。键为英文源文，缺失时运行期回退英文。
+"Coordinates are empty.": "坐标为空"
+"Address is empty.": "地址为空"
+"IP is empty.": "IP 为空"
+"No available map service provider was found.": "未找到可用地图服务提供者"
