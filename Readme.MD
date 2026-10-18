@@ -1,10 +1,19 @@
 # NewLife.Map - 统一地图组件库
 
 ![GitHub top language](https://img.shields.io/github/languages/top/newlifex/NewLife.Map?logo=github)
-![GitHub License](https://img.shields.io/github/license/newlifex/NewLife.Map?logo=github)
-![Nuget Downloads](https://img.shields.io/nuget/dt/NewLife.Map?logo=nuget)
-![Nuget](https://img.shields.io/nuget/v/NewLife.Map?logo=nuget)
-![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/NewLife.Map?label=dev%20nuget&logo=nuget)
+
+
+![GitHub License](https://img.shields.io/github/license/NewLifeX/NewLife.Map?logo=github)
+![NuGet Downloads](https://img.shields.io/nuget/dt/NewLife.Map?logo=nuget)
+![NuGet](https://img.shields.io/nuget/v/NewLife.Map?logo=nuget)
+![NuGet prerelease](https://img.shields.io/nuget/vpre/NewLife.Map?label=dev%20nuget&logo=nuget)
+[![test](https://github.com/NewLifeX/NewLife.Map/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/NewLifeX/NewLife.Map/actions/workflows/test.yml)
+![platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-blue)
+[![contributors](https://img.shields.io/github/contributors/NewLifeX/NewLife.Map?logo=github)](https://github.com/NewLifeX/NewLife.Map/graphs/contributors)
+
+<!-- lang:start -->
+🌐 [繁體中文](README.zh-TW.md) | [English](README.en.md) | [Español](README.es.md) | [Deutsch](README.de.md) | [日本語](README.ja.md) | [Français](README.fr.md) | [Português](README.pt.md) | [Русский](README.ru.md) | [한국어](README.ko.md) | [العربية](README.ar.md)
+<!-- lang:end -->
 
 统一封装百度、高德、腾讯、天地图与企业地图接口平台的地图组件库，以一套接口屏蔽各家差异，提供地理编码、逆地理编码、距离计算、坐标转换与多 Key 熔断能力。  
 
@@ -232,8 +241,6 @@ MIT，保留版权声明即可自由使用于商业 / 开源项目。
 |          [SmartA2](https://github.com/NewLifeX/SmartA2)          | 2019  | 嵌入式工业计算机，物联网边缘网关，高性能.NET8主机，应用于工业、农业、交通、医疗             |
 |                          FIoT物联网平台                          | 2020  | 物联网整体解决方案，建筑、环保、农业，软硬件及大数据分析一体化，单机十万级点位项目验证      |
 |                        UWB高精度室内定位                         | 2020  | 厘米级（10~20cm）高精度室内定位，软硬件一体化，与其它系统联动，大型展厅项目验证             |
-
-
 
 ## 新生命开发团队
 ![XCode](https://newlifex.com/logo.png)  
