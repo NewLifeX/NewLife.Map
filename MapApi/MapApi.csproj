@@ -24,8 +24,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NewLife.Cube.Core" Version="6.15.2026.1017-beta1316" />
-    <PackageReference Include="NewLife.IP" Version="2.5.2026.1016-beta1422" />
+    <PackageReference Include="NewLife.Cube.Core" Version="6.15.2026.1017-beta1435" />
+    <PackageReference Include="NewLife.IP" Version="2.5.2026.1017-beta1408" />
     <PackageReference Include="NewLife.Stardust.Extensions" Version="3.10.2026.1017-beta1056" />
     <PackageReference Include="NewLife.XCode" Version="12.2.2026.1017-beta1246" />
   </ItemGroup>
@@ -33,5 +33,8 @@
   <ItemGroup>
     <ProjectReference Include="..\NewLife.Map\NewLife.Map.csproj" />
   </ItemGroup>
-
+  <ItemGroup>
+    <!-- Locales 目录由 NewLife.Core 源生成器编译期解析；本项目未直接引用 Core 包，显式挂载输入 -->
+    <AdditionalFiles Include="$(MSBuildProjectDirectory)\Locales\*.yml" />
+  </ItemGroup>
 </Project>
