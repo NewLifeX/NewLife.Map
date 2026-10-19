@@ -1,4 +1,5 @@
 using System.Globalization;
+using MapApi;
 using MapApi.Services;
 using NewLife;
 using NewLife.Cube;
@@ -15,6 +16,9 @@ var culture = builder.Configuration["Localization:Culture"];
 if (!culture.IsNullOrEmpty()) Localization.Culture = CultureInfo.GetCultureInfo(culture);
 var logCulture = builder.Configuration["Localization:LogCulture"];
 if (!logCulture.IsNullOrEmpty()) Localization.LogCulture = CultureInfo.GetCultureInfo(logCulture);
+
+// 请求语言随 Accept-Language 变化时，日志默认保持宿主语言，避免日志语言抖动
+if (Localization.Culture == null) Localization.LogCulture ??= CultureInfo.CurrentUICulture;
 
 var services = builder.Services;
 
@@ -53,6 +57,13 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+// 按 Accept-Language 切换本次请求的界面语言；配置 Localization:Culture 后固定语言，不再随请求变化
+app.Use(async (context, next) =>
+{
+    using var scope = RequestCultureScope.Create(context.Request.Headers.AcceptLanguage);
+    await next();
+});
 
 app.UseAuthorization();
 
