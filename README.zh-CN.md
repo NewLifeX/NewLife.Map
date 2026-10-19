@@ -14,13 +14,15 @@
 [![contributors](https://img.shields.io/github/contributors/NewLifeX/NewLife.Map?logo=github)](https://github.com/NewLifeX/NewLife.Map/graphs/contributors)
 
 <!-- lang:start -->
-🌐 [繁體中文](README.zh-TW.md) | [English](README.en.md) | [Español](README.es.md) | [Deutsch](README.de.md) | [日本語](README.ja.md) | [Français](README.fr.md) | [Português](README.pt.md) | [Русский](README.ru.md) | [한국어](README.ko.md) | [العربية](README.ar.md)
+🌐 [English](README.md) | [繁體中文](README.zh-TW.md) | [Español](README.es.md) | [Deutsch](README.de.md) | [日本語](README.ja.md) | [Français](README.fr.md) | [Português](README.pt.md) | [Русский](README.ru.md) | [한국어](README.ko.md) | [العربية](README.ar.md)
 <!-- lang:end -->
 
 统一封装百度、高德、腾讯、天地图与企业地图接口平台的地图组件库，以一套接口屏蔽各家差异，提供地理编码、逆地理编码、距离计算、坐标转换与多 Key 熔断能力。  
 
 源码： https://github.com/NewLifeX/NewLife.Map  
 Nuget：`NewLife.Map`  
+
+> ℹ️ 本中文版与 [English README](README.md) 同批维护；若两者内容不一致，以英文版为对外口径。
 
 ## 仓库组成
 | 工程 | 定位 | 说明 |
