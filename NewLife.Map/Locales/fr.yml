@@ -1,0 +1,4 @@
+# Français 词表（fr）。键为英文源文，与源码字符串逐字一致；缺少的键运行时回退英文。
+"No available key.": "Aucune clé disponible."
+"Coordinate system conversion from [{0}] to [{1}] is not supported.": "La conversion du système de coordonnées de [{0}] vers [{1}] n'est pas prise en charge."
+"The NewLifeMap server address is not specified.": "L'adresse du serveur NewLifeMap n'est pas spécifiée."

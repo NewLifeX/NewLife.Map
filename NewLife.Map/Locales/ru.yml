@@ -1,0 +1,4 @@
+# Русский 词表（ru）。键为英文源文，与源码字符串逐字一致；缺少的键运行时回退英文。
+"No available key.": "Нет доступного ключа."
+"Coordinate system conversion from [{0}] to [{1}] is not supported.": "Преобразование системы координат из [{0}] в [{1}] не поддерживается."
+"The NewLifeMap server address is not specified.": "Адрес сервера NewLifeMap не указан."

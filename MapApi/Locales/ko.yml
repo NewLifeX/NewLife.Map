@@ -1,0 +1,5 @@
+# 한국어 词表（ko）。键为英文源文，与源码字符串逐字一致；缺少的键运行时回退英文。
+"Coordinates are empty.": "좌표가 비어 있습니다."
+"Address is empty.": "주소가 비어 있습니다."
+"IP is empty.": "IP가 비어 있습니다."
+"No available map service provider was found.": "사용 가능한 지도 서비스 공급자를 찾지 못했습니다."

@@ -1,0 +1,5 @@
+# Español 词表（es）。键为英文源文，与源码字符串逐字一致；缺少的键运行时回退英文。
+"Coordinates are empty.": "Las coordenadas están vacías."
+"Address is empty.": "La dirección está vacía."
+"IP is empty.": "La IP está vacía."
+"No available map service provider was found.": "No se encontró ningún proveedor de servicios de mapas disponible."

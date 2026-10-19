@@ -1,0 +1,5 @@
+# Deutsch 词表（de）。键为英文源文，与源码字符串逐字一致；缺少的键运行时回退英文。
+"Coordinates are empty.": "Koordinaten sind leer."
+"Address is empty.": "Adresse ist leer."
+"IP is empty.": "IP ist leer."
+"No available map service provider was found.": "Es wurde kein verfügbarer Kartendienstanbieter gefunden."

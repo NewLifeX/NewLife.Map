@@ -1,0 +1,4 @@
+# Português 词表（pt）。键为英文源文，与源码字符串逐字一致；缺少的键运行时回退英文。
+"No available key.": "Nenhuma chave disponível."
+"Coordinate system conversion from [{0}] to [{1}] is not supported.": "A conversão do sistema de coordenadas de [{0}] para [{1}] não é suportada."
+"The NewLifeMap server address is not specified.": "O endereço do servidor NewLifeMap não foi especificado."
