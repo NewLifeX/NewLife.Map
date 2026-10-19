@@ -3,3 +3,12 @@
 "Address is empty.": "주소가 비어 있습니다."
 "IP is empty.": "IP가 비어 있습니다."
 "No available map service provider was found.": "사용 가능한 지도 서비스 공급자를 찾지 못했습니다."
+
+"Failed to initialize the offline IP database: {0}": "오프라인 IP 데이터베이스를 초기화하지 못했습니다: {0}"
+"Starting to initialize MapProvider data...": "MapProvider 데이터 초기화를 시작합니다..."
+"Finished initializing MapProvider data!": "MapProvider 데이터 초기화를 완료했습니다!"
+"No address was found. Please make sure the IP database is ready.": "주소를 찾지 못했습니다. IP 데이터베이스가 준비되었는지 확인하세요."
+"The coordinate system is not supported.": "지원하지 않는 좌표계입니다."
+"No geographic data was found.": "지리 데이터를 찾지 못했습니다."
+"No geocoding result was found.": "지오코딩 결과를 찾지 못했습니다."
+"No route was found.": "경로를 찾지 못했습니다."

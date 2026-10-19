@@ -32,7 +32,7 @@ public class MapService
         }
         catch (Exception ex)
         {
-            XTrace.WriteLine("离线 IP 库初始化失败：{0}", ex.Message);
+            XTrace.WriteLine("Failed to initialize the offline IP database: {0}", ex.Message);
         }
 
         return ip;

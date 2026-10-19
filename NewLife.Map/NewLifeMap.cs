@@ -46,7 +46,7 @@ public class NewLifeMap : Map, IMap
             if (_client != null)
             {
                 Server = _client.Services.Join(",", e => e.Address);
-                XTrace.WriteLine("由星尘注册中心绑定NewLife.Map地址：{0}", Server);
+                XTrace.WriteLine("Bound the NewLife.Map address from the Stardust registry: {0}", Server);
             }
         }
         else
@@ -57,7 +57,7 @@ public class NewLifeMap : Map, IMap
                 // 单次获取服务端地址，后续不再改变
                 var models = await star.ResolveAddressAsync("NewLife.Map");
                 Server = models.Join(",");
-                if (!Server.IsNullOrEmpty()) XTrace.WriteLine("由星尘注册中心取得NewLife.Map地址：{0}", Server);
+                if (!Server.IsNullOrEmpty()) XTrace.WriteLine("Resolved the NewLife.Map address from the Stardust registry: {0}", Server);
             }
         }
     }

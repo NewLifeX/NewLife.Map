@@ -2,3 +2,6 @@
 "No available key.": "Нет доступного ключа."
 "Coordinate system conversion from [{0}] to [{1}] is not supported.": "Преобразование системы координат из [{0}] в [{1}] не поддерживается."
 "The NewLifeMap server address is not specified.": "Адрес сервера NewLifeMap не указан."
+
+"Bound the NewLife.Map address from the Stardust registry: {0}": "Адрес NewLife.Map привязан из реестра Stardust: {0}"
+"Resolved the NewLife.Map address from the Stardust registry: {0}": "Адрес NewLife.Map получен из реестра Stardust: {0}"

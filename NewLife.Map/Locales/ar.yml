@@ -2,3 +2,6 @@
 "No available key.": "لا يوجد مفتاح متاح."
 "Coordinate system conversion from [{0}] to [{1}] is not supported.": "تحويل نظام الإحداثيات من [{0}] إلى [{1}] غير مدعوم."
 "The NewLifeMap server address is not specified.": "لم يتم تحديد عنوان خادم NewLifeMap."
+
+"Bound the NewLife.Map address from the Stardust registry: {0}": "تم ربط عنوان NewLife.Map من سجل Stardust: {0}"
+"Resolved the NewLife.Map address from the Stardust registry: {0}": "تم استرداد عنوان NewLife.Map من سجل Stardust: {0}"

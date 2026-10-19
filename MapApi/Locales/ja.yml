@@ -3,3 +3,12 @@
 "Address is empty.": "住所が空です。"
 "IP is empty.": "IP が空です。"
 "No available map service provider was found.": "利用可能な地図サービスプロバイダーが見つかりません。"
+
+"Failed to initialize the offline IP database: {0}": "オフライン IP データベースの初期化に失敗しました: {0}"
+"Starting to initialize MapProvider data...": "MapProvider データの初期化を開始します..."
+"Finished initializing MapProvider data!": "MapProvider データの初期化が完了しました！"
+"No address was found. Please make sure the IP database is ready.": "住所が見つかりませんでした。IP データベースの準備を確認してください。"
+"The coordinate system is not supported.": "この座標系はサポートされていません。"
+"No geographic data was found.": "地理データが見つかりませんでした。"
+"No geocoding result was found.": "ジオコーディング結果が見つかりませんでした。"
+"No route was found.": "ルートが見つかりませんでした。"

@@ -1,4 +1,6 @@
-﻿using MapApi.Services;
+using System.Globalization;
+using MapApi.Services;
+using NewLife;
 using NewLife.Cube;
 using NewLife.Log;
 using XCode;
@@ -7,6 +9,13 @@ using XCode;
 XTrace.UseConsole();
 
 var builder = WebApplication.CreateBuilder(args);
+
+// 运行时语言：固定界面与异常语言，或单独固定日志语言；留空时跟随操作系统
+var culture = builder.Configuration["Localization:Culture"];
+if (!culture.IsNullOrEmpty()) Localization.Culture = CultureInfo.GetCultureInfo(culture);
+var logCulture = builder.Configuration["Localization:LogCulture"];
+if (!logCulture.IsNullOrEmpty()) Localization.LogCulture = CultureInfo.GetCultureInfo(logCulture);
+
 var services = builder.Services;
 
 // 配置星尘。借助StarAgent，或者读取配置文件 config/star.config 中的服务器地址、应用标识、密钥

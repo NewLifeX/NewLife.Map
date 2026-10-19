@@ -39,9 +39,9 @@ public class MapController : ControllerBaseX
 
             if (coordtype.IsNullOrEmpty()) coordtype = "wgs84";
             coordtype = coordtype.ToLower();
-            if (!coordtype.EqualIgnoreCase("wgs84", "wgs84ll", "bd09", "bd09ll", "gcj02", "gcj02ll")) throw new ArgumentOutOfRangeException(nameof(coordtype));
+            if (!coordtype.EqualIgnoreCase("wgs84", "wgs84ll", "bd09", "bd09ll", "gcj02", "gcj02ll")) throw new ArgumentOutOfRangeException(nameof(coordtype), L.T("The coordinate system is not supported."));
 
-            var geo = await _mapService.GetAddress(lng, lat, coordtype) ?? throw new Exception("error");
+            var geo = await _mapService.GetAddress(lng, lat, coordtype) ?? throw new InvalidOperationException(L.T("No geographic data was found."));
             var gm = new GeoModel
             {
                 Hash = geo.Hash,
@@ -94,9 +94,9 @@ public class MapController : ControllerBaseX
 
             if (coordtype.IsNullOrEmpty()) coordtype = "wgs84";
             coordtype = coordtype.ToLower();
-            if (!coordtype.EqualIgnoreCase("wgs84", "wgs84ll", "bd09", "bd09ll", "gcj02", "gcj02ll")) throw new ArgumentOutOfRangeException(nameof(coordtype));
+            if (!coordtype.EqualIgnoreCase("wgs84", "wgs84ll", "bd09", "bd09ll", "gcj02", "gcj02ll")) throw new ArgumentOutOfRangeException(nameof(coordtype), L.T("The coordinate system is not supported."));
 
-            var geo = await _mapService.GetAddress(lng, lat, coordtype) ?? throw new Exception("error");
+            var geo = await _mapService.GetAddress(lng, lat, coordtype) ?? throw new InvalidOperationException(L.T("No geographic data was found."));
             var gm = new GeoModel
             {
                 Hash = geo.Hash,
@@ -147,7 +147,7 @@ public class MapController : ControllerBaseX
         {
             if (address.IsNullOrEmpty()) throw new ArgumentNullException(nameof(address), L.T("Address is empty."));
 
-            var gm = await _mapService.GetGeo(address, city, coordtype) ?? throw new Exception("error");
+            var gm = await _mapService.GetGeo(address, city, coordtype) ?? throw new InvalidOperationException(L.T("No geocoding result was found."));
 
             return Json(0, null, gm);
         }
@@ -177,7 +177,7 @@ public class MapController : ControllerBaseX
         {
             if (fromLng == 0 || fromLat == 0 || toLng == 0 || toLat == 0) throw new ArgumentNullException(nameof(fromLng), L.T("Coordinates are empty."));
 
-            var d = await _mapService.GetDistance(new GeoPoint(fromLng, fromLat), new GeoPoint(toLng, toLat), coordtype, type) ?? throw new Exception("error");
+            var d = await _mapService.GetDistance(new GeoPoint(fromLng, fromLat), new GeoPoint(toLng, toLat), coordtype, type) ?? throw new InvalidOperationException(L.T("No route was found."));
 
             return Json(0, null, d);
         }
@@ -202,7 +202,7 @@ public class MapController : ControllerBaseX
             if (ip.IsNullOrEmpty()) throw new ArgumentNullException(nameof(ip), L.T("IP is empty."));
 
             var (area, addr) = MapService.IpDb.GetAddress(ip);
-            if (area.IsNullOrEmpty()) return Json(1, "未查询到地址，请确认 IP 数据库已就绪", null);
+            if (area.IsNullOrEmpty()) return Json(1, L.T("No address was found. Please make sure the IP database is ready."), null);
 
             return Json(0, null, new { ip, area, addr });
         }

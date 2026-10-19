@@ -2,3 +2,6 @@
 "No available key.": "利用可能なキーがありません。"
 "Coordinate system conversion from [{0}] to [{1}] is not supported.": "座標系の変換 [{0}] → [{1}] はサポートされていません。"
 "The NewLifeMap server address is not specified.": "NewLifeMap サーバーアドレスが指定されていません。"
+
+"Bound the NewLife.Map address from the Stardust registry: {0}": "Stardust レジストリから NewLife.Map アドレスをバインドしました: {0}"
+"Resolved the NewLife.Map address from the Stardust registry: {0}": "Stardust レジストリから NewLife.Map アドレスを取得しました: {0}"

@@ -2,3 +2,6 @@
 "No available key.": "沒有可用密鑰"
 "Coordinate system conversion from [{0}] to [{1}] is not supported.": "未支持[{0}]座標系到[{1}]座標系的轉換"
 "The NewLifeMap server address is not specified.": "NewLifeMap服務端地址未指定"
+
+"Bound the NewLife.Map address from the Stardust registry: {0}": "已由星塵註冊中心綁定NewLife.Map位址：{0}"
+"Resolved the NewLife.Map address from the Stardust registry: {0}": "已由星塵註冊中心取得NewLife.Map位址：{0}"

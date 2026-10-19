@@ -3,3 +3,12 @@
 "Address is empty.": "العنوان فارغ."
 "IP is empty.": "عنوان IP فارغ."
 "No available map service provider was found.": "لم يتم العثور على مزوّد خدمة خرائط متاح."
+
+"Failed to initialize the offline IP database: {0}": "فشل تهيئة قاعدة بيانات IP دون اتصال: {0}"
+"Starting to initialize MapProvider data...": "بدء تهيئة بيانات MapProvider..."
+"Finished initializing MapProvider data!": "اكتملت تهيئة بيانات MapProvider!"
+"No address was found. Please make sure the IP database is ready.": "لم يتم العثور على عنوان. يرجى التأكد من جاهزية قاعدة بيانات IP."
+"The coordinate system is not supported.": "نظام الإحداثيات غير مدعوم."
+"No geographic data was found.": "لم يتم العثور على بيانات جغرافية."
+"No geocoding result was found.": "لم يتم العثور على نتيجة ترميز جغرافي."
+"No route was found.": "لم يتم العثور على مسار."

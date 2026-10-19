@@ -61,7 +61,7 @@ public partial class MapProvider : Entity<MapProvider>
         // InitData一般用于当数据表没有数据时添加一些默认数据，该实体类的任何第一次数据库操作都会触发该方法，默认异步调用
         if (Meta.Session.Count > 0) return;
 
-        if (XTrace.Debug) XTrace.WriteLine("开始初始化MapProvider[地图提供者]数据……");
+        if (XTrace.Debug) XTrace.WriteLine("Starting to initialize MapProvider data...");
 
         // 遍历所有地图提供者，创建默认数据
         foreach (var item in MapFactory.Providers)
@@ -79,7 +79,7 @@ public partial class MapProvider : Entity<MapProvider>
             entity.Insert();
         }
 
-        if (XTrace.Debug) XTrace.WriteLine("完成初始化MapProvider[地图提供者]数据！");
+        if (XTrace.Debug) XTrace.WriteLine("Finished initializing MapProvider data!");
     }
 
     ///// <summary>已重载。基类先调用Valid(true)验证数据，然后在事务保护内调用OnInsert</summary>

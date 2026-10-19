@@ -1,6 +1,8 @@
 using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Threading.Tasks;
+using NewLife;
 using NewLife.Data;
 using NewLife.Map;
 using NewLife.Map.Models;
@@ -10,6 +12,7 @@ using Xunit;
 
 namespace XUnitTest;
 
+[Collection("GlobalState")]
 public class NewLifeMapTests
 {
     private NewLifeMap _map;
@@ -149,11 +152,21 @@ public class NewLifeMapTests
     [DisplayName("新生命地图_未配置服务端_抛出异常")]
     public async Task NoServer_Throws()
     {
-        var map = new NewLifeMap();
+        var old = Localization.Culture;
+        try
+        {
+            Localization.Culture = CultureInfo.GetCultureInfo("zh-Hans");
 
-        var ex = await Assert.ThrowsAsync<Exception>(() => map.GetGeoAsync("上海中心"));
+            var map = new NewLifeMap();
 
-        Assert.Contains("服务端地址未指定", ex.Message);
+            var ex = await Assert.ThrowsAsync<Exception>(() => map.GetGeoAsync("上海中心"));
+
+            Assert.Contains("服务端地址未指定", ex.Message);
+        }
+        finally
+        {
+            Localization.Culture = old;
+        }
     }
 
     [Fact]

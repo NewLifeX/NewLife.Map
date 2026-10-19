@@ -3,3 +3,12 @@
 "Address is empty.": "La dirección está vacía."
 "IP is empty.": "La IP está vacía."
 "No available map service provider was found.": "No se encontró ningún proveedor de servicios de mapas disponible."
+
+"Failed to initialize the offline IP database: {0}": "No se pudo inicializar la base de datos IP sin conexión: {0}"
+"Starting to initialize MapProvider data...": "Iniciando la inicialización de los datos de MapProvider..."
+"Finished initializing MapProvider data!": "¡Inicialización de los datos de MapProvider completada!"
+"No address was found. Please make sure the IP database is ready.": "No se encontró ninguna dirección. Asegúrese de que la base de datos IP esté lista."
+"The coordinate system is not supported.": "El sistema de coordenadas no es compatible."
+"No geographic data was found.": "No se encontraron datos geográficos."
+"No geocoding result was found.": "No se encontró ningún resultado de geocodificación."
+"No route was found.": "No se encontró ninguna ruta."

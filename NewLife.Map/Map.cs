@@ -486,9 +486,25 @@ public abstract class Map : DisposeBase
     /// <summary>日志</summary>
     public ILog Log { get; set; } = Logger.Null;
 
+    /// <summary>日志前缀。默认使用提供者类型名，如 [Baidu]；前缀不参与本地化</summary>
+    public String? LogPrefix { get; set; }
+
     /// <summary>写日志</summary>
-    /// <param name="format"></param>
+    /// <param name="format">格式化字符串。应使用英文模板，由日志器按当前语言翻译</param>
     /// <param name="args"></param>
-    public void WriteLog(String format, params Object[] args) => Log?.Info(format, args);
+    public void WriteLog(String format, params Object[] args)
+    {
+        LogPrefix ??= "[" + GetType().Name.TrimSuffix("Map") + "]";
+        Log?.InfoPrefixed(LogPrefix, format, args);
+    }
+
+    /// <summary>写错误日志</summary>
+    /// <param name="format">格式化字符串。应使用英文模板，由日志器按当前语言翻译</param>
+    /// <param name="args"></param>
+    public void WriteError(String format, params Object[] args)
+    {
+        LogPrefix ??= "[" + GetType().Name.TrimSuffix("Map") + "]";
+        Log?.ErrorPrefixed(LogPrefix, format, args);
+    }
     #endregion
 }

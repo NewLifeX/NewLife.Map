@@ -2,3 +2,6 @@
 "No available key.": "Nenhuma chave disponível."
 "Coordinate system conversion from [{0}] to [{1}] is not supported.": "A conversão do sistema de coordenadas de [{0}] para [{1}] não é suportada."
 "The NewLifeMap server address is not specified.": "O endereço do servidor NewLifeMap não foi especificado."
+
+"Bound the NewLife.Map address from the Stardust registry: {0}": "Endereço do NewLife.Map vinculado a partir do registro Stardust: {0}"
+"Resolved the NewLife.Map address from the Stardust registry: {0}": "Endereço do NewLife.Map resolvido a partir do registro Stardust: {0}"
