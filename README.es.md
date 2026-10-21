@@ -45,6 +45,7 @@ NuGet: `NewLife.Map`
 - Lanzamiento opcional de excepciones mediante `ThrowException`, lo que facilita el tratamiento unificado en capas superiores
 - Varios marcos de destino: net45 / net461 / netstandard2.0 / netstandard2.1 (compatible con proyectos heredados y .NET moderno)
 - Firmado con nombre seguro, apto para reflexión y sistemas de complementos
+- Localización en tiempo de ejecución integrada: 11 idiomas con el inglés como origen y respaldo; los mensajes de excepción, los registros y los metadatos del ensamblado se traducen mediante tablas de idioma de tiempo de compilación
 - Integración con el registro Stardust: el proveedor `NewLifeMap` descubre automáticamente las direcciones de los servidores, lo que permite cambiar sin fisuras entre múltiples instancias / despliegues azul-verde
 
 ## Instalación

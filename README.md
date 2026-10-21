@@ -46,6 +46,7 @@ NuGet: `NewLife.Map`
 - Optional exception throwing via `ThrowException`, making unified handling easier for upper layers
 - Multiple target frameworks: net45 / net461 / netstandard2.0 / netstandard2.1 (compatible with legacy projects and modern .NET)
 - Strong-name signed, suitable for reflection and plugin systems
+- Built-in runtime localization: 11 languages with English as the source and fallback; exception messages, logs and assembly metadata are translated through compile-time locale tables
 - Stardust registry integration: the `NewLifeMap` provider discovers server addresses automatically, enabling seamless switching across multiple instances / blue-green deployments
 
 ## Installation
