@@ -12,7 +12,7 @@ namespace NewLife.Map;
 /// 腾讯地图文档地址：  https://lbs.qq.com/service/webService/webServiceGuide/webServiceGcoder
 /// https://lbs.qq.com/service/webService/webServiceGuide/webServiceGeocoder
 /// </remarks>
-[DisplayName("腾讯地图")]
+[DisplayName("Tencent Map")]
 public class WeMap : Map, IMap
 {
     #region 构造

@@ -1,6 +1,8 @@
 using System;
 using System.ComponentModel;
 using System.Globalization;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using NewLife;
 using NewLife.Data;
 using NewLife.Log;
@@ -14,6 +16,12 @@ namespace XUnitTest;
 [Collection("GlobalState")]
 public class LocalizationTests
 {
+    static LocalizationTests()
+    {
+        // 语言表在模块初始化时注册，测试先显式触发，避免依赖测试执行顺序
+        RuntimeHelpers.RunModuleConstructor(typeof(Map).Module.ModuleHandle);
+    }
+
     /// <summary>记录最后一条日志的日志器</summary>
     class CaptureLog : Logger
     {
@@ -119,4 +127,79 @@ public class LocalizationTests
             Localization.Culture = old;
         }
     }
+
+    /// <summary>组件支持的全部语言（英文为源文与兜底，另有 10 份词表）</summary>
+    public static readonly String[] Cultures = ["zh-Hans", "zh-Hant", "es", "de", "ja", "fr", "pt", "ru", "ko", "ar"];
+
+    [Fact]
+    [DisplayName("多语言_十种语言词表_均已编译生效")]
+    public void Translate_AllCultures_AreCompiled()
+    {
+        var old = Localization.Culture;
+        try
+        {
+            const String title = "NewLife Map Component Library";
+            foreach (var item in Cultures)
+            {
+                var culture = CultureInfo.GetCultureInfo(item);
+                Assert.True(Localization.IsSupported(culture), $"{item} 词表未编译");
+                Localization.Culture = culture;
+
+                var text = Localization.Translate(title);
+                Assert.False(text.IsNullOrEmpty(), $"{item} 缺少标题译文");
+                Assert.NotEqual(title, text);
+            }
+        }
+        finally
+        {
+            Localization.Culture = old;
+        }
+    }
+
+    [Fact]
+    [DisplayName("多语言_程序集标题与描述_按语言翻译")]
+    public void Translate_AssemblyMetadata()
+    {
+        var old = Localization.Culture;
+        try
+        {
+            var assembly = typeof(Map).Assembly;
+            var title = assembly.GetCustomAttribute<AssemblyTitleAttribute>()?.Title;
+            var description = assembly.GetCustomAttribute<AssemblyDescriptionAttribute>()?.Description;
+
+            Assert.Equal("NewLife Map Component Library", title);
+            Assert.StartsWith("A unified map component library", description);
+
+            Localization.Culture = CultureInfo.GetCultureInfo("zh-Hans");
+            Assert.Equal("统一地图组件库", Localization.Translate(title));
+            Assert.StartsWith("统一封装百度、高德、腾讯、天地图", Localization.Translate(description));
+
+            Localization.Culture = CultureInfo.GetCultureInfo("en-US");
+            Assert.Equal(title, Localization.Translate(title));
+        }
+        finally
+        {
+            Localization.Culture = old;
+        }
+    }
+
+    [Fact]
+    [DisplayName("多语言_距离单位_按语言格式化")]
+    public void Translate_DistanceUnit()
+    {
+        var old = Localization.Culture;
+        try
+        {
+            Localization.Culture = CultureInfo.GetCultureInfo("zh-Hans");
+            Assert.Equal("16米", Localization.Translate("{0} m", 16));
+
+            Localization.Culture = CultureInfo.GetCultureInfo("en-US");
+            Assert.Equal("16 m", Localization.Translate("{0} m", 16));
+        }
+        finally
+        {
+            Localization.Culture = old;
+        }
+    }
+
 }

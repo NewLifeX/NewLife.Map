@@ -12,7 +12,7 @@ namespace NewLife.Map;
 /// <remarks>
 /// 参考手册 http://lbs.tianditu.gov.cn/server/guide.html
 /// </remarks>
-[DisplayName("天地图")]
+[DisplayName("Tianditu")]
 public class TianDiTu : Map, IMap
 {
     #region 构造

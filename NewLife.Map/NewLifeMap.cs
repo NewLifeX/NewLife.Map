@@ -13,7 +13,7 @@ namespace NewLife.Map;
 /// <summary>新生命地图</summary>
 /// <remarks>
 /// </remarks>
-[DisplayName("新生命地图")]
+[DisplayName("NewLife Map")]
 public class NewLifeMap : Map, IMap
 {
     #region 属性

@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net45;net461;netstandard2.0;netstandard2.1</TargetFrameworks>
-    <AssemblyTitle>统一地图组件库</AssemblyTitle>
-    <Description>统一封装百度、高德、腾讯、天地图与企业聚合地图接口，提供地理编码、逆地理、距离计算、坐标转换与多Key熔断能力</Description>
+    <AssemblyTitle>NewLife Map Component Library</AssemblyTitle>
+    <Description>A unified map component library that wraps Baidu, AMap, Tencent, Tianditu and the enterprise aggregation map API, providing geocoding, reverse geocoding, distance calculation, coordinate conversion and multi-key circuit breaking.</Description>
     <Company>新生命开发团队</Company>
     <Copyright>©2002-2026 新生命开发团队</Copyright>
     <VersionPrefix>2.7</VersionPrefix>
@@ -22,12 +22,13 @@
 
   <PropertyGroup>
     <PackageId>$(AssemblyName)</PackageId>
+    <PackageDescription>A unified map component library that wraps Baidu, AMap, Tencent, Tianditu and the enterprise aggregation map API, providing geocoding, reverse geocoding, distance calculation, coordinate conversion and multi-key circuit breaking. 统一地图组件库：封装百度、高德、腾讯、天地图与企业聚合地图接口，提供地理编码、逆地理编码、距离计算、坐标转换与多 Key 熔断能力。</PackageDescription>
     <Authors>$(Company)</Authors>
     <PackageProjectUrl>https://newlifex.com/core</PackageProjectUrl>
     <PackageIcon>leaf.png</PackageIcon>
     <RepositoryUrl>https://github.com/NewLifeX/NewLife.Map</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>新生命团队;X组件;NewLife;$(AssemblyName)</PackageTags>
+    <PackageTags>新生命团队;X组件;NewLife;地图;Map;本地化;Localization;$(AssemblyName)</PackageTags>
     <PackageReleaseNotes>新增 OSM/Nominatim 开源无 Key 海外地图源；腾讯地图新增行政区划查询；Map 基类新增令牌桶限速与故障统计；NewLifeMap/MapApi 补齐正向地理编码与驾驶距离端点；MapApi 新增在线 IP 解析；新增坐标转换基准测试项目；修复坐标转换健壮性问题并升级依赖至 2026.10</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>

@@ -5,3 +5,13 @@
 
 "Bound the NewLife.Map address from the Stardust registry: {0}": "Stardust 레지스트리에서 NewLife.Map 주소를 바인딩했습니다: {0}"
 "Resolved the NewLife.Map address from the Stardust registry: {0}": "Stardust 레지스트리에서 NewLife.Map 주소를 확인했습니다: {0}"
+
+# 어셈블리 및 공급자 메타데이터(원문은 영어, 키는 csproj/특성의 영어 문자열과 정확히 일치)
+"NewLife Map Component Library": "NewLife 지도 구성 요소 라이브러리"
+"A unified map component library that wraps Baidu, AMap, Tencent, Tianditu and the enterprise aggregation map API, providing geocoding, reverse geocoding, distance calculation, coordinate conversion and multi-key circuit breaking.": "Baidu, AMap, Tencent, Tianditu 및 기업 통합 지도 API를 하나로 감싸 지오코딩, 역지오코딩, 거리 계산, 좌표 변환, 다중 키 회로 차단 기능을 제공하는 지도 구성 요소 라이브러리입니다."
+"Baidu Map": "바이두 지도"
+"AMap": "AMap(가오더 지도)"
+"Tencent Map": "텐센트 지도"
+"Tianditu": "티안디투"
+"NewLife Map": "NewLife 지도"
+"{0} m": "{0} m"

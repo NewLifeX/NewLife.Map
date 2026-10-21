@@ -5,3 +5,13 @@
 
 "Bound the NewLife.Map address from the Stardust registry: {0}": "已由星塵註冊中心綁定NewLife.Map位址：{0}"
 "Resolved the NewLife.Map address from the Stardust registry: {0}": "已由星塵註冊中心取得NewLife.Map位址：{0}"
+
+# 組件與提供者中繼資料（來源為英文，鍵與 csproj/特性中的英文原文逐字一致）
+"NewLife Map Component Library": "統一地圖組件庫"
+"A unified map component library that wraps Baidu, AMap, Tencent, Tianditu and the enterprise aggregation map API, providing geocoding, reverse geocoding, distance calculation, coordinate conversion and multi-key circuit breaking.": "統一封裝百度、高德、騰訊、天地圖與企業聚合地圖介面，提供地理編碼、逆地理編碼、距離計算、座標轉換與多Key熔斷能力。"
+"Baidu Map": "百度地圖"
+"AMap": "高德地圖"
+"Tencent Map": "騰訊地圖"
+"Tianditu": "天地圖"
+"NewLife Map": "新生命地圖"
+"{0} m": "{0}公尺"

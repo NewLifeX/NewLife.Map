@@ -11,7 +11,7 @@ namespace NewLife.Map;
 /// <remarks>
 /// 参考手册 https://lbsyun.baidu.com/index.php?title=webapi
 /// </remarks>
-[DisplayName("百度地图")]
+[DisplayName("Baidu Map")]
 public class BaiduMap : Map, IMap
 {
     #region 构造

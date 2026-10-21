@@ -5,3 +5,13 @@
 
 "Bound the NewLife.Map address from the Stardust registry: {0}": "Stardust レジストリから NewLife.Map アドレスをバインドしました: {0}"
 "Resolved the NewLife.Map address from the Stardust registry: {0}": "Stardust レジストリから NewLife.Map アドレスを取得しました: {0}"
+
+# アセンブリとプロバイダーのメタデータ（原文は英語、キーは csproj/属性の英語文字列と完全一致）
+"NewLife Map Component Library": "NewLife 地図コンポーネントライブラリ"
+"A unified map component library that wraps Baidu, AMap, Tencent, Tianditu and the enterprise aggregation map API, providing geocoding, reverse geocoding, distance calculation, coordinate conversion and multi-key circuit breaking.": "Baidu・AMap・Tencent・天地図・企業集約地図 API を統一的にラップし、ジオコーディング、逆ジオコーディング、距離計算、座標変換、マルチキーサーキットブレーカーを提供する地図コンポーネントライブラリ。"
+"Baidu Map": "Baidu 地図"
+"AMap": "AMap（高徳地図）"
+"Tencent Map": "Tencent 地図"
+"Tianditu": "天地図"
+"NewLife Map": "NewLife 地図"
+"{0} m": "{0} m"

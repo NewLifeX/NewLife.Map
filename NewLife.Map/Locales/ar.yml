@@ -5,3 +5,13 @@
 
 "Bound the NewLife.Map address from the Stardust registry: {0}": "تم ربط عنوان NewLife.Map من سجل Stardust: {0}"
 "Resolved the NewLife.Map address from the Stardust registry: {0}": "تم استرداد عنوان NewLife.Map من سجل Stardust: {0}"
+
+# بيانات تعريف التجميع والمزوّدين (المصدر بالإنجليزية، والمفاتيح مطابقة تمامًا لـ csproj/السمات)
+"NewLife Map Component Library": "مكتبة مكوّنات الخرائط NewLife"
+"A unified map component library that wraps Baidu, AMap, Tencent, Tianditu and the enterprise aggregation map API, providing geocoding, reverse geocoding, distance calculation, coordinate conversion and multi-key circuit breaking.": "مكتبة مكوّنات خرائط توحّد Baidu وAMap وTencent وTianditu وواجهة الخرائط التجميعية للمؤسسات، وتوفّر الترميز الجغرافي والترميز العكسي وحساب المسافة وتحويل الإحداثيات وقاطع الدائرة متعدد المفاتيح."
+"Baidu Map": "خرائط Baidu"
+"AMap": "AMap (Gaode)"
+"Tencent Map": "خرائط Tencent"
+"Tianditu": "Tianditu"
+"NewLife Map": "خريطة NewLife"
+"{0} m": "{0} م"

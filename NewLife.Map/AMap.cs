@@ -11,7 +11,7 @@ namespace NewLife.Map;
 /// <remarks>
 /// 参考地址 http://lbs.amap.com/api/webservice/guide/api/georegeo/#geo
 /// </remarks>
-[DisplayName("高德地图")]
+[DisplayName("AMap")]
 public class AMap : Map, IMap
 {
     #region 构造
@@ -210,7 +210,7 @@ public class AMap : Map, IMap
                 if (geo.Title.IsNullOrEmpty())
                 {
                     if (!sn.TryGetValue("direction", out var direction)) direction = "";
-                    if (sn.TryGetValue("distance", out var distance)) distance = Math.Round(distance.ToDouble(), 0) + "米";
+                    if (sn.TryGetValue("distance", out var distance)) distance = L.T("{0} m", Math.Round(distance.ToDouble(), 0));
 
                     geo.Title = $"{geo.Province}{geo.City}{geo.District}{geo.Township}{geo.Street}{geo.StreetNumber}{direction}{distance}";
                 }
