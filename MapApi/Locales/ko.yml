@@ -12,3 +12,14 @@
 "No geographic data was found.": "지리 데이터를 찾지 못했습니다."
 "No geocoding result was found.": "지오코딩 결과를 찾지 못했습니다."
 "No route was found.": "경로를 찾지 못했습니다."
+
+# 지도 설정 메타데이터(원문은 영어, 키는 [DisplayName]/[Description]의 영어 문자열과 정확히 일치)
+"Map settings": "지도 설정"
+"Enable map. Defaults to true.": "지도 사용 여부입니다. 기본값은 true입니다."
+"Map provider. Defaults to NewLife.": "지도 공급자입니다. 기본값은 NewLife입니다."
+"Browser-side map key.": "브라우저 측 지도 키입니다."
+"Web service map key.": "웹 서비스 지도 키입니다."
+"Map center city. Defaults to Xi'an.": "지도 중심 도시입니다. 기본값은 시안입니다."
+"Zoom level. 6 shows the whole country, 17 is the closest.": "확대 수준입니다. 6은 전국, 17은 최대 확대입니다."
+"Satellite imagery. Defaults to false.": "위성 이미지 사용 여부입니다. 기본값은 false입니다."
+"Cache days. Days to refresh database records, defaults to 30.": "캐시 일수입니다. 데이터베이스 레코드를 갱신하는 기간이며 기본값은 30일입니다."

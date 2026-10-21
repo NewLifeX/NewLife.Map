@@ -12,3 +12,14 @@
 "No geographic data was found.": "Географические данные не найдены."
 "No geocoding result was found.": "Результат геокодирования не найден."
 "No route was found.": "Маршрут не найден."
+
+# Метаданные настроек карты (исходный текст на английском, ключи совпадают с [DisplayName]/[Description])
+"Map settings": "Настройки карты"
+"Enable map. Defaults to true.": "Включить карту. По умолчанию true."
+"Map provider. Defaults to NewLife.": "Поставщик карт. По умолчанию NewLife."
+"Browser-side map key.": "Ключ карты для браузера."
+"Web service map key.": "Ключ карты для веб-службы."
+"Map center city. Defaults to Xi'an.": "Центральный город карты. По умолчанию Сиань."
+"Zoom level. 6 shows the whole country, 17 is the closest.": "Уровень масштабирования. 6 — вся страна, 17 — максимальное приближение."
+"Satellite imagery. Defaults to false.": "Спутниковые снимки. По умолчанию false."
+"Cache days. Days to refresh database records, defaults to 30.": "Дней кеширования. Сколько дней до обновления записей базы данных, по умолчанию 30."

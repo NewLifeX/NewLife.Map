@@ -12,3 +12,14 @@
 "No geographic data was found.": "لم يتم العثور على بيانات جغرافية."
 "No geocoding result was found.": "لم يتم العثور على نتيجة ترميز جغرافي."
 "No route was found.": "لم يتم العثور على مسار."
+
+# بيانات تعريف إعدادات الخريطة (المصدر بالإنجليزية، والمفاتيح مطابقة تمامًا لـ [DisplayName]/[Description])
+"Map settings": "إعدادات الخريطة"
+"Enable map. Defaults to true.": "تفعيل الخريطة. القيمة الافتراضية true."
+"Map provider. Defaults to NewLife.": "مزوّد الخرائط. القيمة الافتراضية NewLife."
+"Browser-side map key.": "مفتاح الخريطة في المتصفح."
+"Web service map key.": "مفتاح الخريطة لخدمة الويب."
+"Map center city. Defaults to Xi'an.": "المدينة المركزية للخريطة. القيمة الافتراضية شيان."
+"Zoom level. 6 shows the whole country, 17 is the closest.": "مستوى التكبير. 6 يعرض البلد بأكمله، و17 هو أقصى تقريب."
+"Satellite imagery. Defaults to false.": "صور الأقمار الصناعية. القيمة الافتراضية false."
+"Cache days. Days to refresh database records, defaults to 30.": "أيام التخزين المؤقت. عدد الأيام قبل تحديث سجلات قاعدة البيانات، والقيمة الافتراضية 30."

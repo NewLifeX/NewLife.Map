@@ -12,3 +12,14 @@
 "No geographic data was found.": "Aucune donnée géographique trouvée."
 "No geocoding result was found.": "Aucun résultat de géocodage trouvé."
 "No route was found.": "Aucun itinéraire trouvé."
+
+# Métadonnées des paramètres de carte (source en anglais, clés identiques à [DisplayName]/[Description])
+"Map settings": "Paramètres de la carte"
+"Enable map. Defaults to true.": "Activer la carte. La valeur par défaut est true."
+"Map provider. Defaults to NewLife.": "Fournisseur de cartes. La valeur par défaut est NewLife."
+"Browser-side map key.": "Clé de carte côté navigateur."
+"Web service map key.": "Clé de carte du service web."
+"Map center city. Defaults to Xi'an.": "Ville centrale de la carte. La valeur par défaut est Xi'an."
+"Zoom level. 6 shows the whole country, 17 is the closest.": "Niveau de zoom. 6 affiche tout le pays, 17 est le zoom maximal."
+"Satellite imagery. Defaults to false.": "Imagerie satellite. La valeur par défaut est false."
+"Cache days. Days to refresh database records, defaults to 30.": "Jours de cache. Nombre de jours avant actualisation des enregistrements de la base, la valeur par défaut est 30."

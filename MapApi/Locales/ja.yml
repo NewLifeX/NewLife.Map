@@ -12,3 +12,14 @@
 "No geographic data was found.": "地理データが見つかりませんでした。"
 "No geocoding result was found.": "ジオコーディング結果が見つかりませんでした。"
 "No route was found.": "ルートが見つかりませんでした。"
+
+# 地図設定のメタデータ（原文は英語、キーは [DisplayName]/[Description] の英語文字列と完全一致）
+"Map settings": "地図設定"
+"Enable map. Defaults to true.": "地図を有効にする。既定値は true。"
+"Map provider. Defaults to NewLife.": "地図プロバイダー。既定値は NewLife。"
+"Browser-side map key.": "ブラウザー側の地図キー。"
+"Web service map key.": "Web サービスの地図キー。"
+"Map center city. Defaults to Xi'an.": "地図の中心都市。既定値は西安。"
+"Zoom level. 6 shows the whole country, 17 is the closest.": "ズームレベル。6 で全国、17 が最小。"
+"Satellite imagery. Defaults to false.": "衛星画像。既定値は false。"
+"Cache days. Days to refresh database records, defaults to 30.": "キャッシュ日数。データベースレコードを更新する日数、既定値は 30。"

@@ -12,3 +12,14 @@
 "No geographic data was found.": "Es wurden keine Geodaten gefunden."
 "No geocoding result was found.": "Es wurde kein Geokodierungsergebnis gefunden."
 "No route was found.": "Es wurde keine Route gefunden."
+
+# Metadaten der Karteneinstellungen (Quelltext Englisch, Schlüssel identisch mit [DisplayName]/[Description])
+"Map settings": "Karteneinstellungen"
+"Enable map. Defaults to true.": "Karte aktivieren. Standardwert ist true."
+"Map provider. Defaults to NewLife.": "Kartenanbieter. Standardwert ist NewLife."
+"Browser-side map key.": "Kartenschlüssel für den Browser."
+"Web service map key.": "Kartenschlüssel für den Webdienst."
+"Map center city. Defaults to Xi'an.": "Zentrale Stadt der Karte. Standardwert ist Xi'an."
+"Zoom level. 6 shows the whole country, 17 is the closest.": "Zoomstufe. 6 zeigt das ganze Land, 17 ist die nächste Stufe."
+"Satellite imagery. Defaults to false.": "Satellitenbilder. Standardwert ist false."
+"Cache days. Days to refresh database records, defaults to 30.": "Cache-Tage. Tage bis zur Aktualisierung der Datenbankeinträge, Standardwert ist 30."

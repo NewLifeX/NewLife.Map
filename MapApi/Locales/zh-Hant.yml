@@ -12,3 +12,14 @@
 "No geographic data was found.": "未查詢到地理資料"
 "No geocoding result was found.": "未查詢到地理編碼結果"
 "No route was found.": "未查詢到路線"
+
+# 地圖設定中繼資料（來源為英文，鍵與 [DisplayName]/[Description] 中的英文原文逐字一致）
+"Map settings": "地圖設定"
+"Enable map. Defaults to true.": "啟用地圖。預設true"
+"Map provider. Defaults to NewLife.": "地圖提供者。預設NewLife"
+"Browser-side map key.": "瀏覽器端地圖密鑰"
+"Web service map key.": "WebService地圖密鑰"
+"Map center city. Defaults to Xi'an.": "地圖中心城市。預設西安"
+"Zoom level. 6 shows the whole country, 17 is the closest.": "縮放等級。預設6看全國，17最小"
+"Satellite imagery. Defaults to false.": "衛星圖。預設false"
+"Cache days. Days to refresh database records, defaults to 30.": "快取天數。更新資料庫記錄的時間，預設30天"

@@ -12,3 +12,14 @@
 "No geographic data was found.": "未查询到地理数据"
 "No geocoding result was found.": "未查询到地理编码结果"
 "No route was found.": "未查询到路线"
+
+# 地图配置元数据（源文为英文，键与 [DisplayName]/[Description] 中的英文原文逐字一致）
+"Map settings": "地图设置"
+"Enable map. Defaults to true.": "启用地图。默认true"
+"Map provider. Defaults to NewLife.": "地图提供者。默认NewLife"
+"Browser-side map key.": "浏览器端地图密钥"
+"Web service map key.": "WebService地图密钥"
+"Map center city. Defaults to Xi'an.": "地图中心城市。默认西安"
+"Zoom level. 6 shows the whole country, 17 is the closest.": "缩放等级。默认6看全国，17最小"
+"Satellite imagery. Defaults to false.": "卫星图。默认false"
+"Cache days. Days to refresh database records, defaults to 30.": "缓存天数。更新数据库记录的时间，默认30天"
