@@ -131,6 +131,34 @@ public class LocalizationTests
     /// <summary>组件支持的全部语言（英文为源文与兜底，另有 10 份词表）</summary>
     public static readonly String[] Cultures = ["zh-Hans", "zh-Hant", "es", "de", "ja", "fr", "pt", "ru", "ko", "ar"];
 
+    [Theory]
+    [InlineData("zh-Hant", "[Test]沒有可用密鑰")]
+    [InlineData("ja", "[Test]利用可能なキーがありません。")]
+    [InlineData("de", "[Test]Kein verfügbarer Schlüssel.")]
+    [InlineData("ko", "[Test]사용 가능한 키가 없습니다.")]
+    [InlineData("ru", "[Test]Нет доступного ключа.")]
+    [InlineData("ar", "[Test]لا يوجد مفتاح متاح.")]
+    [DisplayName("多语言_带前缀日志_各语言译文")]
+    public void WriteLog_LocalizedPerLanguage(String culture, String expected)
+    {
+        var old = Localization.Culture;
+        try
+        {
+            Localization.Culture = CultureInfo.GetCultureInfo(culture);
+
+            var log = new CaptureLog();
+            var map = new TestMap { Log = log };
+
+            map.WriteLog("No available key.");
+
+            Assert.Equal(expected, log.Last);
+        }
+        finally
+        {
+            Localization.Culture = old;
+        }
+    }
+
     [Fact]
     [DisplayName("多语言_十种语言词表_均已编译生效")]
     public void Translate_AllCultures_AreCompiled()
