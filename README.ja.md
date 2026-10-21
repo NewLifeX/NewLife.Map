@@ -16,30 +16,196 @@
 
 > この翻訳は[英語版](README.md)より遅れている場合があります。英語版を正とします。
 
-NewLife.Map は Baidu、AMap、Tencent、天地図などの地図サービスを統合し、ジオコーディング、逆ジオコーディング、経路探索、行政区画を提供します。
+NewLife.Map は、Baidu・AMap・Tencent・天地図・企業向け地図 API プラットフォームを単一のインターフェースに統合した地図コンポーネントライブラリです。ベンダー間の差異を隠蔽し、ジオコーディング、逆ジオコーディング、距離計算、座標変換、マルチキーサーキットブレーカーを提供します。
+
+ソース: https://github.com/NewLifeX/NewLife.Map  
+NuGet: `NewLife.Map`  
+
+## リポジトリ構成
+| プロジェクト | 役割 | 説明 |
+| ---- | ---- | ---- |
+| `NewLife.Map` | 地図コンポーネントライブラリ（NuGet パッケージ） | 統一 `IMap` インターフェース + マルチベンダーアダプター + 座標変換 + キーサーキットブレーカー |
+| `MapApi` | 企業向け地図 API プラットフォーム（Web サービス） | マルチベンダー集約 + 多段 GeoHash キャッシュ + Cube 管理バックエンド |
+| `XUnitTest` | ユニットテスト | 各プロバイダーのジオコーディング／逆ジオコーディング／距離／座標変換テスト（実サービス連携ケースは既定でスキップ） |
+
+## ドキュメント
+- [要件](Doc/需求文档.md) — ビジョン、中核目標、機能要件、保留リスト
+- [機能一覧](Doc/功能清单.md) — モジュール／機能コードと、実装・テスト・コメントの三次元状態管理
+- [アーキテクチャ](Doc/架构设计.md) — レイヤリング、コンポーネント、主要フロー、設計判断
+- [競合分析](Doc/竞品分析.md) — Geocoding.net / ProjNET / 国内単一ベンダーラッパーとの比較マトリクスとギャップ分析
+
+## 機能
+- Baidu / AMap / Tencent / 天地図 / 企業セルフホスト（NewLifeMap）の差異を隠蔽する統一 `IMap` インターフェース。ベンダーの切り替えにコード変更は不要
+- ジオコーディング（住所 → 座標）／逆ジオコーディング（座標 → 住所）。POI のセマンティック情報を自動統合して住所構成要素を補完
+- 経路距離／運転時間。ベンダー固有の戦略パラメーターは抽象化済み
+- 行政区画の照会（AMap / Tencent）、POI／地域検索（Baidu / 天地図）、IP 位置情報（Baidu / Tencent / プラットフォームのオンライン解決）
+- 座標変換：WGS84 / GCJ02 / BD09 のオフライン公式を内蔵 + ベンダーのオンライン一括変換（Baidu 固有の from/to マッピングはカプセル化済み）
+- マルチキー輪番と自動サーキットブレーカー + 定時復旧。単一キーがレート制限や禁止を受けても全体の可用性に影響しない
+- `MaxQps` によるトークンバケット式レート制限とリクエスト統計（合計／成功率／平均遅延）。単一キーが高頻度リクエストで禁止されるのを防止
+- `ThrowException` で例外送出を切り替え可能。上位層での統合処理が容易
+- 複数ターゲットフレームワーク：net45 / net461 / netstandard2.0 / netstandard2.1（レガシープロジェクトと最新 .NET の両方に対応）
+- 厳密名署名済み。リフレクションやプラグインシステムに適する
+- Stardust レジストリ連携：`NewLifeMap` プロバイダーがサーバーアドレスを自動検出し、マルチインスタンス／ブルーグリーン配備でもシームレスに切り替え
 
 ## インストール
-
 ```bash
+# 安定版
 dotnet add package NewLife.Map
+# プレビュー版（日付ベース）
+dotnet add package NewLife.Map --prerelease
 ```
 
 ## クイックスタート
+```csharp
+using NewLife.Map;
+using NewLife.Data;
+
+// 具体的な地図プロバイダーを選択（BaiduMap / AMap / WeMap / TianDiTu / NewLifeMap）
+var map = new BaiduMap { AppKey = "<BAIDU_AK>" }; // 複数のキーはカンマで区切る
+
+// 1. ジオコーディング：住所 -> 座標
+var geo = await map.GetGeoAsync("北京市海淀区上地十街10号", city: "北京", coordtype: "bd09ll", formatAddress: true);
+Console.WriteLine($"Point: {geo?.Location}  Semantic: {geo?.Title}");
+
+// 2. 逆ジオコーディング：座標 -> 住所
+var addr = await map.GetReverseGeoAsync(new GeoPoint(116.30815, 40.056885), "bd09ll");
+Console.WriteLine(addr?.Address);
+
+// 3. 距離（運転）
+var d = await map.GetDistanceAsync(new GeoPoint(116.30815, 40.056885), new GeoPoint(116.39745, 39.909187), "bd09ll");
+Console.WriteLine($"Distance={d?.Distance}m Duration={d?.Duration}s");
+
+// 4. 座標変換（オフライン公式）
+var list = await map.ConvertAsync(new List<GeoPoint> { new(116.30815, 40.056885) }, from: "wgs84", to: "bd09");
+Console.WriteLine(list[0]);
+```
+> 座標は球面座標（経度／緯度）を使用します。出力は BD09 座標系の点です。
+
+## ファクトリによる動的生成
+```csharp
+var m1 = Map.Create("Baidu");           // *Map サフィックスを自動的に照合
+var m2 = Map.Create("AMap");            // AMap
+var m3 = Map.Create("NewLifeMap");
+
+// 列挙型で生成することも可能
+var m4 = MapFactory.Create(MapKinds.TianDiTu);
+```
+> `AppKey` はインスタンス化後に設定します。複数のキーはカンマで区切り、内部で輪番されます。
+
+## 地図プロバイダー
+| プロバイダー | クラス | 主な機能 | 備考 |
+| ------ | ---- | -------- | ---- |
+| Baidu 地図 | `BaiduMap` | ジオコーディング／逆ジオコーディング／距離／POI 検索／IP 位置情報／座標変換（オンライン + オフライン） | `KeyName=ak` |
+| AMap（高徳地図） | `AMap` | ジオコーディング／逆ジオコーディング／距離／行政区画 | `KeyName=key` |
+| Tencent 地図 | `WeMap` | ジオコーディング／逆ジオコーディング／距離／IP 位置情報／行政区画 | `KeyName=key` |
+| 天地図 | `TianDiTu` | ジオコーディング／逆ジオコーディング／距離（経由地対応）／POI 検索 | `KeyName=tk` |
+| OSM/Nominatim | `NominatimMap` | ジオコーディング／逆ジオコーディング（オープンソース、無料、キー不要、WGS84） | キー不要 |
+| NewLife 地図プラットフォーム | `NewLifeMap` | 企業向け集約 API（MapApi プラットフォームに接続） | Stardust によるサービスディスカバリ |
+
+> プロバイダーを追加する場合は、後述の「新しい地図プロバイダーの拡張」と AMap／BaiduMap の実装パターンを参照してください。
+
+## 座標系変換
+| 名称 | 説明 | 主なベンダー |
+| ---- | -------- | ---- |
+| WGS84 | 国際的な GPS 標準 | デバイスの生測位 |
+| GCJ02 | 国家測絵局によるオフセット | AMap / Tencent / 中国国内の大半のオンライン地図 |
+| BD09 | Baidu のオフセット | Baidu |
 
 ```csharp
-var map = new BaiduMap(accessKey);
-var location = await map.GetLocationAsync("北京市海淀区");
+// オフライン公式による変換。ベンダーのクォータを消費しない
+var p = await map.ConvertAsync(new GeoPoint(lng, lat), from: "wgs84", to: "gcj02");
+
+// Baidu のオンライン一括変換。from/to のインデックス値はカプセル化済み
+var list = await map.ConvertAsync(points, from: "wgs84ll", to: "bd09ll");
 ```
 
-## 主な機能
+## AppKey のマルチキー輪番とサーキットブレーカー
+- `AppKey="k1,k2,k3"` を渡すと、リクエストごとにインデックスを加算して剰余で輪番します
+- 応答が無効キーワード（`TOO_FREQUENT` / `LIMIT` / `INVALID` など）に一致すると、`RemoveKey()` を呼び出してそのキーを一時的に無効化します
+- 無効化されたキーは `_pendingKeys` に入り、`TimerX` タイマーが走査して期限到来時に自動復旧します
+- 復旧時間の方針：現在は呼び出し側が指定します（例：1 時間）
 
-- 主要クラウドサービスとマネージドミドルウェアに対応
-- 主要なプロトコル／フォーマットの各バージョンに対応
-- プラグイン可能な拡張アーキテクチャで二次開発が容易
+## NewLifeMap 集約プラットフォーム
+`NewLifeMap` は内蔵の `MapApi` 企業向け地図 API プラットフォームを指します。プラットフォーム側で複数ベンダーを集約し結果をキャッシュするため、クライアントは下層の差異を意識する必要がありません。
 
-## ドキュメント
+```csharp
+// 方法 1：サーバーを直接指定
+var map = new NewLifeMap("http://mapapi.company.local") { AppKey = "<KEY>" };
 
-> 📖 詳細ドキュメント（中国語）： [リポジトリ内ドキュメント](Doc)
+// 方法 2：依存性注入 + Stardust レジストリによるアドレス自動解決
+services.AddSingleton<IMap, NewLifeMap>();
+// NewLifeMap(IServiceProvider) コンストラクターは IRegistry -> StarFactory の順に試行します
+```
+
+- バインドされた `ApiHttpClient` はサーバーアドレス一覧を自動更新するため、MapApi のマルチレプリカ／ブルーグリーン配備でもシームレスに切り替えられます
+- プラットフォームは `GET /Map/Geo`、`/Map/ReverseGeo`（逆ジオコーディング）、`/Map/GeoAddress`（ジオコーディング）、`/Map/Distance`（距離）の統一エンドポイントを公開し、6〜9 文字の 4 段階 GeoHash キャッシュでベンダー呼び出しを削減します
+
+## エラー処理
+- 既定：失敗応答では例外を送出せず、メソッドは `null` を返します
+- `map.ThrowException = true;` を設定すると `Exception` を送出し、上位層で統一的に捕捉できます
+- 直近リクエストのデバッグ情報：`LastUrl` / `LastString` / `LastResult` / `LastKey`
+
+## API 一覧
+```csharp
+Task<GeoAddress?> GetGeoAsync(string address, string? city=null, string? coordtype=null, bool formatAddress=false);
+Task<GeoAddress?> GetReverseGeoAsync(GeoPoint point, string? coordtype);
+Task<Driving?>    GetDistanceAsync(GeoPoint origin, GeoPoint destination, string? coordtype, int type=0);
+Task<IList<GeoPoint>> ConvertAsync(IList<GeoPoint> points, string from, string to);
+```
+拡張メソッド（プロバイダー固有）：
+```csharp
+Task<GeoAddress?> PlaceSearchAsync(...);      // BaiduMap / 天地図の POI／地域検索
+Task<IList<GeoArea>> GetAreaAsync(...);       // AMap の行政区画
+Task<IDictionary<string, object?>> IpLocationAsync(...); // BaiduMap / WeMap の IP 位置情報
+```
+
+## 新しい地図プロバイダーの拡張
+1. `XXXMap : Map, IMap` クラスを作成する
+2. `Server` / `KeyName` を設定する
+3. `InvokeAsync<T>` をオーバーライドし、ベンダー統一のレスポンス構造とエラーコードを解析する
+4. `GetGeoAsync` / `GetReverseGeoAsync` など必要な機能を実装する
+5. ベンダー固有のレート制限／無効化シグナルがある場合は `IsValidKey` をオーバーライドし、true を返して一時無効化をトリガーする
+6. `MapFactory` の静的コンストラクターで `Register<XXXMap>(MapKinds.XXX)` を呼び出して登録する
+7. 主要機能とエッジケースをカバーするユニットテストを提出する
+
+## ユニットテスト
+リポジトリには `XUnitTest` プロジェクトが含まれます。ソリューションは `NewLife.Map.slnx`（VS 2026 / .NET 10 の新しい XML 形式）です：
+- 既定では**決定的テスト**を実行します：84 ケース。ローカル HTTP スタブサービスが各ベンダーの URL 構築とレスポンス解析をカバーし、実行時間は約 0.4〜1 秒で、すべての RID（CI を含む）で安定して動作します
+- 実際のベンダー／OSM／プラットフォームのオンラインテストは `Category=Integration` としてマークされ、`IntegrationFact` により**既定でスキップ**されます。VS テストエクスプローラーの「すべて実行」も `dotnet test` と同じ動作です
+- 統合テストを有効にするには、環境変数 `NEWLIFE_MAP_INTEGRATION=1` を設定してから `--filter "Category=Integration"` を付けて実行します
+- 実際のキーはローカルのユーザーシークレットまたは環境変数に保管し、リポジトリにコミットしないでください
+
+実行（Windows PowerShell）：
+```powershell
+dotnet test -c Release
+$env:NEWLIFE_MAP_INTEGRATION = 1
+dotnet test -c Release --filter "Category=Integration"   # 任意：実環境での統合テスト
+```
+
+## ビルド
+```bash
+dotnet build -c Release
+```
+出力（マルチフレームワークビルド）は `Bin/` にあります。
+
+## 互換性テスト（CI）
+push / PR 時に実行され、主要な RID をカバーします：
+- ユニットテストマトリクス：win-x64 / linux-x64 / linux-arm64 / linux-la64（LoongArch、QEMU エミュレーション + 龍芯 .NET SDK。`test.yml` を参照）
+- NativeAOT スモークマトリクス：同じ 4 つの RID（`AotSmoke` プロジェクト、17 シナリオ。`aot.yml` を参照）
+
+## ロードマップ / TODO
+> 2026-08-04 にすべて完了：並行レート制限（MAP-12）、障害統計（MAP-13）、ベンチマーク比較（MAP-14）
+
+## バージョン方針
+メジャーバージョン = 互換性の変更、マイナーバージョン = 新機能、リビジョン = 修正／最適化。`VersionSuffix` に日付を持たせ、ビルドを識別しやすくしています。
+
+## コントリビューション
+Issue / PR を歓迎します：バグ、性能最適化、対応地図の追加、ドキュメントとテストなど。送信前に `.github/copilot-instructions.md` を読んで、コードスタイルを統一してください。
+
+## ライセンス
+MIT。著作権表示を保持すれば、商用／オープンソースプロジェクトで自由に利用できます。
+
+---
 
 ## エコシステムマップ
 
@@ -108,8 +274,3 @@ NewLife は、独立したバージョン管理を行うオープンソースプ
 
 </details>
 
-## ライセンス
-
-MIT License © 2002-2026 NewLife チーム
-
-[GitHub](https://github.com/NewLifeX/NewLife.Map) | [Website](https://newlifex.com)

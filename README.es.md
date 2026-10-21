@@ -16,30 +16,196 @@
 
 > Esta traducción puede estar desactualizada; la referencia es la [versión en inglés](README.md).
 
-NewLife.Map unifica los servicios de mapas Baidu, AMap, Tencent y Tianditu, con geocodificación, geocodificación inversa, rutas y límites administrativos.
+NewLife.Map es una biblioteca de componentes de mapas que unifica Baidu, AMap, Tencent, Tianditu y la plataforma empresarial de API de mapas tras una única interfaz. Oculta las diferencias entre proveedores y ofrece geocodificación, geocodificación inversa, cálculo de distancias, conversión de coordenadas y corte de circuito multi-clave.
+
+Origen: https://github.com/NewLifeX/NewLife.Map  
+NuGet: `NewLife.Map`  
+
+## Estructura del repositorio
+| Proyecto | Rol | Descripción |
+| ---- | ---- | ---- |
+| `NewLife.Map` | Biblioteca de componentes de mapas (paquete NuGet) | Interfaz unificada `IMap` + adaptadores multiproveedor + conversión de coordenadas + corte de circuito de claves |
+| `MapApi` | Plataforma empresarial de API de mapas (servicio web) | Agregación multiproveedor + caché GeoHash multinivel + panel de administración Cube |
+| `XUnitTest` | Pruebas unitarias | Pruebas de geocodificación / geocodificación inversa / distancia / conversión de coordenadas por proveedor (los casos de integración con servicios reales se omiten de forma predeterminada) |
+
+## Documentación
+- [Requisitos](Doc/需求文档.md) — visión, objetivos principales, requisitos funcionales, lista de pendientes
+- [Lista de funciones](Doc/功能清单.md) — códigos de módulo/función con seguimiento tridimensional (implementación/pruebas/comentarios)
+- [Arquitectura](Doc/架构设计.md) — capas, componentes, flujos clave y decisiones de diseño
+- [Análisis competitivo](Doc/竞品分析.md) — matriz comparativa y análisis de brechas frente a Geocoding.net / ProjNET / envoltorios nacionales de un solo proveedor
+
+## Características
+- Interfaz unificada `IMap` que oculta las diferencias entre Baidu / AMap / Tencent / Tianditu / autoalojado empresarial (NewLifeMap); cambiar de proveedor no requiere cambios de código
+- Geocodificación (dirección → coordenadas) / geocodificación inversa (coordenadas → dirección), fusionando automáticamente la información semántica de los POI para completar los componentes de la dirección
+- Distancia de ruta / tiempo de conducción, con los parámetros de estrategia propios de cada proveedor abstraídos
+- Consultas de divisiones administrativas (AMap / Tencent), búsqueda de POI / regiones (Baidu / Tianditu), ubicación por IP (Baidu / Tencent / resolución en línea de la plataforma)
+- Conversión de sistemas de coordenadas: fórmulas sin conexión integradas para WGS84 / GCJ02 / BD09 + conversión por lotes en línea del proveedor (el mapeo especial from/to de Baidu está encapsulado)
+- Rotación de múltiples claves con corte de circuito automático + recuperación programada; que una clave sea limitada o bloqueada no afecta a la disponibilidad general
+- Limitación de velocidad por token bucket mediante `MaxQps` y estadísticas de solicitudes (total / tasa de éxito / latencia media), evitando que una clave sea bloqueada por solicitudes de alta frecuencia
+- Lanzamiento opcional de excepciones mediante `ThrowException`, lo que facilita el tratamiento unificado en capas superiores
+- Varios marcos de destino: net45 / net461 / netstandard2.0 / netstandard2.1 (compatible con proyectos heredados y .NET moderno)
+- Firmado con nombre seguro, apto para reflexión y sistemas de complementos
+- Integración con el registro Stardust: el proveedor `NewLifeMap` descubre automáticamente las direcciones de los servidores, lo que permite cambiar sin fisuras entre múltiples instancias / despliegues azul-verde
 
 ## Instalación
-
 ```bash
+# Estable
 dotnet add package NewLife.Map
+# Vista previa (basada en fecha)
+dotnet add package NewLife.Map --prerelease
 ```
 
 ## Inicio rápido
+```csharp
+using NewLife.Map;
+using NewLife.Data;
+
+// Elija un proveedor concreto (BaiduMap / AMap / WeMap / TianDiTu / NewLifeMap)
+var map = new BaiduMap { AppKey = "<BAIDU_AK>" }; // Separe varias claves con comas
+
+// 1. Geocodificación directa: dirección -> coordenadas
+var geo = await map.GetGeoAsync("北京市海淀区上地十街10号", city: "北京", coordtype: "bd09ll", formatAddress: true);
+Console.WriteLine($"Point: {geo?.Location}  Semantic: {geo?.Title}");
+
+// 2. Geocodificación inversa: coordenadas -> dirección
+var addr = await map.GetReverseGeoAsync(new GeoPoint(116.30815, 40.056885), "bd09ll");
+Console.WriteLine(addr?.Address);
+
+// 3. Distancia (conducción)
+var d = await map.GetDistanceAsync(new GeoPoint(116.30815, 40.056885), new GeoPoint(116.39745, 39.909187), "bd09ll");
+Console.WriteLine($"Distance={d?.Distance}m Duration={d?.Duration}s");
+
+// 4. Conversión de coordenadas (fórmulas sin conexión)
+var list = await map.ConvertAsync(new List<GeoPoint> { new(116.30815, 40.056885) }, from: "wgs84", to: "bd09");
+Console.WriteLine(list[0]);
+```
+> Las coordenadas deben usar coordenadas esféricas (longitud/latitud); la salida es un punto en el sistema de coordenadas BD09.
+
+## Creación dinámica mediante la fábrica
+```csharp
+var m1 = Map.Create("Baidu");           // Coincide automáticamente con el sufijo *Map
+var m2 = Map.Create("AMap");            // AMap
+var m3 = Map.Create("NewLifeMap");
+
+// O crear mediante enumeración
+var m4 = MapFactory.Create(MapKinds.TianDiTu);
+```
+> `AppKey` se asigna después de la instanciación; varias claves se separan con comas y rotan internamente.
+
+## Proveedores de mapas
+| Proveedor | Clase | Capacidades principales | Notas |
+| ------ | ---- | -------- | ---- |
+| Mapas Baidu | `BaiduMap` | Geocodificación / geocodificación inversa / distancia / búsqueda de POI / ubicación por IP / conversión de coordenadas (en línea + sin conexión) | `KeyName=ak` |
+| AMap | `AMap` | Geocodificación / geocodificación inversa / distancia / divisiones administrativas | `KeyName=key` |
+| Mapas Tencent | `WeMap` | Geocodificación / geocodificación inversa / distancia / ubicación por IP / divisiones administrativas | `KeyName=key` |
+| Tianditu | `TianDiTu` | Geocodificación / geocodificación inversa / distancia (con puntos de paso) / búsqueda de POI | `KeyName=tk` |
+| OSM/Nominatim | `NominatimMap` | Geocodificación / geocodificación inversa (código abierto, gratuito, sin clave, WGS84) | No requiere clave |
+| Plataforma NewLife Map | `NewLifeMap` | API de agregación empresarial (se conecta a la plataforma MapApi) | Descubrimiento de servicios mediante Stardust |
+
+> Para añadir un proveedor, consulte «Ampliar un nuevo proveedor de mapas» más abajo y siga el patrón de AMap/BaiduMap.
+
+## Conversión de sistemas de coordenadas
+| Nombre | Descripción | Proveedores habituales |
+| ---- | -------- | ---- |
+| WGS84 | Estándar GPS internacional | Posicionamiento bruto del dispositivo |
+| GCJ02 | Desplazamiento aplicado por la Oficina Estatal de Topografía y Cartografía | AMap / Tencent / la mayoría de los mapas en línea chinos |
+| BD09 | Desplazamiento de Baidu | Baidu |
 
 ```csharp
-var map = new BaiduMap(accessKey);
-var location = await map.GetLocationAsync("北京市海淀区");
+// Conversión por fórmula sin conexión, no consume cuota del proveedor
+var p = await map.ConvertAsync(new GeoPoint(lng, lat), from: "wgs84", to: "gcj02");
+
+// Conversión por lotes en línea de Baidu, los índices from/to ya están encapsulados
+var list = await map.ConvertAsync(points, from: "wgs84ll", to: "bd09ll");
 ```
 
-## Características
+## Rotación de múltiples AppKey y corte de circuito
+- Pase `AppKey="k1,k2,k3"`; cada solicitud incrementa un índice y toma el resto para rotar
+- Cuando una respuesta coincide con palabras clave de invalidación (como `TOO_FREQUENT` / `LIMIT` / `INVALID`), se llama a `RemoveKey()` para retirar temporalmente esa clave
+- Las claves retiradas entran en `_pendingKeys` y un temporizador `TimerX` las revisa para restaurarlas automáticamente al vencer
+- Política de tiempo de recuperación: actualmente la proporciona quien llama (por ejemplo, 1 hora)
 
-- Compatible con servicios cloud y middleware gestionado
-- Amplia cobertura de versiones de protocolos y formatos
-- Arquitectura extensible y conectable para desarrollo propio
+## Plataforma de agregación NewLifeMap
+`NewLifeMap` apunta a la plataforma integrada `MapApi` de API de mapas empresarial. La plataforma agrega varios proveedores y almacena en caché los resultados, de modo que los clientes no necesitan conocer las diferencias subyacentes.
 
-## Documentación
+```csharp
+// Opción 1: especificar el servidor directamente
+var map = new NewLifeMap("http://mapapi.company.local") { AppKey = "<KEY>" };
 
-> 📖 Documentación completa (en chino): [documentos del repositorio](Doc)
+// Opción 2: inyección de dependencias + resolución automática de direcciones con el registro Stardust
+services.AddSingleton<IMap, NewLifeMap>();
+// El constructor NewLifeMap(IServiceProvider) intenta: IRegistry -> StarFactory
+```
+
+- El `ApiHttpClient` vinculado actualiza automáticamente la lista de direcciones de servidores, lo que permite cambiar sin fisuras durante despliegues de múltiples réplicas / azul-verde de MapApi
+- La plataforma expone los puntos finales unificados `GET /Map/Geo`, `/Map/ReverseGeo` (geocodificación inversa), `/Map/GeoAddress` (geocodificación directa) y `/Map/Distance` (distancia); una caché GeoHash de cuatro niveles (6–9 caracteres) reduce las llamadas a los proveedores
+
+## Tratamiento de errores
+- Predeterminado: una respuesta no satisfactoria no lanza excepción; el método devuelve `null`
+- Con `map.ThrowException = true;` se lanza una `Exception` para capturarla de forma unificada en la capa externa
+- Información de depuración de la última solicitud: `LastUrl` / `LastString` / `LastResult` / `LastKey`
+
+## Resumen de la API
+```csharp
+Task<GeoAddress?> GetGeoAsync(string address, string? city=null, string? coordtype=null, bool formatAddress=false);
+Task<GeoAddress?> GetReverseGeoAsync(GeoPoint point, string? coordtype);
+Task<Driving?>    GetDistanceAsync(GeoPoint origin, GeoPoint destination, string? coordtype, int type=0);
+Task<IList<GeoPoint>> ConvertAsync(IList<GeoPoint> points, string from, string to);
+```
+Extensiones (específicas del proveedor):
+```csharp
+Task<GeoAddress?> PlaceSearchAsync(...);      // Búsqueda de POI / regiones de BaiduMap / Tianditu
+Task<IList<GeoArea>> GetAreaAsync(...);       // Divisiones administrativas de AMap
+Task<IDictionary<string, object?>> IpLocationAsync(...); // Ubicación por IP de BaiduMap / WeMap
+```
+
+## Ampliar un nuevo proveedor de mapas
+1. Cree una clase `XXXMap : Map, IMap`
+2. Configure `Server` / `KeyName`
+3. Sobrescriba `InvokeAsync<T>` para analizar la estructura de respuesta unificada y los códigos de error del proveedor
+4. Implemente `GetGeoAsync` / `GetReverseGeoAsync` / otras capacidades necesarias
+5. Si hay señales propias del proveedor de limitación de velocidad / invalidación, sobrescriba `IsValidKey` para devolver true y activar la retirada temporal
+6. Regístrelo en el constructor estático de `MapFactory` con `Register<XXXMap>(MapKinds.XXX)`
+7. Envíe pruebas unitarias que cubran la funcionalidad principal y los casos límite
+
+## Pruebas unitarias
+El repositorio contiene el proyecto `XUnitTest`; la solución es `NewLife.Map.slnx` (nuevo formato XML de VS 2026 / .NET 10):
+- De forma predeterminada se ejecutan **pruebas deterministas**: 84 casos; un servicio stub HTTP local cubre la construcción de URL y el análisis de respuestas de cada proveedor; la ejecución tarda entre 0,4 y 1 segundo y funciona de forma estable en todos los RID (incluida la CI)
+- Las pruebas en línea de proveedores reales / OSM / plataforma están marcadas como `Category=Integration` y se **omiten de forma predeterminada** mediante `IntegrationFact`; «Ejecutar todo» en el Explorador de pruebas de VS se comporta igual que `dotnet test`
+- Para habilitar las pruebas de integración: primero defina la variable de entorno `NEWLIFE_MAP_INTEGRATION=1` y luego ejecute con `--filter "Category=Integration"`
+- Guarde las claves reales en secretos de usuario locales o variables de entorno; nunca las confirme en el repositorio
+
+Ejecución (Windows PowerShell):
+```powershell
+dotnet test -c Release
+$env:NEWLIFE_MAP_INTEGRATION = 1
+dotnet test -c Release --filter "Category=Integration"   # Opcional: integración en entorno real
+```
+
+## Compilación
+```bash
+dotnet build -c Release
+```
+La salida (compilación multiframework) se encuentra en `Bin/`.
+
+## Pruebas de compatibilidad (CI)
+Se activan en push / PR y cubren los RID principales:
+- Matriz de pruebas unitarias: win-x64 / linux-x64 / linux-arm64 / linux-la64 (LoongArch, emulación QEMU + SDK .NET de Loongson, véase `test.yml`)
+- Matriz de humo NativeAOT: los mismos cuatro RID (proyecto `AotSmoke`, 17 escenarios), véase `aot.yml`
+
+## Hoja de ruta / TODO
+> Todo completado el 2026-08-04: limitación de velocidad concurrente (MAP-12), métricas de fallos (MAP-13), comparación de rendimiento (MAP-14)
+
+## Versionado
+Versión mayor = cambios de compatibilidad; versión menor = nuevas funciones; revisión = correcciones / optimizaciones. `VersionSuffix` incluye una fecha para identificar fácilmente la compilación.
+
+## Contribuir
+Se aceptan issues / PR: errores, optimizaciones de rendimiento, soporte de más mapas, documentación y pruebas. Antes de enviar, lea `.github/copilot-instructions.md` para mantener un estilo de código coherente.
+
+## Licencia
+MIT; conserve el aviso de copyright y podrá usarlo libremente en proyectos comerciales / de código abierto.
+
+---
 
 ## Mapa del ecosistema
 
@@ -108,8 +274,3 @@ Sitio web: https://newlifex.com · Organización de código abierto: https://git
 
 </details>
 
-## Licencia
-
-MIT License © 2002-2026 Equipo NewLife
-
-[GitHub](https://github.com/NewLifeX/NewLife.Map) | [Website](https://newlifex.com)
