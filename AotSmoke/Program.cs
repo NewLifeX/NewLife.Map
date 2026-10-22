@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Globalization;
 using NewLife;
 using NewLife.Data;
 using NewLife.Map;
@@ -197,6 +198,42 @@ Run("全部提供者可实例化并可释放", () =>
         var map = MapFactory.Create(kind);
         if (map == null) throw new Exception($"创建失败：{kind}");
         if (map is IDisposable d) d.Dispose();
+    }
+});
+
+Run("多语言本地化表", () =>
+{
+    var saved = Localization.Culture;
+    try
+    {
+        const String key = "Coordinate system conversion from [{0}] to [{1}] is not supported.";
+
+        // 不变全球化（InvariantGlobalization=true）下具名区域性不可用，语言表注册被跳过，只应回退英文且不得抛异常
+        var invariant = false;
+        try { invariant = CultureInfo.GetCultureInfo("zh-Hans").Name.Length == 0; }
+        catch (CultureNotFoundException) { invariant = true; }
+        if (invariant)
+        {
+            var fallback = Localization.Translate(key, "wgs84", "unknown");
+            if (fallback != "Coordinate system conversion from [wgs84] to [unknown] is not supported.") throw new Exception("不变全球化下未回退英文: " + fallback);
+            return;
+        }
+
+        Localization.Culture = CultureInfo.GetCultureInfo("zh-Hans");
+        var zh = Localization.Translate(key, "wgs84", "unknown");
+        if (zh != "未支持[wgs84]坐标系到[unknown]坐标系的转换") throw new Exception("zh-Hans 译文不正确: " + zh);
+
+        Localization.Culture = CultureInfo.GetCultureInfo("ja");
+        var ja = Localization.Translate("No available key.");
+        if (ja != "利用可能なキーがありません。") throw new Exception("ja 译文不正确: " + ja);
+
+        Localization.Culture = CultureInfo.GetCultureInfo("en-US");
+        var en = Localization.Translate(key, "wgs84", "unknown");
+        if (en != "Coordinate system conversion from [wgs84] to [unknown] is not supported.") throw new Exception("英文回退不正确: " + en);
+    }
+    finally
+    {
+        Localization.Culture = saved;
     }
 });
 

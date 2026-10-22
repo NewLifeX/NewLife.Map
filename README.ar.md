@@ -192,7 +192,7 @@ dotnet build -c Release
 ## اختبارات التوافق (CI)
 تُشغَّل عند push / PR وتغطّي RID الرئيسية:
 - مصفوفة اختبارات الوحدة: win-x64 / linux-x64 / linux-arm64 / linux-la64 (LoongArch، محاكاة QEMU + .NET SDK من Loongson، انظر `test.yml`)
-- مصفوفة اختبارات الدخان NativeAOT: نفس RID الأربعة (مشروع `AotSmoke`، 17 سيناريو)، انظر `aot.yml`
+- مصفوفة اختبارات الدخان NativeAOT: نفس RID الأربعة (مشروع `AotSmoke`، 18 سيناريو)، انظر `aot.yml`
 
 ## خارطة الطريق / TODO
 > اكتمل كل شيء في 2026-08-04: تحديد المعدّل المتزامن (MAP-12)، إحصاءات الأعطال (MAP-13)، مقارنة الأداء (MAP-14)

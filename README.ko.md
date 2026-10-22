@@ -192,7 +192,7 @@ dotnet build -c Release
 ## 호환성 테스트(CI)
 push / PR 시 트리거되며 주요 RID를 다룹니다:
 - 단위 테스트 매트릭스: win-x64 / linux-x64 / linux-arm64 / linux-la64(LoongArch, QEMU 에뮬레이션 + Loongson .NET SDK, `test.yml` 참조)
-- NativeAOT 스모크 매트릭스: 동일한 4개 RID(`AotSmoke` 프로젝트, 17개 시나리오), `aot.yml` 참조
+- NativeAOT 스모크 매트릭스: 동일한 4개 RID(`AotSmoke` 프로젝트, 18개 시나리오), `aot.yml` 참조
 
 ## 로드맵 / TODO
 > 2026-08-04에 모두 완료: 동시 속도 제한(MAP-12), 장애 통계(MAP-13), 벤치마크 비교(MAP-14)

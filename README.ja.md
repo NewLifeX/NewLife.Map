@@ -191,7 +191,7 @@ dotnet build -c Release
 ## 互換性テスト（CI）
 push / PR 時に実行され、主要な RID をカバーします：
 - ユニットテストマトリクス：win-x64 / linux-x64 / linux-arm64 / linux-la64（LoongArch、QEMU エミュレーション + 龍芯 .NET SDK。`test.yml` を参照）
-- NativeAOT スモークマトリクス：同じ 4 つの RID（`AotSmoke` プロジェクト、17 シナリオ。`aot.yml` を参照）
+- NativeAOT スモークマトリクス：同じ 4 つの RID（`AotSmoke` プロジェクト、18 シナリオ。`aot.yml` を参照）
 
 ## ロードマップ / TODO
 > 2026-08-04 にすべて完了：並行レート制限（MAP-12）、障害統計（MAP-13）、ベンチマーク比較（MAP-14）

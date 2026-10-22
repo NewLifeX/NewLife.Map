@@ -192,7 +192,7 @@ La salida (compilación multiframework) se encuentra en `Bin/`.
 ## Pruebas de compatibilidad (CI)
 Se activan en push / PR y cubren los RID principales:
 - Matriz de pruebas unitarias: win-x64 / linux-x64 / linux-arm64 / linux-la64 (LoongArch, emulación QEMU + SDK .NET de Loongson, véase `test.yml`)
-- Matriz de humo NativeAOT: los mismos cuatro RID (proyecto `AotSmoke`, 17 escenarios), véase `aot.yml`
+- Matriz de humo NativeAOT: los mismos cuatro RID (proyecto `AotSmoke`, 18 escenarios), véase `aot.yml`
 
 ## Hoja de ruta / TODO
 > Todo completado el 2026-08-04: limitación de velocidad concurrente (MAP-12), métricas de fallos (MAP-13), comparación de rendimiento (MAP-14)

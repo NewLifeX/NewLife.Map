@@ -195,7 +195,7 @@ dotnet build -c Release
 ## 兼容性测试（CI）
 push / PR 触发，覆盖主流 RID：
 - 单元测试矩阵：win-x64 / linux-x64 / linux-arm64 / linux-la64（龙芯，QEMU 仿真 + 龙芯 .NET SDK，见 `test.yml`）
-- NativeAOT 冒烟矩阵：同上四个 RID（`AotSmoke` 工程，17 个场景），见 `aot.yml`
+- NativeAOT 冒烟矩阵：同上四个 RID（`AotSmoke` 工程，18 个场景），见 `aot.yml`
 
 ## Roadmap / TODO
 > 2026-08-04 已全部完成：并发限速（MAP-12）、故障统计 Metrics（MAP-13）、Benchmark 基准对比（MAP-14）

@@ -192,7 +192,7 @@ dotnet build -c Release
 ## Тесты совместимости (CI)
 Запускаются при push / PR и охватывают основные RID:
 - Матрица модульных тестов: win-x64 / linux-x64 / linux-arm64 / linux-la64 (LoongArch, эмуляция QEMU + .NET SDK Loongson, см. `test.yml`)
-- Матрица smoke-тестов NativeAOT: те же четыре RID (проект `AotSmoke`, 17 сценариев), см. `aot.yml`
+- Матрица smoke-тестов NativeAOT: те же четыре RID (проект `AotSmoke`, 18 сценариев), см. `aot.yml`
 
 ## План развития / TODO
 > Всё завершено 2026-08-04: параллельное ограничение скорости (MAP-12), метрики сбоев (MAP-13), сравнение бенчмарков (MAP-14)

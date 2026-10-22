@@ -195,7 +195,7 @@ The output (multi-framework build) is located in `Bin/`.
 ## Compatibility testing (CI)
 Triggered on push / PR, covering mainstream RIDs:
 - Unit test matrix: win-x64 / linux-x64 / linux-arm64 / linux-la64 (LoongArch, QEMU emulation + Loongson .NET SDK, see `test.yml`)
-- NativeAOT smoke matrix: the same four RIDs (`AotSmoke` project, 17 scenarios), see `aot.yml`
+- NativeAOT smoke matrix: the same four RIDs (`AotSmoke` project, 18 scenarios), see `aot.yml`
 
 ## Roadmap / TODO
 > All completed on 2026-08-04: concurrent rate limiting (MAP-12), failure metrics (MAP-13), benchmark comparison (MAP-14)

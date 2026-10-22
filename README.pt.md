@@ -192,7 +192,7 @@ A saída (build multiframework) fica em `Bin/`.
 ## Testes de compatibilidade (CI)
 Acionados em push / PR, cobrindo os principais RIDs:
 - Matriz de testes unitários: win-x64 / linux-x64 / linux-arm64 / linux-la64 (LoongArch, emulação QEMU + SDK .NET Loongson, consulte `test.yml`)
-- Matriz de smoke NativeAOT: os mesmos quatro RIDs (projeto `AotSmoke`, 17 cenários), consulte `aot.yml`
+- Matriz de smoke NativeAOT: os mesmos quatro RIDs (projeto `AotSmoke`, 18 cenários), consulte `aot.yml`
 
 ## Roteiro / TODO
 > Tudo concluído em 2026-08-04: limitação de taxa concorrente (MAP-12), métricas de falha (MAP-13), comparação de benchmark (MAP-14)
