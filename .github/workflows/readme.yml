@@ -1,6 +1,7 @@
 name: readme
 
-# README 语言切换行由 tools/sync-readme-languages.ps1 从 readme-languages.json 生成。
+# README 语言切换行由 tools/sync-readme-languages.ps1 从 readme-languages.json 生成；
+# NuGet 包版 README.nuget.md 由 tools/sync-readme-package.ps1 从 README.md 生成。
 # 手工改顺序、或某一份副本忘记同步，都会在这里被拦下。
 on:
   push:
@@ -8,14 +9,18 @@ on:
     paths:
       - 'README*.md'
       - 'readme-languages.json'
+      - 'readme-package.json'
       - 'tools/sync-readme-languages.ps1'
+      - 'tools/sync-readme-package.ps1'
       - '.github/workflows/readme.yml'
   pull_request:
     branches: [ '*' ]
     paths:
       - 'README*.md'
       - 'readme-languages.json'
+      - 'readme-package.json'
       - 'tools/sync-readme-languages.ps1'
+      - 'tools/sync-readme-package.ps1'
       - '.github/workflows/readme.yml'
   workflow_dispatch:
 
@@ -33,3 +38,6 @@ jobs:
     - name: Check README language switcher
       shell: pwsh
       run: pwsh -NoProfile -File ./tools/sync-readme-languages.ps1 -Check
+    - name: Check NuGet package README
+      shell: pwsh
+      run: pwsh -NoProfile -File ./tools/sync-readme-package.ps1 -Check
