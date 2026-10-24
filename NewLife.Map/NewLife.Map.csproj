@@ -5,7 +5,7 @@
     <Description>A unified map component library that wraps Baidu, AMap, Tencent, Tianditu and the enterprise aggregation map API, providing geocoding, reverse geocoding, distance calculation, coordinate conversion and multi-key circuit breaking.</Description>
     <Company>新生命开发团队</Company>
     <Copyright>©2002-2026 新生命开发团队</Copyright>
-    <VersionPrefix>2.7</VersionPrefix>
+    <VersionPrefix>2.8</VersionPrefix>
     <VersionSuffix>$([System.DateTime]::Now.ToString(`yyyy.MMdd`))</VersionSuffix>
     <Version>$(VersionPrefix).$(VersionSuffix)</Version>
     <FileVersion>$(Version)</FileVersion>
@@ -29,7 +29,7 @@
     <RepositoryUrl>https://github.com/NewLifeX/NewLife.Map</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>新生命团队;X组件;NewLife;地图;Map;本地化;Localization;$(AssemblyName)</PackageTags>
-    <PackageReleaseNotes>新增 OSM/Nominatim 开源无 Key 海外地图源；腾讯地图新增行政区划查询；Map 基类新增令牌桶限速与故障统计；NewLifeMap/MapApi 补齐正向地理编码与驾驶距离端点；MapApi 新增在线 IP 解析；新增坐标转换基准测试项目；修复坐标转换健壮性问题并升级依赖至 2026.10</PackageReleaseNotes>
+    <PackageReleaseNotes>新增 11 种语言运行时本地化与带前缀日志，MapApi 支持按 Accept-Language 切换请求语言；修复天地图 POI 检索、失效密钥识别与 Nominatim 数组根解析；新增 NativeAOT/移动端冒烟与多 RID CI；确定性测试增至 98 个；升级 NewLife.Core 12.0.2026.1024 等依赖</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
@@ -51,7 +51,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NewLife.Core" Version="12.0.2026.1021-beta0321" />
+    <PackageReference Include="NewLife.Core" Version="12.0.2026.1024" />
+    <!-- Stardust 暂无与 Core 12 对齐的稳定版（3.10.2026.901 仍依赖 Core 11），稳定包会触发 NU5104；待稳定版发布后升级并复测 -->
     <PackageReference Include="NewLife.Stardust" Version="3.10.2026.1021-beta0432" />
   </ItemGroup>
 
